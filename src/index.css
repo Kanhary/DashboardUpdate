@@ -12,9 +12,16 @@
   width: 8px;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #6b7280; 
-  border-radius: 10px;
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(81,57,96);
+  background: linear-gradient(90deg, rgba(81,57,96,1) 0%, rgba(33,102,161,1) 8%, rgba(28,52,75,1) 100%);
+  border-radius: 5px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {

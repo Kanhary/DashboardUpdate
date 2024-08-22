@@ -93,7 +93,7 @@ const Computer = () => {
 
   return (
     <section className='mt-10 font-khmer'>
-      <h1 className='top-0 text-2xl font-semibold text-center '>Computer Inventory</h1>
+      <h1 className='top-0 text-2xl font-semibold text-center '>តារាងកំុព្យូទ័រ</h1>
       <div className='w-full mt-4'>
         <div className='relative w-full overflow-hidden bg-white shadow-md sm:rounded-lg'>
           <div className='flex flex-col items-center justify-between p-4 space-y-3 md:flex-row md:space-y-0 md:space-x-4'>
@@ -141,12 +141,12 @@ const Computer = () => {
               <thead className='text-xs text-gray-700 uppercase bg-gray-50'>
                 <tr>
                   <th scope="col" className="sticky left-0 px-4 py-3 bg-gray-50">Action</th>
-                  <th scope="col" className="px-4 py-3">Code</th>
-                  <th scope='col' className='px-4 py-3'>Brand</th>
+                  <th scope="col" className="px-4 py-3 text-start"style={{ minWidth: '150px' }}>Code</th>
+                  <th scope='col' className='px-4 py-3 text-start'style={{ minWidth: '150px' }}>Brand</th>
                   <th scope="col" className="px-4 py-3 text-start" style={{ minWidth: '150px' }}>Model</th>
-                  <th scope='col' className='px-4 py-3'>Processor</th>
-                  <th scope='col' className='px-4 py-3'>RAM</th>
-                  <th scope='col' className='px-4 py-3'>Department</th>
+                  <th scope='col' className='px-4 py-3 text-start'style={{ minWidth: '150px' }}>Processor</th>
+                  <th scope='col' className='px-4 py-3 text-start'style={{ minWidth: '150px' }}>RAM</th>
+                  <th scope='col' className='px-4 py-3 text-start'style={{ minWidth: '150px' }}>Department</th>
                   <th scope='col' className='px-4 py-3 text-start' style={{ minWidth: '150px' }}>User</th>
                   <th scope='col' className='px-4 py-3 text-start' style={{ minWidth: '150px' }}>Location</th>
                   <th scope="col" className="px-4 py-3 text-start" style={{ minWidth: '150px' }}>Last By</th>

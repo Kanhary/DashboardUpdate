@@ -174,12 +174,12 @@ const EmployeePositionList = () => {
             <table className='w-full text-[15px] left text-gray-500 text- '>
               <thead className='text-xs text-gray-700 uppercase bg-gray-50 '>
                 <tr>
-                  <th scope="col" className="sticky left-0 px-4 py-3 bg-gray-50 ">Action</th>
-                  <th scope="col" className="px-4 py-3">Code</th>
-                  <th scope="col" className="px-4 py-3" style={{ minWidth: '200px' }}>Position</th>
-                  <th scope="col" className="px-4 py-3" style={{ minWidth: '200px' }}>Description</th>
-                  <th scope="col" className="px-4 py-3" style={{ minWidth: '150px' }}>Last By</th>
-                  <th scope="col" className="px-4 py-3" style={{ minWidth: '150px' }}>Last Date</th>
+                  <th scope="col" className="sticky left-0 px-4 py-3 bg-gray-50 text-start">Action</th>
+                  <th scope="col" className="px-4 py-3 text-start">Code</th>
+                  <th scope="col" className="px-4 py-3 text-start" style={{ minWidth: '200px' }}>Position</th>
+                  <th scope="col" className="px-4 py-3 text-start" style={{ minWidth: '200px' }}>Description</th>
+                  <th scope="col" className="px-4 py-3 text-start" style={{ minWidth: '150px' }}>Last By</th>
+                  <th scope="col" className="px-4 py-3 text-start" style={{ minWidth: '150px' }}>Last Date</th>
                 </tr>
               </thead>
               <tbody>
