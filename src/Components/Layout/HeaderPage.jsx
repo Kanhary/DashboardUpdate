@@ -235,7 +235,8 @@ const HeaderPage = ({ toggleSidebar }) => {
                         {/* <p className='py-1 text-sm font-medium text-gray-400 truncate'>{userEmail}</p> */}
                       </div>
                 </div>
-
+                
+                {/* Ruler line bottom */}
                 <hr className='mx-auto w-52' />
 
                 <ul className="py-1">
