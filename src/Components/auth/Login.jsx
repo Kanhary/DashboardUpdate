@@ -90,7 +90,7 @@ const LoginForm = () => {
               {error && (
                 <p 
                   data-aos="zoom-in" 
-                  className="mb-4 p-2 text-red-500 bg-red-100 border border-red-300 rounded flex items-center">
+                  className="flex items-center p-2 mb-4 text-red-500 bg-red-100 border border-red-300 rounded">
                   <FiXCircle className="mr-2 text-red-600" />
                   <span className="font-semibold"></span> {error}
                 </p>
