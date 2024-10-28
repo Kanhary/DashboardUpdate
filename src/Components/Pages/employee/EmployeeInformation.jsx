@@ -627,8 +627,6 @@ const EmployeeInformation = () => {
 
 
 
-
-          
             <div className='w-full overflow-x-auto'
             data-aos='fade-right'>
               <table className='w-full text-sm text-left text-gray-500'>
