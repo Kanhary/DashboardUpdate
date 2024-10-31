@@ -393,7 +393,7 @@ const EmployeeInformation = () => {
     } else if (isViewModalOpen) {
       await handleViewSave();
     }
-  };
+  }; 
   
   
   
@@ -949,6 +949,5 @@ const EmployeeInformation = () => {
     </section> 
   );
 };
-
 export default EmployeeInformation;
 

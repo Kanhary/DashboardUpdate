@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { FaBuilding, FaLaptop, FaUserFriends, FaCog, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { HiChartBar } from "react-icons/hi2";
 import { BsFillQuestionCircleFill } from "react-icons/bs";
+import { MdDashboard } from "react-icons/md";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { GetMenu } from '../../api/user';
@@ -43,9 +44,33 @@ const Sidebar = ({ isSidebarOpen }) => {
     setActiveItem(itemName);
   };
 
+  // Mapping English to Khmer text
+  const translations = {
+    'dashboard': "ផ្ទាំងគ្រប់គ្រង",
+    'computer': "តារាងទិន្នន័យកុំព្យូទ័រ",
+    'employee': "តារាងបុគ្គលិក",
+    'positionlist': "តារាងបញ្ជីមុខតំណែង",
+    'genderlist': "តារាងបញ្ជីភេទបុគ្គលិក",
+    'employee_info': "តារាងបញ្ចូលព័ត៌មានបុគ្គលិក",
+    'system_setting': "ការកំណត់ប្រព័ន្ធ",
+    'setting': "ការកំណត់",
+    'report': "របាយការណ៍",
+    'help': "ជំនួយ",
+    'user': "អ្នកប្រើប្រាស់",
+    'company': "តារាងក្រុមហ៊ុន",
+    'office' : "ការិយាល័យ",
+    'branch' : "សាខា",
+    'department' : "នាយកដ្ឋាន",
+    'company_list' : "ក្រុមហ៊ុន",
+    'maintenance' : "ការថែទាំ"
+  };
+
+  // Function to translate menu name
+  const translateText = (text) => translations[text.toLowerCase()] || text;
+
   const getIconComponent = (iconName) => {
     const iconMap = {
-      dashboard: <FaBuilding />,
+      dashboard: <MdDashboard />,
       computer: <FaLaptop />,
       peoples: <FaUserFriends />,
       setting: <FaCog />,
@@ -63,7 +88,7 @@ const Sidebar = ({ isSidebarOpen }) => {
             <div key={item.id}>
               <NavItem
                 icon={getIconComponent(item.icon)}
-                text={item.menuName}
+                text={translateText(item.menuName)} 
                 onClick={() => toggleSubmenu(item.id)}
                 isActive={activeItem === item.menuName}
                 dropdownIcon={item.children && item.children.length > 0 ? (submenuStates[item.id] ? <FaChevronUp /> : <FaChevronDown />) : null}  // Show dropdown icon only if there are children
@@ -74,7 +99,7 @@ const Sidebar = ({ isSidebarOpen }) => {
                   {item.children.map((subItem) => (
                     <SubmenuItem
                       key={subItem.id}
-                      text={subItem.menuName}
+                      text={translateText(subItem.menuName)} 
                       to={subItem.path}
                       onClick={() => handleLinkClick(subItem.menuName)}
                       isActive={activeItem === subItem.menuName}

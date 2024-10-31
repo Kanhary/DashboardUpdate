@@ -55,17 +55,17 @@ function MainDashboard() {
           <Route path='/' element={<Navigate to='dashboard' />} />
           <Route path='dashboard' element={<Dashboard />} />
           <Route path='computer' element={<Computer />} />
-          <Route path='employee/position-list' element={<EmployeePositionList />} />
-          <Route path='employee/gender-list' element={<GenderList />} />
-          <Route path='employee/employee-information' element={<EmployeeInformation />} />
-          <Route path='system-setting/user' element={<User/>} />
-          <Route path='system-setting/group-master' element={<GroupMaster/>} />
-          <Route path='system-setting/item-permission' element={<ItemPermission/>} />
-          <Route path='system-setting/group-details'element={<GroupDetails/>} />
+          <Route path='employee/positionlist' element={<EmployeePositionList />} />
+          <Route path='employee/genderlist' element={<GenderList />} />
+          <Route path='employee/employeeinfo' element={<EmployeeInformation />} />
+          <Route path='system_setting' element={<User/>} />
+          <Route path='system_setting/role' element={<GroupMaster/>} />
+          <Route path='system_setting/menu' element={<ItemPermission/>} />
+          <Route path='system_setting/rolemenu'element={<GroupDetails/>} />
           <Route path='company/branch' element={<Branch/>} />
           <Route path='company/department' element={<Department/>} />
           <Route path='company/office' element={<Office/>}/>
-          <Route path='company/company-list' element={<Company/>} />
+          <Route path='company/companylist' element={<Company/>} />
           <Route path='maintenance' element={<Maintenance />} />
           <Route path='setting' element={<Setting />} />
           <Route path='report' element={<Report />} />
