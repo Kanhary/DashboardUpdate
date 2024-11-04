@@ -3,6 +3,7 @@ import { FaPen, FaTrashAlt } from "react-icons/fa";
 import { FaAngleLeft } from "react-icons/fa6";
 import { FaAngleRight } from "react-icons/fa6";
 import { FaAngleDown } from "react-icons/fa";
+import { IoMdRefresh } from "react-icons/io";
 
 const Computer = () => {
   const INITAIL_FORM_DATA = {code: '', brand: '', model: '', processor: '', ram: '', department: '', user: '', location: ''}
@@ -92,6 +93,10 @@ const Computer = () => {
     }
   };
 
+  const handleRefresh = () => {
+    window.location.reload();
+  };
+
   return (
     <section className='mt-10 font-khmer'>
       <h1 className='text-xl font-medium text-blue-800'>តារាងបង្ហាញព័ត៌មានកំុព្យូទ័រ</h1>
@@ -123,8 +128,15 @@ const Computer = () => {
             </div>
             <div className='flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3'>
               <button
+                onClick={handleRefresh}
+                className="flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
+              >
+                <IoMdRefresh />
+                Refresh
+              </button>
+              <button
                 type='button'
-                className='flex items-center justify-center px-5 py-2 text-sm font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95'
+                className='flex items-center justify-center px-5 py-3 text-sm font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95'
                 onClick={openAddModal}
               >
                 <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -145,16 +157,16 @@ const Computer = () => {
               <thead className='text-xs text-gray-700 uppercase bg-gray-100'>
                 <tr>
                   <th scope="col" className="sticky left-0 px-4 py-3 bg-gray-100 border">Action</th>
-                  <th scope="col" className="px-4 py-3 text-start border"style={{ minWidth: '150px' }}>Code</th>
-                  <th scope='col' className='px-4 py-3 text-start border'style={{ minWidth: '150px' }}>Brand</th>
-                  <th scope="col" className="px-4 py-3 text-start border" style={{ minWidth: '150px' }}>Model</th>
-                  <th scope='col' className='px-4 py-3 text-start border'style={{ minWidth: '150px' }}>Processor</th>
-                  <th scope='col' className='px-4 py-3 text-start border'style={{ minWidth: '150px' }}>RAM</th>
-                  <th scope='col' className='px-4 py-3 text-start border'style={{ minWidth: '150px' }}>Department</th>
-                  <th scope='col' className='px-4 py-3 text-start border' style={{ minWidth: '150px' }}>User</th>
-                  <th scope='col' className='px-4 py-3 text-start border' style={{ minWidth: '150px' }}>Location</th>
-                  <th scope="col" className="px-4 py-3 text-start border" style={{ minWidth: '150px' }}>Last By</th>
-                  <th scope="col" className="px-4 py-3 text-start border" style={{ minWidth: '150px' }}>Last Date</th>
+                  <th scope="col" className="px-4 py-3 border text-start"style={{ minWidth: '150px' }}>Code</th>
+                  <th scope='col' className='px-4 py-3 border text-start'style={{ minWidth: '150px' }}>Brand</th>
+                  <th scope="col" className="px-4 py-3 border text-start" style={{ minWidth: '150px' }}>Model</th>
+                  <th scope='col' className='px-4 py-3 border text-start'style={{ minWidth: '150px' }}>Processor</th>
+                  <th scope='col' className='px-4 py-3 border text-start'style={{ minWidth: '150px' }}>RAM</th>
+                  <th scope='col' className='px-4 py-3 border text-start'style={{ minWidth: '150px' }}>Department</th>
+                  <th scope='col' className='px-4 py-3 border text-start' style={{ minWidth: '150px' }}>User</th>
+                  <th scope='col' className='px-4 py-3 border text-start' style={{ minWidth: '150px' }}>Location</th>
+                  <th scope="col" className="px-4 py-3 border text-start" style={{ minWidth: '150px' }}>Last By</th>
+                  <th scope="col" className="px-4 py-3 border text-start" style={{ minWidth: '150px' }}>Last Date</th>
                 </tr>
               </thead>
               <tbody>
@@ -162,7 +174,7 @@ const Computer = () => {
                   <tr key={computer.code} className='transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50'>
                     <td className='sticky left-0 flex px-6 py-4 bg-white border-r'>
                       <input type="checkbox" className="mr-1 action-checkbox" />
-                      <FaPen className="text-blue-500 cursor-pointer hover:text-blue-700 ml-2" onClick={() => openEditModal(computer.code,computer.brand, computer.model, computer.processor, computer.ram, computer.department, computer.user, computer.location)} />
+                      <FaPen className="ml-2 text-blue-500 cursor-pointer hover:text-blue-700" onClick={() => openEditModal(computer.code,computer.brand, computer.model, computer.processor, computer.ram, computer.department, computer.user, computer.location)} />
                       <FaTrashAlt className="ml-3 text-red-500 cursor-pointer hover:text-red-700" onClick={() => deleteComputer(computer.code)} />
                     </td>
                     <td className='px-4 py-3 border-r '>{computer.code}</td>

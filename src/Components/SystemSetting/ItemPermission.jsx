@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FaPen, FaTrashAlt } from "react-icons/fa"
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-
+import { IoMdRefresh } from "react-icons/io";
 
 
 const ItemPermission = () => {
@@ -118,6 +118,10 @@ const ItemPermission = () => {
     });
   }
   
+  const handleRefresh = () => {
+    window.location.reload();
+  };
+  
   return (
     <section className='mt-14 font-khmer'>
     <h1 className='text-xl font-medium text-blue-800'>ការអនុញ្ញាតអ្នកប្រើប្រាស់</h1>
@@ -148,6 +152,13 @@ const ItemPermission = () => {
             </div>
             <div className='flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3'>
               <button
+                onClick={handleRefresh}
+                className="flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
+              >
+                <IoMdRefresh />
+                Refresh
+              </button>
+              <button
                 type='button'
                 className='flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95'
                 onClick={openAddModal}
@@ -164,12 +175,12 @@ const ItemPermission = () => {
             <table className='w-full text-sm text-left text-gray-500 '>
               <thead className='text-xs text-gray-700 uppercase bg-gray-100 border-t-2'>
                 <tr>
-                  <th scope="col" className="sticky left-0 px-4 py-3 bg-gray-100 border-r border-t">Action</th>
-                  <th scope="col" className="px-4 py-3 border-r border-t">Code</th>
-                  <th scope='col' className='px-4 py-3 border-r border-t' style={{ minWidth: '300px' }}>Function Code</th>
-                  <th scope='col' className='px-4 py-3 border-r border-t' style={{ minWidth: '300px' }}>Function Name</th>
-                  <th scope="col" className="px-4 py-3 border-r border-t" style={{ minWidth: '150px' }}>Last By</th>
-                  <th scope="col" className="px-4 py-3 border-r border-t" style={{ minWidth: '150px' }}>Last Date</th>
+                  <th scope="col" className="sticky left-0 px-4 py-3 bg-gray-100 border-t border-r">Action</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r">Code</th>
+                  <th scope='col' className='px-4 py-3 border-t border-r' style={{ minWidth: '300px' }}>Function Code</th>
+                  <th scope='col' className='px-4 py-3 border-t border-r' style={{ minWidth: '300px' }}>Function Name</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Last By</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Last Date</th>
                 </tr>
               </thead>
               <tbody>
@@ -177,7 +188,7 @@ const ItemPermission = () => {
                     <tr key={index} className='transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50'>
                       <td className='sticky left-0 flex px-6 py-4 bg-white border-r'>
                         <input type="checkbox" className="mr-1 action-checkbox" />
-                        <FaPen className="text-blue-500 cursor-pointer hover:text-blue-700 ml-2" 
+                        <FaPen className="ml-2 text-blue-500 cursor-pointer hover:text-blue-700" 
                         onClick={() => openEditModal(item.code, item.functionCode, item.functionName)} 
                         />
                         <FaTrashAlt className="ml-3 text-red-500 cursor-pointer hover:text-red-700" 

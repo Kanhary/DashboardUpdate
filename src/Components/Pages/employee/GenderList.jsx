@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FaPen, FaTrashAlt } from "react-icons/fa";
+import { IoMdRefresh } from "react-icons/io";
 
 const GenderList = () => {
   
@@ -90,6 +91,9 @@ const GenderList = () => {
       // Your delete logic here...
     }
   };
+  const handleRefresh = () => {
+    window.location.reload();
+  };
 
   return (
     <section className='mt-10 font-khmer'>
@@ -121,6 +125,13 @@ const GenderList = () => {
               </form>
             </div>
             <div className='flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3'>
+            <button
+                onClick={handleRefresh}
+                className="flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
+              >
+                <IoMdRefresh />
+                Refresh
+              </button>
               <button
                 type='button'
                 className='flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95'
@@ -139,11 +150,11 @@ const GenderList = () => {
             <table className='w-full text-sm text-left text-gray-500 '>
               <thead className='text-xs text-gray-700 uppercase bg-gray-100 '>
                 <tr>
-                  <th scope="col" className="sticky left-0 px-4 py-3 bg-gray-100 border-r border-t">Action</th>
-                  <th scope="col" className="px-4 py-3 border-r border-t">Code</th>
-                  <th scope="col" className="px-4 py-3 border-r border-t" style={{ minWidth: '150px' }}>Gender</th>
-                  <th scope="col" className="px-4 py-3 border-r border-t" style={{ minWidth: '150px' }}>Last By</th>
-                  <th scope="col" className="px-4 py-3 border-r border-t" style={{ minWidth: '150px' }}>Last Date</th>
+                  <th scope="col" className="sticky left-0 px-4 py-3 bg-gray-100 border-t border-r">Action</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r">Code</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Gender</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Last By</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Last Date</th>
                 </tr>
               </thead>
               <tbody>

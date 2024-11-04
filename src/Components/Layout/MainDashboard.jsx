@@ -58,7 +58,7 @@ function MainDashboard() {
           <Route path='employee/positionlist' element={<EmployeePositionList />} />
           <Route path='employee/genderlist' element={<GenderList />} />
           <Route path='employee/employeeinfo' element={<EmployeeInformation />} />
-          <Route path='system_setting' element={<User/>} />
+          <Route path='system_setting/user' element={<User/>} />
           <Route path='system_setting/role' element={<GroupMaster/>} />
           <Route path='system_setting/menu' element={<ItemPermission/>} />
           <Route path='system_setting/rolemenu'element={<GroupDetails/>} />

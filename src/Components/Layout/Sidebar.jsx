@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaBuilding, FaLaptop, FaUserFriends, FaCog, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { HiChartBar } from "react-icons/hi2";
+import { FaScrewdriverWrench } from "react-icons/fa6";
 import { BsFillQuestionCircleFill } from "react-icons/bs";
 import { MdDashboard } from "react-icons/md";
 import AOS from 'aos';
@@ -11,7 +12,7 @@ import { GetMenu } from '../../api/user';
 const Sidebar = ({ isSidebarOpen }) => {
   const [activeItem, setActiveItem] = useState('');
   const [submenuStates, setSubmenuStates] = useState({});
-  //const [menuItems, setMenuItems] = useState([]);
+  // const [menuItems, setMenuItems] = useState([]);
   
   const menuItems = [
     { id: 1, menuName: 'dashboard', icon: 'dashboard', path: 'dashboard' },
@@ -31,7 +32,7 @@ const Sidebar = ({ isSidebarOpen }) => {
       { id: 21, menuName: 'company', icon: 'company', path: 'company/companylist' },
     ]},
     { id: 5, menuName: 'system_setting', icon: 'setting', path: '', children: [
-      { id: 30, menuName: 'user', icon: 'user', path: 'employee/system_setting' },
+      { id: 30, menuName: 'user', icon: 'user', path: 'system_setting/user' },
       { id: 30, menuName: 'rolemenu', icon: 'rolemenu', path: 'system_setting/rolemenu' },
       { id: 30, menuName: 'menu', icon: 'menu', path: 'system_setting/menu' },
       { id: 30, menuName: 'role', icon: 'role', path: 'system_setting/role' },
@@ -105,7 +106,8 @@ const Sidebar = ({ isSidebarOpen }) => {
       peoples: <FaUserFriends />,
       setting: <FaCog />,
       report: <HiChartBar />,
-      help: <BsFillQuestionCircleFill />
+      help: <BsFillQuestionCircleFill />,
+      maintenance: <FaScrewdriverWrench/>
     };
     return iconMap[iconName] || <FaBuilding />;  // Default to FaBuilding if icon is not found
   };

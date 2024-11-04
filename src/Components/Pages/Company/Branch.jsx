@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FaPen, FaTrashAlt, FaEye } from 'react-icons/fa';
+import { IoMdRefresh } from "react-icons/io";
 
 const Branch = () => {
   const INITIAL_FORM_DATA = {
@@ -221,6 +222,10 @@ const Branch = () => {
     }
   };
 
+  const handleRefresh = () => {
+    window.location.reload();
+  };
+
   return (
     <section className='mt-16'>
       <h1 className='text-xl font-medium text-blue-800'>បញ្ចូលព័ត៌មានសាខា</h1>
@@ -250,6 +255,13 @@ const Branch = () => {
               </form>
             </div>
             <div className='flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3'>
+            <button
+                onClick={handleRefresh}
+                className="flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
+              >
+                <IoMdRefresh />
+                Refresh
+              </button>
               <button
                 type='button'
                 className='flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95'
@@ -266,12 +278,12 @@ const Branch = () => {
             <table className='w-full text-sm text-left text-gray-500 '>
               <thead className='text-xs text-gray-700 uppercase bg-gray-100'>
                 <tr>
-                  <th scope="col" className="sticky left-0 px-4 py-3 mr-3 bg-gray-100 border-r border-t" >Action</th>
-                  <th scope="col" className="px-4 py-3 border-r-2 border-t" style={{minWidth: '150px'}}>Company Code</th>
-                  <th scope="col" className="px-4 py-3 border-r border-t" style={{minWidth: '200px'}}>Branch Code</th>
-                  <th scope="col" className="px-4 py-3 border-r border-t" style={{minWidth: '200px'}}>Branch Name</th>
-                  <th scope="col" className="px-4 py-3 border-r border-t" style={{minWidth: '200px'}}>Last By</th>
-                  <th scope="col" className="px-4 py-3 border-r border-t" style={{minWidth: '200px'}}>Last Date</th>
+                  <th scope="col" className="sticky left-0 px-4 py-3 mr-3 bg-gray-100 border-t border-r" >Action</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r-2" style={{minWidth: '150px'}}>Company Code</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '200px'}}>Branch Code</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '200px'}}>Branch Name</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '200px'}}>Last By</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '200px'}}>Last Date</th>
             </tr>
               </thead>
               <tbody>
@@ -398,7 +410,7 @@ const Branch = () => {
                     name="CompanyCode" // Added name attribute for form data
                     value={formData.CompanyCode} 
                     onChange={handleChange} 
-                    className='block w-full p-2 mt-1 text-sm border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1 text-gray-700'
+                    className='block w-full p-2 mt-1 text-sm text-gray-700 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1'
                     required
                   >
                     <option value="" disabled hidden>Select a Company Code</option>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FaPen, FaTrashAlt } from "react-icons/fa";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import { IoMdRefresh } from "react-icons/io";
 
 
 
@@ -14,16 +15,16 @@ const GroupMaster = () => {
   const [editingGroupMaster,setEditingGroupMaster] = useState(null);
   
   const groupMaster = [
-    {Code: '001', GroupCode: 'Admin', GroupName: 'super-admin'},
-    {Code: '002', GroupCode: 'User', GroupName: 'user'},
-    {Code: '003', GroupCode: 'Editor', GroupName: 'Editor'}
+    {role_id: '001', role_label: 'Admin', role_name: 'super-admin'},
+    {role_id: '002', role_label: 'User', role_name: 'user'},
+    {role_id: '003', role_label: 'Editor', role_name: 'Editor'}
   ];
 
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 8;
   const filterGroupMaster = groupMaster.filter(groupmaster =>
-    groupmaster.GroupCode.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()) ||
-    groupmaster.Code.includes(searchTerm)
+    groupmaster.role_label.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()) ||
+    groupmaster.role_id.includes(searchTerm)
   );
   const totalPages = Math.ceil(filterGroupMaster.length / recordsPerPage);
   const handlePageChange = (pageNumber) => {
@@ -107,6 +108,10 @@ const GroupMaster = () => {
       }
     });
   }
+  const handleRefresh = () => {
+    window.location.reload();
+  };
+  
     
   return (
     <section className='mt-16 font-khmer'>
@@ -138,6 +143,13 @@ const GroupMaster = () => {
             </div>
             <div className='flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3'>
               <button
+                onClick={handleRefresh}
+                className="flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
+              >
+                <IoMdRefresh />
+                Refresh
+              </button>
+              <button
                 type='button'
                 className='flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95'
                 onClick={openAddModal}
@@ -154,11 +166,12 @@ const GroupMaster = () => {
             <table className='w-full text-sm text-left text-gray-500 '>
               <thead className='text-xs text-gray-700 uppercase bg-gray-100 border-t-2'>
                 <tr>
-                  <th scope="col" className="sticky left-0 px-4 py-3 bg-gray-100 border-r border-t">Action</th>
-                  <th scope='col' className='px-4 py-3 border-r border-t'>Code Group</th>
-                  <th scope='col' className='px-4 py-3 border-r border-t'style={{ minWidth: '300px' }}>Code Name</th>
-                  <th scope="col" className="px-4 py-3 border-r border-t" style={{ minWidth: '150px' }}>Last By</th>
-                  <th scope="col" className="px-4 py-3 border-r border-t" style={{ minWidth: '150px' }}>Last Date</th>
+                  <th scope="col" className="sticky left-0 px-4 py-3 bg-gray-100 border-t border-r">Action</th>
+                  <th scope='col' className='px-4 py-3 border-t border-r' style={{ minWidth: '90px' }}>Role ID</th>
+                  <th scope='col' className='px-4 py-3 border-t border-r'style={{ minWidth: '200px' }}>Role Label</th>
+                  <th scope='col' className='px-4 py-3 border-t border-r'style={{ minWidth: '200px' }}>Role Name</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Last By</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Last Date</th>
                 </tr>
               </thead>
               <tbody>
@@ -167,14 +180,15 @@ const GroupMaster = () => {
                       <td className='sticky left-0 flex px-6 py-4 bg-white border-r'>
                         <input type="checkbox" className="mr-1 action-checkbox" />
                         <FaPen className="ml-2 text-blue-500 cursor-pointer hover:text-blue-700" 
-                        onClick={() => openEditModal(groupmaster.Code, groupmaster.GroupCode, groupmaster.GroupName)}
+                        onClick={() => openEditModal(groupmaster.role_id, groupmaster.role_label, groupmaster.role_name)}
                         />
                         <FaTrashAlt className="ml-3 text-red-500 cursor-pointer hover:text-red-700" 
-                        onClick={() => deleteGender(groupmaster.Code)} 
+                        onClick={() => deleteGender(groupmaster.role_id)} 
                         />
                     </td>
-                    <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>{groupmaster.GroupCode}</td>
-                    <td className='px-4 py-3 border-r' style={{ minWidth: '500px' }}>{groupmaster.GroupName}</td>
+                    <td className='px-4 py-3 border-r'>{groupmaster.role_id}</td>
+                    <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>{groupmaster.role_label}</td>
+                    <td className='px-4 py-3 border-r' style={{ minWidth: '500px' }}>{groupmaster.role_name}</td>
                     <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>Last Edited By</td>
                     <td className='px-4 py-3 border-r' style={{ minWidth: '160px' }}>Last Edited Date</td>
                     </tr>

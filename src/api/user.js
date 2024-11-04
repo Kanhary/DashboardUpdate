@@ -147,3 +147,10 @@ export function Logout(){
         url: '/auth/logout'
     })
 }
+
+export function GetAllUser(){
+    return request({
+        method: "GET",
+        url: '/user/getAllUser'
+    })
+}

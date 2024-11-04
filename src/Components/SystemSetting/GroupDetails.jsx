@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FaEdit, FaSave, FaTimes, FaPlus } from 'react-icons/fa';
+import { IoMdRefresh } from "react-icons/io";
 
 // FunctionCodeCheckboxes Component
 const FunctionCodeCheckboxes = ({ permissions, onChange, isEditing, functionCode }) => {
@@ -327,10 +328,22 @@ const PermissionsPage = () => {
             return updatedPermissions;
         });
     };
+    const handleRefresh = () => {
+        window.location.reload();
+      };
 
     return (
         <div className="min-h-screen p-6 mt-10 space-y-6 bg-gray-50 font-khmer">
-            <h1 className="mb-6 text-4xl font-bold text-gray-900">Permissions Management</h1>
+            <div className="flex items-center space-x-[34rem]">
+                <h1 className="mb-6 text-4xl font-bold text-gray-900">Permissions Management</h1>
+                <button
+                    onClick={handleRefresh}
+                    className="flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
+                >
+                    <IoMdRefresh className="mr-2" />
+                    Refresh
+                </button>
+            </div>
             <div className="w-full lg:flex lg:items-center lg:justify-between">
                 {/* Role Selection */}
                 <div className="w-full mb-6 lg:w-1/3">

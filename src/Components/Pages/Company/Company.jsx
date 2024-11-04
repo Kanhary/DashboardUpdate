@@ -11,6 +11,8 @@ const companies = [
   // You can add more companies here
 ];
 
+
+
 const Company = () => {
   return (
     <section className='mt-10'>

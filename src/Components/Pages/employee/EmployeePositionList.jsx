@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FaPen, FaTrashAlt } from "react-icons/fa";
+import { IoMdRefresh } from "react-icons/io";
 
 
 const EmployeePositionList = () => {
@@ -108,6 +109,10 @@ const EmployeePositionList = () => {
     }
   };
 
+  const handleRefresh = () => {
+    window.location.reload();
+  };
+
   return (
     <section className='mt-10 font-khmer'>
       <h1 className='text-xl font-medium text-blue-800'>តារាងបញ្ជីមុខតំណែង</h1>
@@ -138,6 +143,13 @@ const EmployeePositionList = () => {
               </form>
             </div>
             <div className='flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3'>
+            <button
+                onClick={handleRefresh}
+                className="flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
+              >
+                <IoMdRefresh />
+                Refresh
+              </button>
               <button
                 type='button'
                 className='flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95'
