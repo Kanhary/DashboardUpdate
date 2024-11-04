@@ -11,8 +11,35 @@ import { GetMenu } from '../../api/user';
 const Sidebar = ({ isSidebarOpen }) => {
   const [activeItem, setActiveItem] = useState('');
   const [submenuStates, setSubmenuStates] = useState({});
-  const [menuItems, setMenuItems] = useState([]);
-
+  //const [menuItems, setMenuItems] = useState([]);
+  
+  const menuItems = [
+    { id: 1, menuName: 'dashboard', icon: 'dashboard', path: 'dashboard' },
+    { id: 2, menuName: 'computer', icon: 'computer', path: 'Computer', children: [
+      // { id: 21, menuName: 'company_list', path: '/computer/company' },
+      // { id: 22, menuName: 'maintenance', path: '/computer/maintenance' },
+    ]},
+    { id: 3, menuName: 'employee', icon: 'peoples', path: 'employee/positionlist', children: [
+      { id: 16, menuName: 'positionlist', icon: 'positionlist', path: 'employee/positionlist' },
+      { id: 16, menuName: 'genderlist', icon: 'genderlist', path: 'employee/genderlist' },
+      { id: 16, menuName: 'employee_info', icon: 'employee_info', path: 'employee/employeeinfo' },
+    ] },
+    { id: 4, menuName: 'company', icon: 'company', path: '', children: [
+      { id: 21, menuName: 'department', icon: 'department', path: 'company/department' },
+      { id: 21, menuName: 'branch', icon: 'branch', path: 'company/branch' },
+      { id: 21, menuName: 'office', icon: 'office', path: 'company/office' },
+      { id: 21, menuName: 'company', icon: 'company', path: 'company/companylist' },
+    ]},
+    { id: 5, menuName: 'system_setting', icon: 'setting', path: '', children: [
+      { id: 30, menuName: 'user', icon: 'user', path: 'employee/system_setting' },
+      { id: 30, menuName: 'rolemenu', icon: 'rolemenu', path: 'system_setting/rolemenu' },
+      { id: 30, menuName: 'menu', icon: 'menu', path: 'system_setting/menu' },
+      { id: 30, menuName: 'role', icon: 'role', path: 'system_setting/role' },
+    ] },
+    { id: 6, menuName: 'report', icon: 'report', path: 'report' },
+    { id: 7, menuName: 'help', icon: 'help', path: 'help' },
+  ];
+  
   useEffect(() => {
     AOS.init({ duration: 1000 });
 
@@ -62,7 +89,10 @@ const Sidebar = ({ isSidebarOpen }) => {
     'branch' : "សាខា",
     'department' : "នាយកដ្ឋាន",
     'company_list' : "ក្រុមហ៊ុន",
-    'maintenance' : "ការថែទាំ"
+    'maintenance' : "ការថែទាំ",
+    'rolemenu': "Role Menu",
+    'menu': "Menu",
+    'role': "Role"
   };
 
   // Function to translate menu name

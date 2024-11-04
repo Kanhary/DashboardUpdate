@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import { BiBell } from "react-icons/bi";
-import { GetUserLogin } from '../../api/user'; 
+import { GetUserLogin, Logout } from '../../api/user'; 
 import { FaUpload } from 'react-icons/fa'; // Import the upload icon
 import Swal from 'sweetalert2'; // Import SweetAlert2
 import { FiUser, FiLogOut } from 'react-icons/fi';
@@ -109,8 +109,10 @@ const HeaderPage = ({ toggleSidebar }) => {
   //   setNewProfileImage(e.target.files[0]);
   // };
   const handleLogout = (e) => {
-    e.stopPropagation(); 
-    localStorage.removeItem("userToken"); 
+    // e.stopPropagation(); 
+    // localStorage.removeItem("userToken"); 
+    // navigate("/");
+    Logout(); 
     navigate("/");
   };
 

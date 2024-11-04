@@ -140,3 +140,10 @@ export function GetMenu(){
         url: '/menu/getLoginUserMenu'
     })
 }
+
+export function Logout(){
+    return request({
+        method: "POST",
+        url: '/auth/logout'
+    })
+}
