@@ -433,66 +433,32 @@ const handleSave = async () => {
 
 const handleSaveEdit = async () => {
   try {
-    setIsLoading(true); // Show loading state
+    setIsLoading(true); // Show a loading state
 
     // Ensure you're editing a valid user
-    if (!editingUser || !editingUser.id) {
-      console.error("No user selected for editing or invalid user ID");
-      Swal.fire({
-        title: "Error!",
-        text: "No user selected for editing.",
-        icon: "error",
-      });
-      return;
-    }
-
-    // Retrieve the token using the helper function from localStorage
-    const token = getToken('token'); // Use your getToken function
-
-    if (!token) {
-      console.error("No authentication token found");
-      Swal.fire({
-        title: "Error!",
-        text: "Authentication token is missing.",
-        icon: "error",
-      });
+    if (!editingUser) {
+      console.error("No user selected for editing");
       return;
     }
 
     // Prepare updated form data
-    const updatedFormData = new FormData();
-    updatedFormData.append('staffcode', selectedOption);
-    updatedFormData.append('creator', currentUser);
-    updatedFormData.append('updater', currentUser);
-    updatedFormData.append('createTime', new Date().toISOString());
-    updatedFormData.append('updateTime', new Date().toISOString());
+    const updatedFormData = {
+      ...formData,
+      staffcode: selectedOption,
+      creator: currentUser, // Ensure currentUser is set correctly
+      updater: currentUser,
+      createTime: new Date().toISOString(),
+      updateTime: new Date().toISOString(),
+    };
 
-    // Append the avatar (image file) to the FormData if available
-    if (formData.avatar) {
-      updatedFormData.append('avatar', formData.avatar);
-    }
+    console.log("Updated Form Data:", updatedFormData);
 
-    // Inspect FormData (log content) - Optional
-    updatedFormData.forEach((value, key) => {
-      console.log(key, value);
-    });
+    // Make the API call to update the user
+    const response = await UpdateUser(editingUser.id, updatedFormData);
+    
+    console.log('Update response:', response);
 
-    // Make the API call to update the user with the token in the Authorization header
-    const response = await fetch(`http://192.168.168.4:8888/user/${editingUser.id}/upload-image`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`, // Add the token to the header, prefixed with 'Bearer'
-      },
-      body: updatedFormData,
-    });
-
-    // Handle the response from the API
-    const responseData = await response.json(); // Assuming the response is in JSON format
-
-    console.log('Update response:', responseData);
-
-    // Handle success or failure
-    if (response.ok) {  // Use 'response.ok' for a successful HTTP status (200-299)
+    if (response.status === 200) {
       Swal.fire({
         title: "Success!",
         text: "User updated successfully.",
@@ -500,19 +466,17 @@ const handleSaveEdit = async () => {
       });
       closeEditModal(); // Close modal after success
     } else {
-      // Handle failure based on the response data
       Swal.fire({
         title: "Error!",
-        text: responseData?.message || "Failed to update user.",
+        text: "Failed to update user.",
         icon: "error",
       });
     }
   } catch (error) {
     console.error('Error updating user:', error);
-    // If error is not from fetch, handle general error
     Swal.fire({
       title: "Error!",
-      text: error.message || 'An error occurred.',
+      text: error.response?.data?.message || 'An error occurred.',
       icon: "error",
     });
   } finally {
@@ -1167,9 +1131,9 @@ const optionsRole = [
               {/* Right Side: Picture Upload */}
               <div className="flex items-center w-full space-y-4 justify-evenly lg:justify-center lg:flex-col md:w-1/4">
   <div className="relative flex items-center justify-center w-40 h-40 overflow-hidden bg-gray-100 rounded-lg shadow-lg">
-    {formData.avatar ? (
+    {users[0]?.avatar ? (  // Check if the first user has an avatar
       <img
-        src={formData.path} // Use the stored path for image preview
+        src={`http://localhost:5174/public/img/${users[0].avatar}`} // Use the correct path
         alt="Profile"
         className="object-cover w-full h-full"
       />
@@ -1204,6 +1168,7 @@ const optionsRole = [
     {formData.avatar ? "Change Picture" : "Upload Picture"} {/* Dynamic text */}
   </label>
 </div>
+
             </form>
           {/* Footer */}
           <footer className="flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">
