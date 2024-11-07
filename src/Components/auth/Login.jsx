@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import "remixicon/fonts/remixicon.css";
-import { Login, GetUser } from "../../api/user";
+import { Login } from "../../api/user";
 import { FiXCircle } from 'react-icons/fi';
 
 import { setToken, getToken, removeToken } from "../../utils/token/Token";
@@ -20,38 +20,38 @@ const LoginForm = () => {
     const [loading, setLoading] = useState(false); 
 
 
-    const handleSubmit = (e) => {
-    e.preventDefault();
-    if (username === 'Pheakdey' && password === '123') {
-      navigate('/main-dashboard'); 
-    } else {
-      setError('Invalid username or password');
-    }
-  };
+  //   const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   if (username === 'Pheakdey' && password === '123') {
+  //     navigate('/main-dashboard'); 
+  //   } else {
+  //     setError('Invalid username or password');
+  //   }
+  // };
 
 
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     setLoading(true);
-    //     setError(null);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError(null);
 
-    //     try {
-    //         const response = await Login({ username, password });
+        try {
+            const response = await Login({ username, password });
 
-    //         if (response.status === 200) {
-    //             const { token } = response.data; 
-    //             setToken("token", token); 
-    //             navigate('/main-dashboard'); 
-    //             console.log('Login successful');
-    //         } else {
-    //             setError('Invalid username or password');
-    //         }
-    //     } catch (err) {
-    //         setError('Invalid username or password');
-    //     } finally {
-    //         setLoading(false); 
-    //     }
-    // };
+            if (response.status === 200) {
+                const { token } = response.data; 
+                setToken("token", token); 
+                navigate('/main-dashboard'); 
+                console.log('Login successful');
+            } else {
+                setError('Invalid username or password');
+            }
+        } catch (err) {
+            setError('Invalid username or password');
+        } finally {
+            setLoading(false); 
+        }
+    };
     
     const togglePassword = () => {
         const passwordField = document.getElementById("password");

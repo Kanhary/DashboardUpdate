@@ -7,14 +7,14 @@ import { IoMdRefresh } from "react-icons/io";
 import ReactPaginate from 'react-paginate';
 import Select from 'react-select';
 import { GiShipBow } from "react-icons/gi";
-import { GetAllUser } from '../../api/user';
+import { GetAllUser, AddUser, GetUserLogin, UpdateUser } from '../../api/user';
 
 const User = () => {
   const INITIAL_FORM_DATA = { 
     username: '', 
     nickname: '',
     usercode: '', 
-    staffCode: '', 
+    staffcode: '', 
     email: '', 
     mobile: '',
     sex: '',
@@ -22,6 +22,10 @@ const User = () => {
     password: '', 
     path: '',
     status: '',
+    creator: '',
+    updater: '',
+    updateTime: '',
+    createTime: '',
   };
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -39,6 +43,7 @@ const User = () => {
   const [selectedOption, setSelectedOption] = useState('');
   const [pictureUrl, setPictureUrl] = useState(null);
   const [role, setRole] = useState('');
+  const [currentUser, setCurrentUser] = useState(null);
   const recordsPerPage = 8;
 
 
@@ -79,7 +84,7 @@ const User = () => {
       setFormData((prevData) => {
         const updatedData = {
           ...prevData,
-          picture: file,
+          avatar: file,
           path: pictureUrl, // Store the URL in the path
         };
         console.log("Updated formData:", updatedData); 
@@ -87,6 +92,66 @@ const User = () => {
       });
     }
   };
+
+  useEffect(() => {
+    if (formData.picture && (formData.picture instanceof File || formData.picture instanceof Blob)) {
+      const url = URL.createObjectURL(formData.picture);
+      setPictureUrl(url);
+  
+      // Cleanup URL object
+      return () => {
+        URL.revokeObjectURL(url);
+      };
+    } else {
+      setPictureUrl(null); // Reset the picture URL if no valid picture is present
+    }
+  }, [formData.picture]);
+  
+  
+  
+  // Fetch users and employees
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await GetAllUser();
+        setUsers(response.data.data)
+      } catch (err) {
+        setError(err.message || 'An error occurred');
+      }
+    };
+  
+
+    const fetchEmployees = async () => {
+      try {
+        const response = await GetEmp();
+        setEmployees(response.data.data)
+      } catch (err) {
+        setError(err.message || 'An error occurred');
+      }
+    };
+
+    const fetchCurrentUser = async () => {
+      try {
+        const response = await GetUserLogin(); // Call the API to get the current user
+        setCurrentUser(response.data.data.username); // Assuming the response contains a username field
+        console.log('Fetched user:', response.data.data.username);
+      } catch (error) {
+        console.error('Error fetching current user:', error);
+      }
+    };
+    // const fetchRole = async () => {
+    //   try{
+    //     const response = await 
+    //   }
+    // }
+    
+    fetchUsers();
+    fetchEmployees();
+    fetchCurrentUser(); 
+    // setCurrentPage(0);
+  }, []);
+
+  
   const handleSaveNew = async () => {
     const validationErrors = {};
 
@@ -107,7 +172,7 @@ const User = () => {
     }
 
     // Update formData with selectedOption
-    const updatedFormData = { ...formData, staffCode: selectedOption };
+    const updatedFormData = { ...formData, staffcode: selectedOption };
     setFormData(updatedFormData);
 
     setIsLoading(true);
@@ -162,77 +227,84 @@ const User = () => {
     }
 };
 
-
 const handleSave = async () => {
-    const validationErrors = {};
+  const validationErrors = {};
 
-    // Validation for required fields
-    // if (!formData.userCode) validationErrors.userCode = 'User Code is required';
-    // if (!formData.userName) validationErrors.userName = 'User Name is required';
-    // if (!formData.firstName) validationErrors.firstName = 'First Name is required';
-    // if (!formData.lastName) validationErrors.lastName = 'Last Name is required';
-    // if (!formData.email) validationErrors.email = 'Email is required';
-    // if (!formData.password) validationErrors.password = 'Password is required';
-    // if (!formData.cardId) validationErrors.cardId = 'Card ID is required';
-    // if (!selectedOption) validationErrors.staffCode = 'Staff Code is required';
+  // Validate required fields
+  if (!formData.staffcode) validationErrors.staffcode = 'Staff Code is required';
+  if (!formData.username) validationErrors.username = 'Username is required';
+  if (!formData.email) validationErrors.email = 'Email is required';
+  if (!formData.password) validationErrors.password = 'Password is required';
 
-    // If validation errors exist, stop and display the errors
-    if (Object.keys(validationErrors).length > 0) {
-        console.log('Validation errors:', validationErrors);
-        setErrors(validationErrors);
-        return;
-    }
-    const updatedFormData = { ...formData, staffCode: selectedOption };
-    setFormData(updatedFormData);
-    // Create a new FormData object to handle file uploads
-    
-    setIsLoading(true);
+  // Check for validation errors
+  if (Object.keys(validationErrors).length > 0) {
+    console.log('Validation errors:', validationErrors);
+    setErrors(validationErrors);
+    return; // Stop if there are validation errors
+  }
 
-    try {
-        // Call CheckUser to check for user existence and add the user if they don't exist
-        const checkResponse = await CheckUser(updatedFormData);
-
-        console.log('CheckUser response:', checkResponse);
-
-        if (checkResponse.data.exists) {
-            console.log('User already exists');
-            setErrors({ general: 'User already exists' });
-
-            Swal.fire({
-                title: "User Exists!",
-                text: "User with this information already exists.",
-                icon: "warning"
-            });
-
-            setIsLoading(false);
-            return;
-        }
-
-        // If the user was added successfully
-        console.log('User created successfully:', checkResponse);
-
-        Swal.fire({
-            title: "Success!",
-            text: "User created successfully.",
-            icon: "success"
-        });
-
-        closeAddModal(); // Close the modal on success
-
-    } catch (error) {
-        console.error('Error during user creation:', error);
-        setErrors({ general: 'Error during user creation' });
-
-        Swal.fire({
-            title: "Error!",
-            text: "There was an error creating the user. Please try again.",
-            icon: "error"
-        });
-
-    } finally {
-        setIsLoading(false);  // Set loading to false after the process
-    }
+  // Prepare the updated form data
+  const updatedFormData = {
+    ...formData,
+    staffcode: selectedOption ? selectedOption.value : '',
+    creator: currentUser, // Use the fetched username as creator
+    updater: currentUser, // Use the fetched username as updater
+    createTime: new Date().toISOString(),
+    updateTime: new Date().toISOString(),
   };
+
+  console.log('FormData before API call:', updatedFormData); // Debug: check if staffcode is correct
+
+  setIsLoading(true);
+
+  try {
+    // Call the API to add the user
+    const addUserResponse = await AddUser(updatedFormData);
+
+    // Log the response for debugging
+    console.log('User created successfully:', addUserResponse);
+
+    // Display success message
+    Swal.fire({
+      title: "Success!",
+      text: "User created successfully.",
+      icon: "success",
+    });
+
+    closeAddModal(); // Close the modal on success
+
+  } catch (error) {
+    console.error('Error during user creation:', error);
+
+    // Enhanced error handling
+    if (error.response) {
+      const errorMessage = error.response.data.message || 'Error during user creation';
+      console.error('Response data:', error.response.data); // Log the detailed error response
+
+      // Handle specific error for user already exists
+      if (errorMessage.includes('User already exists')) {
+        setErrors({ general: 'This user already exists. Please use a different username or email.' });
+      } else {
+        setErrors({ general: errorMessage });
+      }
+    } else {
+      setErrors({ general: 'Network error' });
+    }
+
+    // Display error message
+    Swal.fire({
+      title: "Error!",
+      text: errors.general || "There was an error creating the user. Please try again.",
+      icon: "error",
+    });
+
+  } finally {
+    setIsLoading(false); // Ensure loading state is reset
+  }
+};
+
+
+
 
   // const handleClick = () => {
   //   Swal.fire({
@@ -257,53 +329,7 @@ const handleSave = async () => {
 
   const [uploadSuccess, setUploadSuccess] = useState(false);
   
-  useEffect(() => {
-    if (formData.picture && (formData.picture instanceof File || formData.picture instanceof Blob)) {
-      const url = URL.createObjectURL(formData.picture);
-      setPictureUrl(url);
   
-      // Cleanup URL object
-      return () => {
-        URL.revokeObjectURL(url);
-      };
-    } else {
-      setPictureUrl(null); // Reset the picture URL if no valid picture is present
-    }
-  }, [formData.picture]);
-  
-  
-  
-  // Fetch users and employees
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await GetAllUser();
-        setUsers(response.data.data)
-      } catch (err) {
-        setError(err.message || 'An error occurred');
-      }
-    };
-  
-
-    const fetchEmployees = async () => {
-      try {
-        const response = await GetEmp();
-        setEmployees(response.data.data)
-      } catch (err) {
-        setError(err.message || 'An error occurred');
-      }
-    };
-    // const fetchRole = async () => {
-    //   try{
-    //     const response = await 
-    //   }
-    // }
-    
-    fetchUsers();
-    fetchEmployees();
-    // setCurrentPage(0);
-  }, []);
-
 
   useEffect(() => {
     setCurrentPage(0); // Reset to first page when users data changes
@@ -403,7 +429,7 @@ const handleSave = async () => {
 
   const handleSaveEdit = async () => {
     try {
-      const updatedFormData = { ...formData, staffCode: selectedOption };
+      const updatedFormData = { ...formData, staffcode: selectedOption };
   
       setIsLoading(true); // Show a loading state (optional)
   
@@ -483,11 +509,28 @@ const customStyles = {
     height: '30px',
   }),
 };
+
+
+const handleStaffCode = (option) => {
+  console.log('Selected option:', option); // Check if selectedOption has the correct value
+  setSelectedOption(option);
+  setFormData((prevData) => ({
+    ...prevData,
+    staffcode: option ? option.value : '',
+  }));
+};
+
+
+
+const optionsStaffCode = [
+  {value: 'staff-005', label: 'staff-005'}
+]
+
 // Format options for react-select
-const optionsStaffCode = employees.map(employee => ({
-  value: employee.staffCode,
-  label: `${employee.staffCode} - ${employee.laTanName}`
-}));
+// const optionsStaffCode = employees.map(employee => ({
+//   value: employee.staffcode,
+//   label: `${employee.staffcode}`
+// }));
 
 const optionsRole = [
   {value: 'Admin', label: 'Admin'},
@@ -758,7 +801,7 @@ const optionsRole = [
                   </div>
                 </div>
                 <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                  <div className="w-full md:w-1/2">
+                  {/* <div className="w-full md:w-1/2">
                     <label htmlFor="role" className="block mb-2 text-sm font-semibold text-gray-700">Role</label>
                     <Select
                       value={optionsRole.find(option => option.value === selectedOption)}
@@ -770,30 +813,42 @@ const optionsRole = [
                       styles={customStyles}
                     />
                     {errors.staffCode && <p className="mt-1 text-xs text-red-500">{errors.staffCode}</p>}
+                  </div> */}
+
+                  <div className="w-full md:w-1/2">
+                    <label htmlFor="password" className="block mb-2 text-sm font-semibold text-gray-700">Password</label>
+                    <input
+                      type="text"
+                      id="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    />
                   </div>
+                  
                   {/* Select for Staff Code */}
                   <div className="w-full md:w-1/2">
-                    <label htmlFor="staffCode" className="block mb-2 text-sm font-semibold text-gray-700">Staff Code</label>
+                    <label htmlFor="staffcode" className="block mb-2 text-sm font-semibold text-gray-700">Staff Code</label>
                     <Select
-                      value={optionsStaffCode.find(option => option.value === selectedOption)}
-                      onChange={handleChangeSelection}
                       options={optionsStaffCode}
+                      onChange={handleStaffCode}  // Ensure handleStaffCode is passed correctly here
+                      value={optionsStaffCode.find(option => option.value === formData.staffcode)}
                       placeholder="Select or type to search"
                       className="basic-single"
                       classNamePrefix="select"
                       styles={customStyles}
                     />
-                    {errors.staffCode && <p className="mt-1 text-xs text-red-500">{errors.staffCode}</p>}
+                    {errors.staffcode && <p className="mt-1 text-xs text-red-500">{errors.staffcode}</p>}
                   </div>
                 </div>
                 <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
                   {/* Input for Phone Number */}
                   <div className="w-full md:w-1/2">
-                    <label htmlFor="phone" className="block mb-2 text-sm font-semibold text-gray-700">Phone Number</label>
+                    <label htmlFor="mobile" className="block mb-2 text-sm font-semibold text-gray-700">Phone Number</label>
                     <input
                       type="text"
-                      id="phone"
-                      value={formData.phone}
+                      id="mobile"
+                      value={formData.mobile}
                       onChange={handleChange}
                       className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                     />
@@ -813,7 +868,7 @@ const optionsRole = [
                 </div>
                 <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
                   {/* Input for Phone Number */}
-                  <div className="w-full md:w-1/2">
+                  {/* <div className="w-full md:w-1/2">
                     <label htmlFor="cardId" className="block mb-2 text-sm font-semibold text-gray-700">Card ID</label>
                     <input
                       type="text"
@@ -823,7 +878,7 @@ const optionsRole = [
                       className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                     />
                   </div>
-                  
+                   */}
                   {/* <div className="w-full md:w-1/2">
                     <label htmlFor="branch" className="block mb-2 text-sm font-semibold text-gray-700">Branch</label>
                     <input
@@ -841,7 +896,7 @@ const optionsRole = [
               {/* Right Side: Picture Upload */}
               <div className="flex items-center w-full space-y-4 justify-evenly lg:justify-center lg:flex-col md:w-1/4">
                 <div className="relative flex items-center justify-center w-40 h-40 overflow-hidden bg-gray-100 rounded-lg shadow-lg">
-                  {formData.picture ? (
+                  {formData.avatar ? (
                     <img
                       src={formData.path} // Use the stored path
                       alt="Profile"
@@ -866,16 +921,16 @@ const optionsRole = [
                 </div>
                 <input
                   type="file"
-                  id="picture"
+                  id="avatar"
                   accept="image/*"
                   onChange={handlePictureChange}
                   className="hidden"
                 />
                 <label
-                  htmlFor="picture"
+                  htmlFor="avatar"
                   className="flex items-center px-4 py-2 text-sm font-semibold text-center text-white transition-colors duration-200 bg-blue-500 rounded-lg cursor-pointer hover:bg-blue-600"
                 >
-                  {formData.picture ? "Change Picture" : "Upload Picture"}
+                  {formData.avatar ? "Change Picture" : "Upload Picture"}
                 </label>
               </div>
             </form>
@@ -910,66 +965,66 @@ const optionsRole = [
               &times;
             </button>
           </header>
-          <form className="flex flex-col flex-grow px-6 py-6 space-y-6 md:flex-row md:space-x-6">
-            {/* Left Side: Form Inputs */}
-            <div className="w-full space-y-6 md:w-3/4">
-              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                {/* Input for Username */}
-                <div className="w-full md:w-1/2">
-                  <label htmlFor="userName" className="block mb-2 text-sm font-semibold text-gray-700">Username</label>
-                  <input
-                    type="text"
-                    id="userName"
-                    value={formData.username}
-                    onChange={handleChange}
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    autoComplete="username"
-                  />
-                  {errors.userName && <p className="mt-1 text-xs text-red-500">{errors.userName}</p>}
-                </div>
+          <form className="z-10 flex flex-col flex-grow px-6 py-6 space-y-6 md:flex-row md:space-x-6" data-aos='zoom-in'>
+              {/* Left Side: Form Inputs */}
+              <div className="w-full space-y-6 md:w-3/4">
+                <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                  {/* Input for Username */}
+                  <div className="w-full md:w-1/2">
+                    <label htmlFor="usercode" className="block mb-2 text-sm font-semibold text-gray-700">User Code</label>
+                    <input
+                      type="text"
+                      id="usercode"
+                      value={formData.usercode}
+                      onChange={handleChange}
+                      className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                      autoComplete="usercode"
+                    />
+                    {errors.usercode && <p className="mt-1 text-xs text-red-500">{errors.usercode}</p>}
+                  </div>
 
-                {/* Input for Password */}
-                <div className="w-full md:w-1/2">
-                  <label htmlFor="password" className="block mb-2 text-sm font-semibold text-gray-700">Password</label>
-                  <input
-                    type="password"
-                    id="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    className={`block w-full px-4 py-2 text-sm text-gray-800 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
-                    autoComplete="current-password"
-                  />
-                  {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password}</p>}
+                  {/* Input for Password */}
+                  <div className="w-full md:w-1/2">
+                    <label htmlFor="username" className="block mb-2 text-sm font-semibold text-gray-700">Username</label>
+                    <input
+                      type="text"
+                      id="username"
+                      value={formData.username}
+                      onChange={handleChange}
+                      className={`block w-full px-4 py-2 text-sm text-gray-800 border ${errors.username ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
+                      autoComplete="username"
+                    />
+                    {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password}</p>}
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                {/* Input for First Name */}
-                <div className="w-full md:w-1/2">
-                  <label htmlFor="firstName" className="block mb-2 text-sm font-semibold text-gray-700">First Name</label>
-                  <input
-                    type="text"
-                    id="firstName"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    className={`block w-full px-4 py-2 text-sm text-gray-800 border ${errors.firstName ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
-                  />
-                  {errors.firstName && <p className="mt-1 text-xs text-red-500">{errors.firstName}</p>}
+                <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                  {/* Input for First Name */}
+                  <div className="w-full md:w-1/2">
+                    <label htmlFor="nickname" className="block mb-2 text-sm font-semibold text-gray-700">Nickname</label>
+                    <input
+                      type="text"
+                      id="nickname"
+                      value={formData.nickname}
+                      onChange={handleChange}
+                      className={`block w-full px-4 py-2 text-sm text-gray-800 border ${errors.nickname ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
+                    />
+                    {errors.nickname && <p className="mt-1 text-xs text-red-500">{errors.nickname}</p>}
+                  </div>
+                  {/* Input for Last Name */}
+                  <div className="w-full md:w-1/2">
+                    <label htmlFor="sex" className="block mb-2 text-sm font-semibold text-gray-700">Gender</label>
+                    <input
+                      type="text"
+                      id="sex"
+                      value={formData.sex}
+                      onChange={handleChange}
+                      className={`block w-full px-4 py-2 text-sm text-gray-800 border ${errors.sex ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
+                    />
+                    {errors.sex && <p className="mt-1 text-xs text-red-500">{errors.sex}</p>}
+                  </div>
                 </div>
-                {/* Input for Last Name */}
-                <div className="w-full md:w-1/2">
-                  <label htmlFor="lastName" className="block mb-2 text-sm font-semibold text-gray-700">Last Name</label>
-                  <input
-                    type="text"
-                    id="lastName"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                    className={`block w-full px-4 py-2 text-sm text-gray-800 border ${errors.lastName ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
-                  />
-                  {errors.lastName && <p className="mt-1 text-xs text-red-500">{errors.lastName}</p>}
-                </div>
-              </div>
-              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                <div className="w-full md:w-1/2">
+                <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                  {/* <div className="w-full md:w-1/2">
                     <label htmlFor="role" className="block mb-2 text-sm font-semibold text-gray-700">Role</label>
                     <Select
                       value={optionsRole.find(option => option.value === selectedOption)}
@@ -981,102 +1036,127 @@ const optionsRole = [
                       styles={customStyles}
                     />
                     {errors.staffCode && <p className="mt-1 text-xs text-red-500">{errors.staffCode}</p>}
-                </div>
-                
-                {/* Select for Staff Code */}
-                <div className="w-full md:w-1/2">
-                  <label htmlFor="staffCode" className="block mb-2 text-sm font-semibold text-gray-700">Staff Code</label>
-                  <Select
-                    value={options.find(option => option.value === selectedOption)}
-                    onChange={handleChangeSelection}
-                    options={options}
-                    placeholder="Select or type to search"
-                    className="basic-single"
-                    classNamePrefix="select"
-                  />
-                  {errors.staffCode && <p className="mt-1 text-xs text-red-500">{errors.staffCode}</p>}
-                </div>
-              </div>
-              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                {/* Input for Phone Number */}
-                <div className="w-full md:w-1/2">
-                  <label htmlFor="phone" className="block mb-2 text-sm font-semibold text-gray-700">Phone Number</label>
-                  <input
-                    type="text"
-                    id="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                  />
-                </div>
-                {/* Input for Email */}
-                <div className="w-full md:w-1/2">
-                  <label htmlFor="email" className="block mb-2 text-sm font-semibold text-gray-700">Email</label>
-                  <input
-                    type="text"
-                    id="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className={`block w-full px-4 py-2 text-sm text-gray-800 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
-                  />
-                  {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
-                </div>
-              </div>
-              <div className="w-full">
-                  <label htmlFor="cardId" className="block mb-2 text-sm font-semibold text-gray-700">Card ID</label>
-                  <input
-                    type="text"
-                    id="cardId"
-                    value={formData.cardId}
-                    onChange={handleChange}
-                    className={`block w-full px-4 py-2 text-sm text-gray-800 border ${errors.cardId ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
-                  />
-                  {errors.cardId && <p className="mt-1 text-xs text-red-500">{errors.cardId}</p>}
-                </div>
-            </div>
+                  </div> */}
 
-            {/* Right Side: Picture Upload */}
-            <div className="flex items-center w-full space-y-4 justify-evenly lg:justify-center lg:flex-col md:w-1/4">
-              <div className="relative flex items-center justify-center w-32 h-32 overflow-hidden bg-gray-100 rounded-lg shadow-md">
-                {formData.picture ? (
-                  <img
-                    src={URL.createObjectURL(formData.picture)}
-                    alt="Profile"
-                    className="object-cover w-full h-full"
-                  />
-                ) : (
-                  <svg
-                    className="w-10 h-10 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M12 4v16m8-8H4"
+                  <div className="w-full md:w-1/2">
+                    <label htmlFor="password" className="block mb-2 text-sm font-semibold text-gray-700">Password</label>
+                    <input
+                      type="text"
+                      id="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                     />
-                  </svg>
-                )}
+                  </div>
+                  
+                  {/* Select for Staff Code */}
+                  <div className="w-full md:w-1/2">
+                    <label htmlFor="staffcode" className="block mb-2 text-sm font-semibold text-gray-700">Staff Code</label>
+                    <Select
+                      options={optionsStaffCode}
+                      onChange={handleStaffCode}  // Ensure handleStaffCode is passed correctly here
+                      value={optionsStaffCode.find(option => option.value === formData.staffcode)}
+                      placeholder="Select or type to search"
+                      className="basic-single"
+                      classNamePrefix="select"
+                      styles={customStyles}
+                    />
+                    {errors.staffcode && <p className="mt-1 text-xs text-red-500">{errors.staffcode}</p>}
+                  </div>
+                </div>
+                <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                  {/* Input for Phone Number */}
+                  <div className="w-full md:w-1/2">
+                    <label htmlFor="mobile" className="block mb-2 text-sm font-semibold text-gray-700">Phone Number</label>
+                    <input
+                      type="text"
+                      id="mobile"
+                      value={formData.mobile}
+                      onChange={handleChange}
+                      className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    />
+                  </div>
+                  {/* Input for Email */}
+                  <div className="w-full md:w-1/2">
+                    <label htmlFor="email" className="block mb-2 text-sm font-semibold text-gray-700">Email</label>
+                    <input
+                      type="text"
+                      id="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className={`block w-full px-4 py-2 text-sm text-gray-800 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
+                    />
+                    {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
+                  </div>
+                </div>
+                <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                  {/* Input for Phone Number */}
+                  {/* <div className="w-full md:w-1/2">
+                    <label htmlFor="cardId" className="block mb-2 text-sm font-semibold text-gray-700">Card ID</label>
+                    <input
+                      type="text"
+                      id="cardId"
+                      value={formData.cardId}
+                      onChange={handleChange}
+                      className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    />
+                  </div>
+                   */}
+                  {/* <div className="w-full md:w-1/2">
+                    <label htmlFor="branch" className="block mb-2 text-sm font-semibold text-gray-700">Branch</label>
+                    <input
+                      type="text"
+                      id="branch"
+                      value={formData.branch}
+                      onChange={handleChange}
+                      className={`block w-full px-4 py-2 text-sm text-gray-800 border ${errors.branch ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
+                    />
+                    {errors.branch && <p className="mt-1 text-xs text-red-500">{errors.branch}</p>}
+                  </div> */}
+                </div>
               </div>
-              <input
-                type="file"
-                id="picture"
-                accept="image/*"
-                onChange={handlePictureChange}
-                className="hidden"
-              />
-              <label
-                htmlFor="picture"
-                className="px-4 py-2 text-sm font-semibold text-center text-white bg-blue-500 rounded-lg cursor-pointer hover:bg-blue-600 focus:outline-none"
-              >
-                {formData.picture ? "Change Picture" : "Upload Picture"}
-              </label>
-            </div>
-          </form>
 
+              {/* Right Side: Picture Upload */}
+              <div className="flex items-center w-full space-y-4 justify-evenly lg:justify-center lg:flex-col md:w-1/4">
+                <div className="relative flex items-center justify-center w-40 h-40 overflow-hidden bg-gray-100 rounded-lg shadow-lg">
+                  {formData.avatar ? (
+                    <img
+                      src={formData.path} // Use the stored path
+                      alt="Profile"
+                      className="object-cover w-full h-full"
+                    />
+                  ) : (
+                    <svg
+                      className="w-12 h-12 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M12 4v16m8-8H4"
+                      />
+                    </svg>
+                  )}
+                </div>
+                <input
+                  type="file"
+                  id="avatar"
+                  accept="image/*"
+                  onChange={handlePictureChange}
+                  className="hidden"
+                />
+                <label
+                  htmlFor="avatar"
+                  className="flex items-center px-4 py-2 text-sm font-semibold text-center text-white transition-colors duration-200 bg-blue-500 rounded-lg cursor-pointer hover:bg-blue-600"
+                >
+                  {formData.avatar ? "Change Picture" : "Upload Picture"}
+                </label>
+              </div>
+            </form>
           {/* Footer */}
           <footer className="flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">
           <button onClick={handleSaveEdit} className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto">

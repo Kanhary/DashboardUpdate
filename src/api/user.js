@@ -2,22 +2,12 @@
 import request from '@/utils/requst'
 import axios from 'axios';
 
-export function AddUser(data) {
-    console.log(data);
-    return request({
-        method: "POST",
-        url: '/userSystem/addUser',
-        data: data
-    });
-}
-
-
-export function GetUser() {  
-    return request({
-        method: "GET",
-        url: `/user/getLoginUser.do`, 
-    });
-}
+// export function GetUser() {  
+//     return request({
+//         method: "GET",
+//         url: `/user/getLoginUser.do`, 
+//     });
+// }
 
 export function GetUserLogin() {  
     return request({
@@ -38,7 +28,7 @@ export function GetEmp(params) {
 export function UpdateUser(ID, data) {
     return request({
         method: 'POST',
-        url: `/userSystem/updateUser/${ID}`,
+        url: `/user/updateUser/${ID}`,
         data: data
     });
 }
@@ -153,4 +143,13 @@ export function GetAllUser(){
         method: "GET",
         url: '/user/getAllUser'
     })
+}
+
+export function AddUser(data) {
+    console.log(data);
+    return request({
+        method: "POST",
+        url: '/user/addNewUsers',
+        data: data
+    });
 }
