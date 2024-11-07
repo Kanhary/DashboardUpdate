@@ -81,49 +81,50 @@ const HeaderPage = ({ toggleSidebar }) => {
   
   const handleSaveProfileImage = () => {
     if (newProfileImage) {
-      // Get the file name from the selected image
+      // Get only the file name from the selected image
       const fileName = newProfileImage.name;
   
       // Prepare form data with only the file name
       const formData = new FormData();
-      formData.append('image', fileName); // Send only the file name, not the actual file
+      formData.append('avatar', fileName); // Only send the file name, not the actual file
   
-      // Get token from local storage
-      const token = getToken('authToken'); // Make sure `authToken` is the correct key name
+      // Get the token from local storage
+      const token = localStorage.getItem('token');
   
-      // Make API call to upload the image name
+      // Make API call to upload only the file name
       axios.post('http://192.168.168.4:8888/user/4/upload-image', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`, // Add Authorization header if required
+          Authorization: token,
         },
       })
       .then(response => {
-        console.log('Image uploaded successfully:', response.data);
-        
+        console.log('Filename uploaded successfully:', response.data);
+  
         // Close the edit modal and show success alert
         setIsEditModalOpen(false);
         setShowSuccessAlert(true);
-        
+  
         // Hide alert after 3 seconds
         setTimeout(() => setShowSuccessAlert(false), 3000);
       })
       .catch(error => {
-        console.error('Error uploading image:', error);
-        alert('Failed to upload image.');
+        console.error('Error uploading filename:', error.response?.data || error.message);
+        alert('Failed to upload filename. Please check the server requirements.');
       });
-      
+  
     } else {
       // Handle case when the image is removed
       setProfileImage(null);
-      localStorage.removeItem('profileImage'); // Remove image from local storage
+      localStorage.removeItem('profileImage');
       setIsEditModalOpen(false);
-      setShowImageRemovalAlert(true); // Show alert for image removal
+      setShowImageRemovalAlert(true);
   
       // Hide alert after 3 seconds
       setTimeout(() => setShowImageRemovalAlert(false), 3000);
     }
   };
+  
+  
   
 
   // const handleImageChange = (e) => {
