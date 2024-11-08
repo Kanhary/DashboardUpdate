@@ -7,7 +7,9 @@ import { IoMdRefresh } from "react-icons/io";
 import ReactPaginate from 'react-paginate';
 import Select from 'react-select';
 import { GiShipBow } from "react-icons/gi";
-import { GetAllUser, AddUser, GetUserLogin, UpdateUser } from '../../api/user';
+import { GetAllUser, AddUser, GetUserLogin, UpdateUser, DeleteUser } from '../../api/user';
+import axios from 'axios';
+import { getToken } from '../../utils/token/Token';
 
 const User = () => {
   const INITIAL_FORM_DATA = { 
@@ -44,6 +46,7 @@ const User = () => {
   const [pictureUrl, setPictureUrl] = useState(null);
   const [role, setRole] = useState('');
   const [currentUser, setCurrentUser] = useState(null);
+  const [Avatar, setAvatar] = useState(null)
   const recordsPerPage = 8;
 
 
@@ -85,7 +88,7 @@ const User = () => {
         const updatedData = {
           ...prevData,
           avatar: file,
-          path: pictureUrl, // Store the URL in the path
+          path: pictureUrl, // Temporary URL for image preview
         };
         console.log("Updated formData:", updatedData); 
         return updatedData;
@@ -114,11 +117,15 @@ const User = () => {
     const fetchUsers = async () => {
       try {
         const response = await GetAllUser();
-        setUsers(response.data.data)
+        setUsers(response.data.data);
+        // Assuming 'avatar' is a field inside each user object in the response:
+        setAvatar(`http://localhost:5174/public/img/${response.data.data[0]?.avatar}`);
+
       } catch (err) {
         setError(err.message || 'An error occurred');
       }
     };
+    
   
 
     const fetchEmployees = async () => {
@@ -373,7 +380,7 @@ const handleSave = async () => {
   // const handleChangeSelection = (e) => {
   //   setSelectedOption(e.target.value);
   // };
-  const handleDelete = async (ID) => {
+  const handleDelete = async (username) => {
     try {
         const result = await Swal.fire({
             title: "Are you sure?",
@@ -386,38 +393,31 @@ const handleSave = async () => {
         });
 
         if (result.isConfirmed) {
-            const response = await DeleteUser(ID);
-            console.log('Response:', response);  // Log the response to debug
+            const response = await DeleteUser(username); // Pass the username here
+            console.log('Response:', response);  // Log the response to confirm the deletion
 
-            if (response.status === 200) {  // Check HTTP status code directly
-              Swal.fire({
-                  title: "Deleted!",
-                  text: "User has been deleted.",
-                  icon: "success",
-                  confirmButtonText: "Okay",
-              });
-          
-              const deleteUSer = users.filter(user => user.id !== ID);
-              setUsers(deleteUSer);
-          } else {
-              Swal.fire({
-                  title: "Error!",
-                  text: "Failed to delete user.",
-                  icon: "error",
-                  confirmButtonText: "Okay",
-              });
-          }
-          
+            if (response.status === 200) {  // Check for a successful response
+                Swal.fire({
+                    title: "Deleted!",
+                    text: "User has been deleted.",
+                    icon: "success",
+                    confirmButtonText: "Okay",
+                });
+                
+                // Remove the deleted user from the list
+                const updatedUsers = users.filter(user => user.username !== username);
+                setUsers(updatedUsers);
+            } else {
+                Swal.fire({
+                    title: "Error!",
+                    text: "Failed to delete user.",
+                    icon: "error",
+                    confirmButtonText: "Okay",
+                });
+            }
         }
     } catch (error) {
         console.error('Error:', error.response ? error.response.data : error.message);
-        
-        if (error.response) {
-            console.log('Error response:', error.response);  // Full error response
-        } else {
-            console.log('Error message:', error.message);  // Error message if no response
-        }
-
         Swal.fire({
             title: 'Error!',
             text: error.response?.data?.message || 'Failed to connect to the server.',
@@ -425,54 +425,105 @@ const handleSave = async () => {
             confirmButtonText: 'Okay',
         });
     }
-  };
+};
 
-  const handleSaveEdit = async () => {
-    try {
-      const updatedFormData = { ...formData, staffcode: selectedOption };
-  
-      setIsLoading(true); // Show a loading state (optional)
-  
-      // Ensure you're editing a valid user
-      if (!editingUser) {
-        console.error("No user selected for editing");
-        return;
-      }
-  
-      // Log formData before making the API call to verify the correct data is sent
-      console.log("Updated Form Data:", updatedFormData);
-  
-      // Make the API call to update the user
-      const response = await UpdateUser(editingUser.id, updatedFormData);
-  
-      console.log('Update response:', response);
-  
-      if (response.status === 200) {
-        Swal.fire({
-          title: "Success!",
-          text: "User updated successfully.",
-          icon: "success",
-        });
-        // Optionally, close the modal after success
-        closeEditModal();
-      } else {
-        Swal.fire({
-          title: "Error!",
-          text: "Failed to update user.",
-          icon: "error",
-        });
-      }
-    } catch (error) {
-      console.error('Error updating user:', error);
+
+
+
+
+const handleSaveEdit = async () => {
+  try {
+    setIsLoading(true); // Show loading state
+
+    // Ensure you're editing a valid user
+    if (!editingUser || !editingUser.id) {
+      console.error("No user selected for editing or invalid user ID");
       Swal.fire({
         title: "Error!",
-        text: error.response?.data?.message || 'An error occurred.',
+        text: "No user selected for editing.",
         icon: "error",
       });
-    } finally {
-      setIsLoading(false); // Hide loading state
+      return;
     }
-  };
+
+    // Retrieve the token using the helper function from localStorage
+    const token = getToken('token'); // Use your getToken function
+
+    if (!token) {
+      console.error("No authentication token found");
+      Swal.fire({
+        title: "Error!",
+        text: "Authentication token is missing.",
+        icon: "error",
+      });
+      return;
+    }
+
+    // Prepare updated form data
+    const updatedFormData = new FormData();
+    updatedFormData.append('staffcode', selectedOption);
+    updatedFormData.append('creator', currentUser);
+    updatedFormData.append('updater', currentUser);
+    updatedFormData.append('createTime', new Date().toISOString());
+    updatedFormData.append('updateTime', new Date().toISOString());
+
+    // Append the avatar (image file) to the FormData if available
+    if (formData.avatar) {
+      updatedFormData.append('avatar', formData.avatar);
+    }
+
+    // Inspect FormData (log content) - Optional
+    updatedFormData.forEach((value, key) => {
+      console.log(key, value);
+    });
+
+    // Make the API call to update the user with the token in the Authorization header
+    const response = await fetch(`http://192.168.168.4:8888/user/${editingUser.id}/upload-image`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`, // Add the token to the header, prefixed with 'Bearer'
+      },
+      body: updatedFormData,
+    });
+
+    // Handle the response from the API
+    const responseData = await response.json(); // Assuming the response is in JSON format
+
+    console.log('Update response:', responseData);
+
+    // Handle success or failure
+    if (response.ok) {  // Use 'response.ok' for a successful HTTP status (200-299)
+      Swal.fire({
+        title: "Success!",
+        text: "User updated successfully.",
+        icon: "success",
+      });
+      closeEditModal(); // Close modal after success
+    } else {
+      // Handle failure based on the response data
+      Swal.fire({
+        title: "Error!",
+        text: responseData?.message || "Failed to update user.",
+        icon: "error",
+      });
+    }
+  } catch (error) {
+    console.error('Error updating user:', error);
+    // If error is not from fetch, handle general error
+    Swal.fire({
+      title: "Error!",
+      text: error.message || 'An error occurred.',
+      icon: "error",
+    });
+  } finally {
+    setIsLoading(false); // Hide loading state
+  }
+};
+
+
+
+
+
   
   const handleChangeSelection = (selectedOption) => {
     // Ensure selectedOption is the correct value
@@ -626,7 +677,7 @@ const optionsRole = [
               <tbody>
                 {currentPageUsers.map(user => (
                   <tr key={`${user.id}-${user.username}`} className='transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50'>
-                    <td className="sticky left-0 h-full px-4 py-3 bg-white border-r">
+                    <td className="sticky left-0 w-full h-full px-4 py-3 bg-white border-r">
                       <div className="flex items-center justify-center space-x-3">
                         <button
                           className="text-blue-600 hover:text-blue-800"
@@ -635,9 +686,9 @@ const optionsRole = [
                           <FaPen />
                         </button>
                         <button
-                          key={user.id}
+                          key={user.username}
                           className="text-red-600 hover:text-red-800"
-                          onClick={() => handleDelete(user.id)}
+                          onClick={() => handleDelete(user.username)}
                         >
                           <FaTrashAlt />
                         </button>
@@ -653,11 +704,8 @@ const optionsRole = [
                     <td className='px-4 py-3 border-r'>{user.sex}</td>
                     <td className='px-4 py-3 border-r'>{user.staffcode}</td>
                     <td className="px-4 py-3 border-r">
-                      <img
-                        src={user.avatar}
-                        alt={`${user.username}'s avatar`}
-                        className="object-cover w-10 h-10 rounded-full"
-                      />
+                    <img src={`http://localhost:5174/public/img/${user.avatar}`} alt="User Avatar" className="object-cover w-10 h-10 rounded-full"/>
+
                     </td>
                     <td className='px-4 py-3 border-r'>{user.status}</td>
                     <td className='px-4 py-3 border-r'>{user.creator}</td>
@@ -1118,44 +1166,44 @@ const optionsRole = [
 
               {/* Right Side: Picture Upload */}
               <div className="flex items-center w-full space-y-4 justify-evenly lg:justify-center lg:flex-col md:w-1/4">
-                <div className="relative flex items-center justify-center w-40 h-40 overflow-hidden bg-gray-100 rounded-lg shadow-lg">
-                  {formData.avatar ? (
-                    <img
-                      src={formData.path} // Use the stored path
-                      alt="Profile"
-                      className="object-cover w-full h-full"
-                    />
-                  ) : (
-                    <svg
-                      className="w-12 h-12 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M12 4v16m8-8H4"
-                      />
-                    </svg>
-                  )}
-                </div>
-                <input
-                  type="file"
-                  id="avatar"
-                  accept="image/*"
-                  onChange={handlePictureChange}
-                  className="hidden"
-                />
-                <label
-                  htmlFor="avatar"
-                  className="flex items-center px-4 py-2 text-sm font-semibold text-center text-white transition-colors duration-200 bg-blue-500 rounded-lg cursor-pointer hover:bg-blue-600"
-                >
-                  {formData.avatar ? "Change Picture" : "Upload Picture"}
-                </label>
-              </div>
+  <div className="relative flex items-center justify-center w-40 h-40 overflow-hidden bg-gray-100 rounded-lg shadow-lg">
+    {formData.avatar ? (
+      <img
+        src={formData.path} // Use the stored path for image preview
+        alt="Profile"
+        className="object-cover w-full h-full"
+      />
+    ) : (
+      <svg
+        className="w-12 h-12 text-gray-400"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M12 4v16m8-8H4"
+        />
+      </svg>
+    )}
+  </div>
+  <input
+    type="file"
+    id="avatar"
+    accept="image/*"
+    onChange={handlePictureChange} // Call the function to update the image
+    className="hidden"
+  />
+  <label
+    htmlFor="avatar"
+    className="flex items-center px-4 py-2 text-sm font-semibold text-center text-white transition-colors duration-200 bg-blue-500 rounded-lg cursor-pointer hover:bg-blue-600"
+  >
+    {formData.avatar ? "Change Picture" : "Upload Picture"} {/* Dynamic text */}
+  </label>
+</div>
             </form>
           {/* Footer */}
           <footer className="flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">

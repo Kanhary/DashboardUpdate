@@ -8,6 +8,8 @@ import { FiUser, FiLogOut } from 'react-icons/fi';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { FaCamera } from "react-icons/fa";
+import { getToken } from '../../utils/token/Token';
+import axios from 'axios';
 
 const HeaderPage = ({ toggleSidebar }) => {
   const [showImageRemovalAlert, setShowImageRemovalAlert] = useState(false); // New state for removal alert
@@ -30,24 +32,27 @@ const HeaderPage = ({ toggleSidebar }) => {
     GetUserLogin()
       .then(res => {
         setUsername(res.data.data.username);
-        setAvatar(res.data.data.avatar);
+        // Set the new avatar URL when the login is successful
+        setAvatar(`http://localhost:5174/public/img/${res.data.data.avatar}`); 
       })
       .catch(error => {
         console.error('Error fetching user data:', error);
       });
-
+  
     const storedEmail = localStorage.getItem('userEmail');
     if (storedEmail) {
       setUserEmail(storedEmail);
     }
   }, []);
+  
 
-    const handleRemoveProfileImage = () => {
+  const handleRemoveProfileImage = () => {
     setProfileImage(null); // Clear the uploaded image from state
     setNewProfileImage(null); // Clear the new image file
-    document.getElementById("file-input").value = ""; // Reset the file input
+    document.getElementById('file-input').value = ''; // Reset the file input
     localStorage.removeItem('profileImage'); // Remove the image from local storage
   };
+
 
   const handleDropdownToggle = () => {
     setIsDropdownOpen(prev => !prev);
@@ -75,34 +80,51 @@ const HeaderPage = ({ toggleSidebar }) => {
   };
   
   const handleSaveProfileImage = () => {
-    // This code remains unchanged
     if (newProfileImage) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        // Update the profile image state and local storage
-        setProfileImage(reader.result);
-        localStorage.setItem('profileImage', reader.result);
-      };
-      reader.readAsDataURL(newProfileImage);
-      
-      // Close the edit modal and show success alert
-      setIsEditModalOpen(false);
-      setShowSuccessAlert(true);
-      
-      // Hide alert after 3 seconds
-      setTimeout(() => setShowSuccessAlert(false), 3000);
-      
+      // Get only the file name from the selected image
+      const fileName = newProfileImage.name;
+  
+      // Prepare form data with only the file name
+      const formData = new FormData();
+      formData.append('avatar', fileName); // Only send the file name, not the actual file
+  
+      // Get the token from local storage
+      const token = localStorage.getItem('token');
+  
+      // Make API call to upload only the file name
+      axios.post('http://192.168.168.4:8888/user/4/upload-image', formData, {
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then(response => {
+        console.log('Filename uploaded successfully:', response.data);
+  
+        // Close the edit modal and show success alert
+        setIsEditModalOpen(false);
+        setShowSuccessAlert(true);
+  
+        // Hide alert after 3 seconds
+        setTimeout(() => setShowSuccessAlert(false), 3000);
+      })
+      .catch(error => {
+        console.error('Error uploading filename:', error.response?.data || error.message);
+        alert('Failed to upload filename. Please check the server requirements.');
+      });
+  
     } else {
       // Handle case when the image is removed
-    setProfileImage(null);
-    localStorage.removeItem('profileImage'); // Remove image from local storage
-    setIsEditModalOpen(false);
-    setShowImageRemovalAlert(true); // Show alert for image removal
-
-    // Hide alert after 3 seconds
-    setTimeout(() => setShowImageRemovalAlert(false), 3000);
+      setProfileImage(null);
+      localStorage.removeItem('profileImage');
+      setIsEditModalOpen(false);
+      setShowImageRemovalAlert(true);
+  
+      // Hide alert after 3 seconds
+      setTimeout(() => setShowImageRemovalAlert(false), 3000);
     }
   };
+  
+  
   
 
   // const handleImageChange = (e) => {

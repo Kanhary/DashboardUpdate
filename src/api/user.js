@@ -25,30 +25,30 @@ export function GetEmp(params) {
     });
 }
 
-export function UpdateUser(ID, data) {
+
+
+
+// export function CheckUser(data) {
+//     return request({
+//         method: 'POST',
+//         url: '/userSystem/checkusers',
+//         data: data,
+//         // headers: {
+//         //     'Content-Type': 'multipart/form-data'
+//         // }
+//     });
+// }
+
+// Modify DeleteUser to accept username as a parameter
+export function DeleteUser(username) {
     return request({
-        method: 'POST',
-        url: `/user/updateUser/${ID}`,
-        data: data
+        method: 'DELETE', // Assuming the backend uses the DELETE HTTP method
+        url: `/user/deleteUser?username=${username}`, // Add the username to the query parameter
     });
 }
 
-export function CheckUser(data) {
-    return request({
-        method: 'POST',
-        url: '/userSystem/checkusers',
-        data: data,
-        // headers: {
-        //     'Content-Type': 'multipart/form-data'
-        // }
-    });
-}
-export function DeleteUser(ID) {
-    return request({
-        method: 'POST',
-        url: `/userSystem/delete/${ID}`,
-    });
-}
+
+
 
 export function Login({ username, password }) {
     return request({
@@ -151,5 +151,32 @@ export function AddUser(data) {
         method: "POST",
         url: '/user/addNewUsers',
         data: data
+    });
+}
+
+export function UpdateUser(userId, data) {
+    return request({
+        method: 'POST', // Assuming your API expects a POST request
+        url: `/user/updateUser?id=${userId}`, // Use query parameter for user ID
+        data: data
+    });
+}
+
+// Assuming `request` is a function you've defined elsewhere for making HTTP requests
+export function uploadPicture(userId, imageFile) {
+    // Create a FormData object to hold the file
+    const formData = new FormData();
+    formData.append('image', imageFile); 
+
+    // Log the form data (optional, can be removed)
+    console.log('Uploading image for userId:', userId);
+
+    return request({
+        method: "POST",
+        url: `/user/${userId}/upload-image`,
+        data: formData, 
+        headers: {
+            'Content-Type': 'multipart/form-data', 
+        },
     });
 }
