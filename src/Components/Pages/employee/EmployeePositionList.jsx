@@ -250,7 +250,6 @@ const EmployeePositionList = () => {
               </ul>
             </nav>
           </div>
-
         </div>
       </div>
     

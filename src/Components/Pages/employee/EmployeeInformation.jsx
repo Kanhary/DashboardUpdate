@@ -834,11 +834,9 @@ const EmployeeInformation = () => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
           </svg>
         </button>
- 
       </div>
      
       <div className="px-4">
-      
         <TabMenu
           formData={formData}
           errors={errors}
@@ -872,7 +870,6 @@ const EmployeeInformation = () => {
     </div>
   </div>
 )}
-
 
       {isEditModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
