@@ -12,10 +12,13 @@ import { motion, useScroll } from "framer-motion";
 
 const EmployeeInformation = () => {
   
+  const INITIAL_FORM_DATA ={
+    
+  }
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null); // Manage the selected item to edit
   const [editingEmployees, setEditingEmployees] = useState(null);
-  // const [employees, setEmployees] = useState([]); 
+  const [employees, setEmployees] = useState([]); 
   const { scrollYProgress } = useScroll();
 
 
@@ -63,31 +66,21 @@ const EmployeeInformation = () => {
   };
 
   const [formData, setFormData] = useState({
-    id: '',
-    staffCode: '',
-    fullName: '',
-    latanName: '',
-    genderCode: '',
+    staffcode: '',
+    engname: '',
+    khname: '',
     height: '',
     weight: '',
-    birthDate: '',
-    nationality: '',
-    region: '',
-    birthdateAddress: '',
-    address: '',
-    phoneNumber1: '',
-    nationals: '',
-    email: '',
-    specailPhoneNumber: '',
-    familyStatus: '',
-    companyCode: '',
-    companyBranchCode: '',
-    departmentCode: '',
-    officeCode: '',
+    bod: '',
+    currentaddress: '',
+    gendercode: '',
+    departcode: '',
+    office: '',
+    branchCode: '',
     positionCode: '',
-    photo: null,
-    path: ''
+    fileUpload: null,
   });
+  
 
   const departments = [
     { id: '1', name: 'HR' },
@@ -101,46 +94,54 @@ const EmployeeInformation = () => {
     '3': ['Finance Office 1', 'Finance Office 2'], // Offices under Finance
   };
   
+  
 
   useEffect(() => {
     const fetchAllStaff = async () => {
       try {
         const response = await GetAllStaff();
-        console.log(response.data); // Check if data is an array of employee objects
-        // Extract the employees array from the response
-        const employeesData = response.data.data;
+        console.log('Response data:', response.data);
+  
+        const employeesData = response.data?.data || response.data;
         if (Array.isArray(employeesData)) {
           setEmployees(employeesData);
         } else {
-          console.error('API response data is not an array:', employeesData);
+          console.error('Unexpected data format:', employeesData);
+          setErrors({ message: 'Unexpected API response format' });
         }
       } catch (err) {
-        setErrors({ message: err.message || 'An error occurred' });
+        // Log and capture more details about the error
+        console.error('Error details:', err.response || err);
+        const errorMessage = err.response?.data?.message || 'An unknown error occurred';
+        setErrors({ message: errorMessage });
       }
     };
-    
+  
     fetchAllStaff();
   }, []);
   
   
-  const [employees, setEmployees] = useState([
+  
+  
+  
+//   const [employees, setEmployees] = useState([
 
-    { id: '1', staffCode: '001', fullName: 'សែម ភក្តី', latanName: 'Sem Pheakdey', gender: 'Male', height: '185cm', weight: '75kg', birthDate: '1990-01-01', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់ស្រះចក, ខណ្ឌឬស្សីកែវ, រាជធានីភ្នំពេញ', address: 'សង្កាត់ស្រះចក, ខណ្ឌឬស្សីកែវ, រាជធានីភ្នំពេញ', phoneNumber1: '0123456789', email: 'sem.pheakdey@example.com', specailPhoneNumber: '010 444 152', familyStatus: 'Single', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS3', departmentCode: 'Administration', officeCode: 'IT Department', positionCode: 'Manager', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
-    { id: '2', staffCode: '002', fullName: 'សុជឿន ជ័យនេត', latanName: 'Sokhoeun Chhaynet', gender: 'Female', height: '160cm', weight: '55kg', birthDate: '1985-05-15', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់ដេក, ខណ្ឌភ្នំពេញ, រាជធានីភ្នំពេញ', address: 'សង្កាត់ដេក, ខណ្ឌភ្នំពេញ, រាជធានីភ្នំពេញ', phoneNumber1: '0987654321', email: 'sokhoeun.chhaynet@example.com', specailPhoneNumber: '010 555 123', familyStatus: 'Married', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS4', departmentCode: 'Finance', officeCode: 'Engineering Office', positionCode: 'Senior Analyst', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
-    { id: '3', staffCode: '003', fullName: 'អ៊ុំ ម៉េង', latanName: 'Um Meng', gender: 'Male', height: '175cm', weight: '68kg', birthDate: '1988-07-22', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់ទន្លេបត, ខណ្ឌសៀមរាប, រាជធានីសៀមរាប', address: 'សង្កាត់ទន្លេបត, ខណ្ឌសៀមរាប, រាជធានីសៀមរាប', phoneNumber1: '0976543210', email: 'um.meng@example.com', specailPhoneNumber: '010 666 789', familyStatus: 'Single', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS5', departmentCode: 'Technology', officeCode: 'Research Department', positionCode: 'IT Specialist', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
-    { id: '4', staffCode: '004', fullName: 'ចន ឃឿន', latanName: 'Chan Khuon', gender: 'Female', height: '170cm', weight: '60kg', birthDate: '1992-03-10', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់ផែន, ខណ្ឌព្រះសីហនុ, រាជធានីព្រះសីហនុ', address: 'សង្កាត់ផែន, ខណ្ឌព្រះសីហនុ, រាជធានីព្រះសីហនុ', phonphoneNumber1e_number: '0934567890', email: 'chan.khuon@example.com', specailPhoneNumber: '010 777 888', familyStatus: 'Divorced', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS6', departmentCode: 'Human Resources', officeCode: 'Administrative Office', positionCode: 'HR Coordinator', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
-    { id: '5', staffCode: '005', fullName: 'ម៉ៅ សំរៀន', latanName: 'Mao Somrien', gender: 'Male', height: '180cm', weight: '70kg', birthDate: '1980-11-30', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់បឹងកេងកង, ខណ្ឌចំការមន, រាជធានីភ្នំពេញ', address: 'សង្កាត់បឹងកេងកង, ខណ្ឌចំការមន, រាជធានីភ្នំពេញ', phoneNumber1: '0923456789', email: 'mao.somrien@example.com', specailPhoneNumber: '010 888 999', familyStatus: 'Widowed', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS7', departmentCode: 'Research', officeCode: 'Data Office', positionCode: 'Research Analyst', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
-    { id: '6', staffCode: '006', fullName: 'សុខ សុជា', latanName: 'Sok Sochea', gender: 'Male', height: '170cm', weight: '65kg', birthDate: '1995-09-25', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់ឬស្សីកែវ, ខណ្ឌសែនសុខ, រាជធានីភ្នំពេញ', address: 'សង្កាត់ឬស្សីកែវ, ខណ្ឌសែនសុខ, រាជធានីភ្នំពេញ', phoneNumber1: '0956789012', email: 'sok.sochea@example.com', specailPhoneNumber: '010 999 000', familyStatus: 'Single', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS8', departmentCode: 'Logistics', officeCode: 'Administrative Office', positionCode: 'Logistics Manager', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
-    { id: '7', staffCode: '007', fullName: 'ម៉ាត់ សុខសម', latanName: 'Mat Soksam', gender: 'Female', height: '162cm', weight: '58kg', birthDate: '1993-12-12', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់បឹងត្របែក, ខណ្ឌកណ្តាល, រាជធានីភ្នំពេញ', address: 'សង្កាត់បឹងត្របែក, ខណ្ឌកណ្តាល, រាជធានីភ្នំពេញ', phoneNumber1: '0965432101', email: 'mat.soksam@example.com', specailPhoneNumber: '010 333 444', familyStatus: 'Married', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS9', departmentCode: 'Customer Service', officeCode: 'Support Office', positionCode: 'Customer Service Representative', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
-    { id: '8', staffCode: '008', fullName: 'ឃីម សុវណ្ណ', latanName: 'Kim Sovann', gender: 'Male', height: '178cm', weight: '72kg', birthDate: '1987-06-20', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់បឹងទំពូង, ខណ្ឌពោធិ៍សែនជ័យ, រាជធានីភ្នំពេញ', address: 'សង្កាត់បឹងទំពូង, ខណ្ឌពោធិ៍សែនជ័យ, រាជធានីភ្នំពេញ', phoneNumber1: '0978765432', email: 'kim.sovann@example.com', specailPhoneNumber: '010 222 333', familyStatus: 'Separated', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS10', departmentCode: 'Marketing', officeCode: 'Strategy Office', positionCode: 'Marketing Specialist', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
-    { id: '9', staffCode: '009', fullName: 'ទូច ស្រេង', latanName: 'Touch Sreang', gender: 'Female', height: '168cm', weight: '63kg', birthDate: '1991-08-14', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់ជ័យជូរ, ខណ្ឌសែនសុខ, រាជធានីភ្នំពេញ', address: 'សង្កាត់ជ័យជូរ, ខណ្ឌសែនសុខ, រាជធានីភ្នំពេញ', phoneNumber1: '0938765432', email: 'touch.sreang@example.com', specailPhoneNumber: '010 444 555', familyStatus: 'Single', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS11', departmentCode: 'Accounting', officeCode: 'Finance Office', positionCode: 'Accountant', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
-    { id: '10', staffCode: '010', fullName: 'គង់ សេង', latanName: 'Kong Seng', gender: 'Male', height: '177cm', weight: '70kg', birthDate: '1982-04-05', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់កំពង់ឃុំ, ខណ្ឌឬស្សីកែវ, រាជធានីភ្នំពេញ', address: 'សង្កាត់កំពង់ឃុំ, ខណ្ឌឬស្សីកែវ, រាជធានីភ្នំពេញ', phoneNumber1: '0945678901', email: 'kong.seng@example.com', specailPhoneNumber: '010 666 000', familyStatus: 'Married', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS12', departmentCode: 'Legal', officeCode: 'Legal Affairs Office', positionCode: 'Legal Advisor', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
-    { id: '11', staffCode: '011', fullName: 'អៀង សុផល', latanName: 'Ieang Sophal', gender: 'Female', height: '155cm', weight: '50kg', birthDate: '1990-11-22', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់ជ័យជោគ, ខណ្ឌសែនសុខ, រាជធានីភ្នំពេញ', address: 'សង្កាត់ជ័យជោគ, ខណ្ឌសែនសុខ, រាជធានីភ្នំពេញ', phoneNumber1: '0955432101', email: 'ieang.sophal@example.com', specailPhoneNumber: '010 777 888', familyStatus: 'Single', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS13', departmentCode: 'HR', officeCode: 'Human Resources Office', positionCode: 'HR Coordinator', last_modified_by: 'Admin', last_modified_date: '2024-08-22' },
-    { id: '12', staffCode: '012', fullName: 'យ៉ែត សំអាង', latanName: 'Yet Somang', gender: 'Male', height: '180cm', weight: '75kg', birthDate: '1984-01-19', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់បឹងកេងកង, ខណ្ឌទួលគោក, រាជធានីភ្នំពេញ', address: 'សង្កាត់បឹងកេងកង, ខណ្ឌទួលគោក, រាជធានីភ្នំពេញ', phoneNumber1: '0967891234', email: 'yet.somang@example.com', specailPhoneNumber: '010 999 000', familyStatus: 'Married', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS14', departmentCode: 'IT', officeCode: 'IT Support Office', positionCode: 'IT Specialist', last_modified_by: 'Admin', last_modified_date: '2024-08-22' },
-    { id: '13', staffCode: '013', fullName: 'ទេព សុភាព', latanName: 'Teap Sophap', gender: 'Female', height: '160cm', weight: '57kg', birthDate: '1992-07-09', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់ឫស្សីកែវ, ខណ្ឌឫស្សីកែវ, រាជធានីភ្នំពេញ', address: 'សង្កាត់ឫស្សីកែវ, ខណ្ឌឫស្សីកែវ, រាជធានីភ្នំពេញ', phoneNumber1: '0976543210', email: 'teap.sophap@example.com', specailPhoneNumber: '010 888 999', familyStatus: 'Single', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS15', departmentCode: 'R&D', officeCode: 'Research Office', positionCode: 'Research Analyst', last_modified_by: 'Admin', last_modified_date: '2024-08-22' },
-    { id: '14', staffCode: '014', fullName: 'សេក ប៉ូលី', latanName: 'Sek Polley', gender: 'Male', height: '172cm', weight: '68kg', birthDate: '1986-03-25', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់ស្វាយដល់, ខណ្ឌដង្កោ, រាជធានីភ្នំពេញ', address: 'សង្កាត់ស្វាយដល់, ខណ្ឌដង្កោ, រាជធានីភ្នំពេញ', phoneNumber1: '0939876543', email: 'sek.polley@example.com', specailPhoneNumber: '010 555 666', familyStatus: 'Married', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS16', departmentCode: 'Operations', officeCode: 'Operations Office', positionCode: 'Operations Manager', last_modified_by: 'Admin', last_modified_date: '2024-08-22' },
+//     { id: '1', staffCode: '001', fullName: 'សែម ភក្តី', latanName: 'Sem Pheakdey', gender: 'Male', height: '185cm', weight: '75kg', birthDate: '1990-01-01', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់ស្រះចក, ខណ្ឌឬស្សីកែវ, រាជធានីភ្នំពេញ', address: 'សង្កាត់ស្រះចក, ខណ្ឌឬស្សីកែវ, រាជធានីភ្នំពេញ', phoneNumber1: '0123456789', email: 'sem.pheakdey@example.com', specailPhoneNumber: '010 444 152', familyStatus: 'Single', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS3', departmentCode: 'Administration', officeCode: 'IT Department', positionCode: 'Manager', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
+//     { id: '2', staffCode: '002', fullName: 'សុជឿន ជ័យនេត', latanName: 'Sokhoeun Chhaynet', gender: 'Female', height: '160cm', weight: '55kg', birthDate: '1985-05-15', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់ដេក, ខណ្ឌភ្នំពេញ, រាជធានីភ្នំពេញ', address: 'សង្កាត់ដេក, ខណ្ឌភ្នំពេញ, រាជធានីភ្នំពេញ', phoneNumber1: '0987654321', email: 'sokhoeun.chhaynet@example.com', specailPhoneNumber: '010 555 123', familyStatus: 'Married', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS4', departmentCode: 'Finance', officeCode: 'Engineering Office', positionCode: 'Senior Analyst', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
+//     { id: '3', staffCode: '003', fullName: 'អ៊ុំ ម៉េង', latanName: 'Um Meng', gender: 'Male', height: '175cm', weight: '68kg', birthDate: '1988-07-22', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់ទន្លេបត, ខណ្ឌសៀមរាប, រាជធានីសៀមរាប', address: 'សង្កាត់ទន្លេបត, ខណ្ឌសៀមរាប, រាជធានីសៀមរាប', phoneNumber1: '0976543210', email: 'um.meng@example.com', specailPhoneNumber: '010 666 789', familyStatus: 'Single', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS5', departmentCode: 'Technology', officeCode: 'Research Department', positionCode: 'IT Specialist', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
+//     { id: '4', staffCode: '004', fullName: 'ចន ឃឿន', latanName: 'Chan Khuon', gender: 'Female', height: '170cm', weight: '60kg', birthDate: '1992-03-10', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់ផែន, ខណ្ឌព្រះសីហនុ, រាជធានីព្រះសីហនុ', address: 'សង្កាត់ផែន, ខណ្ឌព្រះសីហនុ, រាជធានីព្រះសីហនុ', phonphoneNumber1e_number: '0934567890', email: 'chan.khuon@example.com', specailPhoneNumber: '010 777 888', familyStatus: 'Divorced', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS6', departmentCode: 'Human Resources', officeCode: 'Administrative Office', positionCode: 'HR Coordinator', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
+//     { id: '5', staffCode: '005', fullName: 'ម៉ៅ សំរៀន', latanName: 'Mao Somrien', gender: 'Male', height: '180cm', weight: '70kg', birthDate: '1980-11-30', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់បឹងកេងកង, ខណ្ឌចំការមន, រាជធានីភ្នំពេញ', address: 'សង្កាត់បឹងកេងកង, ខណ្ឌចំការមន, រាជធានីភ្នំពេញ', phoneNumber1: '0923456789', email: 'mao.somrien@example.com', specailPhoneNumber: '010 888 999', familyStatus: 'Widowed', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS7', departmentCode: 'Research', officeCode: 'Data Office', positionCode: 'Research Analyst', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
+//     { id: '6', staffCode: '006', fullName: 'សុខ សុជា', latanName: 'Sok Sochea', gender: 'Male', height: '170cm', weight: '65kg', birthDate: '1995-09-25', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់ឬស្សីកែវ, ខណ្ឌសែនសុខ, រាជធានីភ្នំពេញ', address: 'សង្កាត់ឬស្សីកែវ, ខណ្ឌសែនសុខ, រាជធានីភ្នំពេញ', phoneNumber1: '0956789012', email: 'sok.sochea@example.com', specailPhoneNumber: '010 999 000', familyStatus: 'Single', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS8', departmentCode: 'Logistics', officeCode: 'Administrative Office', positionCode: 'Logistics Manager', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
+//     { id: '7', staffCode: '007', fullName: 'ម៉ាត់ សុខសម', latanName: 'Mat Soksam', gender: 'Female', height: '162cm', weight: '58kg', birthDate: '1993-12-12', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់បឹងត្របែក, ខណ្ឌកណ្តាល, រាជធានីភ្នំពេញ', address: 'សង្កាត់បឹងត្របែក, ខណ្ឌកណ្តាល, រាជធានីភ្នំពេញ', phoneNumber1: '0965432101', email: 'mat.soksam@example.com', specailPhoneNumber: '010 333 444', familyStatus: 'Married', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS9', departmentCode: 'Customer Service', officeCode: 'Support Office', positionCode: 'Customer Service Representative', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
+//     { id: '8', staffCode: '008', fullName: 'ឃីម សុវណ្ណ', latanName: 'Kim Sovann', gender: 'Male', height: '178cm', weight: '72kg', birthDate: '1987-06-20', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់បឹងទំពូង, ខណ្ឌពោធិ៍សែនជ័យ, រាជធានីភ្នំពេញ', address: 'សង្កាត់បឹងទំពូង, ខណ្ឌពោធិ៍សែនជ័យ, រាជធានីភ្នំពេញ', phoneNumber1: '0978765432', email: 'kim.sovann@example.com', specailPhoneNumber: '010 222 333', familyStatus: 'Separated', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS10', departmentCode: 'Marketing', officeCode: 'Strategy Office', positionCode: 'Marketing Specialist', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
+//     { id: '9', staffCode: '009', fullName: 'ទូច ស្រេង', latanName: 'Touch Sreang', gender: 'Female', height: '168cm', weight: '63kg', birthDate: '1991-08-14', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់ជ័យជូរ, ខណ្ឌសែនសុខ, រាជធានីភ្នំពេញ', address: 'សង្កាត់ជ័យជូរ, ខណ្ឌសែនសុខ, រាជធានីភ្នំពេញ', phoneNumber1: '0938765432', email: 'touch.sreang@example.com', specailPhoneNumber: '010 444 555', familyStatus: 'Single', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS11', departmentCode: 'Accounting', officeCode: 'Finance Office', positionCode: 'Accountant', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
+//     { id: '10', staffCode: '010', fullName: 'គង់ សេង', latanName: 'Kong Seng', gender: 'Male', height: '177cm', weight: '70kg', birthDate: '1982-04-05', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់កំពង់ឃុំ, ខណ្ឌឬស្សីកែវ, រាជធានីភ្នំពេញ', address: 'សង្កាត់កំពង់ឃុំ, ខណ្ឌឬស្សីកែវ, រាជធានីភ្នំពេញ', phoneNumber1: '0945678901', email: 'kong.seng@example.com', specailPhoneNumber: '010 666 000', familyStatus: 'Married', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS12', departmentCode: 'Legal', officeCode: 'Legal Affairs Office', positionCode: 'Legal Advisor', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
+//     { id: '11', staffCode: '011', fullName: 'អៀង សុផល', latanName: 'Ieang Sophal', gender: 'Female', height: '155cm', weight: '50kg', birthDate: '1990-11-22', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់ជ័យជោគ, ខណ្ឌសែនសុខ, រាជធានីភ្នំពេញ', address: 'សង្កាត់ជ័យជោគ, ខណ្ឌសែនសុខ, រាជធានីភ្នំពេញ', phoneNumber1: '0955432101', email: 'ieang.sophal@example.com', specailPhoneNumber: '010 777 888', familyStatus: 'Single', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS13', departmentCode: 'HR', officeCode: 'Human Resources Office', positionCode: 'HR Coordinator', last_modified_by: 'Admin', last_modified_date: '2024-08-22' },
+//     { id: '12', staffCode: '012', fullName: 'យ៉ែត សំអាង', latanName: 'Yet Somang', gender: 'Male', height: '180cm', weight: '75kg', birthDate: '1984-01-19', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់បឹងកេងកង, ខណ្ឌទួលគោក, រាជធានីភ្នំពេញ', address: 'សង្កាត់បឹងកេងកង, ខណ្ឌទួលគោក, រាជធានីភ្នំពេញ', phoneNumber1: '0967891234', email: 'yet.somang@example.com', specailPhoneNumber: '010 999 000', familyStatus: 'Married', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS14', departmentCode: 'IT', officeCode: 'IT Support Office', positionCode: 'IT Specialist', last_modified_by: 'Admin', last_modified_date: '2024-08-22' },
+//     { id: '13', staffCode: '013', fullName: 'ទេព សុភាព', latanName: 'Teap Sophap', gender: 'Female', height: '160cm', weight: '57kg', birthDate: '1992-07-09', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់ឫស្សីកែវ, ខណ្ឌឫស្សីកែវ, រាជធានីភ្នំពេញ', address: 'សង្កាត់ឫស្សីកែវ, ខណ្ឌឫស្សីកែវ, រាជធានីភ្នំពេញ', phoneNumber1: '0976543210', email: 'teap.sophap@example.com', specailPhoneNumber: '010 888 999', familyStatus: 'Single', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS15', departmentCode: 'R&D', officeCode: 'Research Office', positionCode: 'Research Analyst', last_modified_by: 'Admin', last_modified_date: '2024-08-22' },
+//     { id: '14', staffCode: '014', fullName: 'សេក ប៉ូលី', latanName: 'Sek Polley', gender: 'Male', height: '172cm', weight: '68kg', birthDate: '1986-03-25', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់ស្វាយដល់, ខណ្ឌដង្កោ, រាជធានីភ្នំពេញ', address: 'សង្កាត់ស្វាយដល់, ខណ្ឌដង្កោ, រាជធានីភ្នំពេញ', phoneNumber1: '0939876543', email: 'sek.polley@example.com', specailPhoneNumber: '010 555 666', familyStatus: 'Married', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS16', departmentCode: 'Operations', officeCode: 'Operations Office', positionCode: 'Operations Manager', last_modified_by: 'Admin', last_modified_date: '2024-08-22' },
 
-]);
+// ]);
   
   const viewDetails = (employeeId) => {
     // Fetch or set employee data based on employeeId
@@ -155,42 +156,52 @@ const EmployeeInformation = () => {
   };
   
 
-  const handleChange = (e) => {
-    const { id, value } = e.target;
 
-    const file = e.target.files[0];
-    if (file) {
+  const handleChange = (e, setFormData) => {
+    const { id, value } = e.target;
+  
+    // Handle file input
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
       const reader = new FileReader();
+  
       reader.onloadend = () => {
-        setFormData(prevState => ({
+        setFormData((prevState) => ({
           ...prevState,
           picture: true,
-          path: reader.result // this will be a base64 string
+          path: reader.result, // base64 string
         }));
       };
+  
       reader.readAsDataURL(file);
     }
-
-    if (id === "birthDate") {
-      const formattedDate = new Date(value).toISOString().split('T')[0];
-      setFormData(prevData => ({
+  
+    // Handle date formatting
+    if (id === "bod") {
+      const formattedDate = new Date(value).toISOString().split("T")[0];
+      setFormData((prevData) => ({
         ...prevData,
-        [id]: formattedDate
-      }));
-    } else if (id === "familyStatus") {
-      // Convert text to boolean
-      const booleanValue = value === "true"; // "true" for married, "false" for single
-      setFormData(prevData => ({
-        ...prevData,
-        [id]: booleanValue
-      }));
-    } else {
-      setFormData(prevData => ({
-        ...prevData,
-        [id]: value
+        [id]: formattedDate,
       }));
     }
+    // Handle family status as boolean
+    else if (id === "familyStatus") {
+      const booleanValue = value === "true"; // "true" for married, "false" for single
+      setFormData((prevData) => ({
+        ...prevData,
+        [id]: booleanValue,
+      }));
+    }
+    // Handle default case
+    // else {
+    //   setFormData((prevData) => ({
+    //     ...prevData,
+    //     [id]: value,
+    //   }));
+    // }
   };
+  
+
 
   const handleFileChange = (e) => {
     const { files } = e.target;
@@ -400,15 +411,15 @@ const EmployeeInformation = () => {
   const recordsPerPage = 8;
   //open edit modal
   const openEditModal = (
-    id, staffCode, fullName, latanName, genderCode, height, weight, birthDate, nationals, nationality, region, 
+    Id, staffCode, fullName, latanName, genderCode, height, weight, birthDate, nationals, nationality, region, 
     birthdateAddress, address, phoneNumber1, email, specailPhoneNumber, familyStatus, companyCode, 
     companyBranchCode, departmentCode, officeCode, positionCode, last_modified_by, last_modified_date
   ) => {
-    console.log({ id, staffCode, fullName, latanName, genderCode, height, weight, birthDate, nationals, nationality });
+    console.log({ Id, staffCode, fullName, latanName, genderCode, height, weight, birthDate, nationals, nationality });
     
-    setEditingEmployees({ id, staffCode, fullName, latanName, genderCode, height, weight, birthDate, nationals, nationality, region, birthdateAddress, address, phoneNumber1, email, specailPhoneNumber, familyStatus, companyCode, companyBranchCode, departmentCode, officeCode, positionCode, last_modified_by, last_modified_date });
+    setEditingEmployees({ Id, staffCode, fullName, latanName, genderCode, height, weight, birthDate, nationals, nationality, region, birthdateAddress, address, phoneNumber1, email, specailPhoneNumber, familyStatus, companyCode, companyBranchCode, departmentCode, officeCode, positionCode, last_modified_by, last_modified_date });
     
-    setFormData({ id, staffCode, fullName, latanName, genderCode, height, weight, birthDate, nationals, nationality, region, birthdateAddress, address, phoneNumber1, email, specailPhoneNumber, familyStatus, companyCode, companyBranchCode, departmentCode, officeCode, positionCode, last_modified_by, last_modified_date });
+    setFormData({ Id, staffCode, fullName, latanName, genderCode, height, weight, birthDate, nationals, nationality, region, birthdateAddress, address, phoneNumber1, email, specailPhoneNumber, familyStatus, companyCode, companyBranchCode, departmentCode, officeCode, positionCode, last_modified_by, last_modified_date });
     
     setIsEditModalOpen(true);
   };
@@ -495,11 +506,11 @@ const EmployeeInformation = () => {
   }
   const handleSearch = () => {
     let filteredUsers;
-    if (searchType === 'username') {
+    if (searchTerm === 'username') {
       filteredUsers = users.filter(user => 
         user.username.toLowerCase().includes(searchTerm.toLowerCase())
       );
-    } else if (searchType === 'id') {
+    } else if (searchTerm === 'id') {
       filteredUsers = users.filter(user => 
         user.id.toString().includes(searchTerm)
       );
@@ -512,9 +523,9 @@ const EmployeeInformation = () => {
   useEffect(() => {
     setFilteredEmployees(
       employees.filter(employee =>
-        (employee.fullName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (employee.staffCode || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (employee.latanName || '').toLowerCase().includes(searchTerm.toLowerCase())
+        (employee.engname || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (employee.staffcode || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (employee.khname || '').toLowerCase().includes(searchTerm.toLowerCase())
       )
     );
   }, [employees, searchTerm]);
@@ -554,7 +565,7 @@ const EmployeeInformation = () => {
       <div className='w-full mt-4'
       data-aos='fade-up'>
         <div className='relative w-full overflow-hidden bg-white shadow-md sm:rounded-lg'>
-        <div className='flex flex-col md:flex-row items-center justify-between p-4 space-y-4 md:space-y-0'>
+        <div className='flex flex-col items-center justify-between p-4 space-y-4 md:flex-row md:space-y-0'>
   {/* Search Input */}
   <div className='w-full md:w-full lg:w-[600px]'>
   <form className='flex items-center justify-start'>
@@ -578,7 +589,7 @@ const EmployeeInformation = () => {
         <button
           type="button"
           onClick={() => setSearchTerm('')}
-          className='absolute inset-y-1 right-2 flex items-center justify-center w-10 h-10 pr-3 text-gray-500 hover:text-gray-700 focus:outline-none'
+          className='absolute flex items-center justify-center w-10 h-10 pr-3 text-gray-500 inset-y-1 right-2 hover:text-gray-700 focus:outline-none'
         >
           <AiOutlineClose className="w-5 h-5" />
         </button>
@@ -589,7 +600,7 @@ const EmployeeInformation = () => {
 
 
   {/* Date Filter with Label and Clear Button */}
-  <div className='flex flex-wrap items-center justify-end w-full space-x-3 md:w-full md:justify-end mr-3 '>
+  <div className='flex flex-wrap items-center justify-end w-full mr-3 space-x-3 md:w-full md:justify-end '>
   <label htmlFor="date-filter" className='text-sm font-medium text-gray-700'>Filter by Date:</label>
   <input
     type="date"
@@ -600,7 +611,7 @@ const EmployeeInformation = () => {
   />
   <button
     type="button"
-    className='px-6 py-3 text-sm font-medium text-red-700 bg-red-200 rounded-3xl hover:bg-red-300 focus:ring-2 focus:ring-red-400 duration-300'
+    className='px-6 py-3 text-sm font-medium text-red-700 duration-300 bg-red-200 rounded-3xl hover:bg-red-300 focus:ring-2 focus:ring-red-400'
     onClick={() => clearDateFilter()}
   >
     សម្អាត
@@ -613,7 +624,7 @@ const EmployeeInformation = () => {
   <div className='flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3'>
     <button
       type='button'
-      className='flex items-center justify-center px-4 py-3 text-sm font-medium text-blue-600 duration-300 rounded-3xl bg-blue-200 hover:bg-blue-300 focus:ring-4 focus:ring-primary-300'
+      className='flex items-center justify-center px-4 py-3 text-sm font-medium text-blue-600 duration-300 bg-blue-200 rounded-3xl hover:bg-blue-300 focus:ring-4 focus:ring-primary-300'
       onClick={() => setIsAddModalOpen(true)}
     >
       <svg className="h-3.5 w-3.5 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -634,50 +645,50 @@ const EmployeeInformation = () => {
               <table className='w-full text-sm text-left text-gray-500'>
                 <thead className='text-xs text-gray-700 uppercase bg-gray-100 border-t-2'>
                   <tr>
-                    <th scope="col" className="sticky left-0 px-4 py-3 mr-3 bg-gray-100 border-r border-t">Action</th>
-                    <th scope="col" className="px-4 py-3 border-r border-t">NO</th>
-                    <th scope="col" className="px-4 py-3 border-r border-t" style={{ minWidth: '80px' }}>Code</th>
-                    <th scope="col" className="px-4 py-3 border-r border-t" style={{ minWidth: '200px' }}>Full Name</th>
-                    <th scope="col" className="px-4 py-3 border-r border-t" style={{ minWidth: '200px' }}>Latan name</th>
-                    <th scope="col" className="px-4 py-3 border-r border-t">Gender</th>
-                    <th scope="col" className="px-4 py-3 border-r border-t">Height</th>
-                    <th scope="col" className="px-4 py-3 border-r border-t ">Weight</th>
-                    <th scope="col" className="px-4 py-3 border-r border-t" style={{ minWidth: '120px' }}>Birthdate</th>
-                    <th scope="col" className="px-4 py-3 border-r border-t">Nation</th>
-                    <th scope="col" className="px-4 py-3 border-r border-t"style={{ minWidth: '120px' }}>Nationality</th>
-                    <th scope="col" className="px-4 py-3 border-r border-t"style={{ minWidth: '120px' }}>Region</th>
-                    <th scope="col" className="px-4 py-3 border-r border-t"style={{ minWidth: '330px' }}>Birthdate Address</th>
-                    <th scope="col" className="px-4 py-3 border-r border-t"style={{ minWidth: '330px' }}>Address</th>
-                    <th scope="col" className="px-4 py-3 border-r border-t" style={{ minWidth: '150px'}}>Phone Number</th>
-                    <th scope="col" className="px-4 py-3 border-r border-t" style={{ minWidth: '220px' }}>Email</th>
-                    <th scope="col" className="px-4 py-3 border-r border-t"style={{ minWidth: '150px' }}>Special Number</th>
-                    <th scope="col" className="px-4 py-3 border-r border-t"style={{ minWidth: '140px' }}>Marital Status</th>
-                    <th scope="col" className="px-4 py-3 border-r border-t"style={{ minWidth: '200px' }}>Company</th>
-                    <th scope="col" className="px-4 py-3 border-r border-t">Branch</th>
-                    <th scope="col" className="px-4 py-3 border-r border-t"style={{ minWidth: '150px' }}>Department</th>
-                    <th scope="col" className="px-4 py-3 border-r border-t"style={{ minWidth: '250px' }}>Office</th>
-                    <th scope="col" className="px-4 py-3 border-r border-t"style={{ minWidth: '250px' }}>Position</th>
-                    <th scope="col" className="px-4 py-30 border-r border-t"style={{ minWidth: '200px' }}>Last Modified By</th>
-                    <th scope="col" className="px-4 py-3 border-r border-t"style={{ minWidth: '250px' }}>Last Modified Date</th>
-                    <th scope="col" className="px-4 py-3 border-r border-t"style={{ minWidth: '250px' }}>Photo</th>
+                    <th scope="col" className="sticky left-0 px-4 py-3 mr-3 bg-gray-100 border-t border-r">Action</th>
+                    <th scope="col" className="px-4 py-3 border-t border-r">NO</th>
+                    <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '120px' }}>staff Code</th>
+                    <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '200px' }}>Full Name</th>
+                    <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '200px' }}>Latan name</th>
+                    <th scope="col" className="px-4 py-3 border-t border-r">Gender</th>
+                    <th scope="col" className="px-4 py-3 border-t border-r">Height</th>
+                    <th scope="col" className="px-4 py-3 border-t border-r ">Weight</th>
+                    <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '120px' }}>Birthdate</th>
+                    <th scope="col" className="px-4 py-3 border-t border-r">Nation</th>
+                    <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '120px' }}>Nationality</th>
+                    <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '120px' }}>Region</th>
+                    <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '330px' }}>Birthdate Address</th>
+                    <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '330px' }}>Address</th>
+                    <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px'}}>Phone Number</th>
+                    <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '220px' }}>Email</th>
+                    <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '150px' }}>Special Number</th>
+                    <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '140px' }}>Marital Status</th>
+                    <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '200px' }}>Company</th>
+                    <th scope="col" className="px-4 py-3 border-t border-r">Branch</th>
+                    <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '150px' }}>Department</th>
+                    <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '250px' }}>Office</th>
+                    <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '250px' }}>Position</th>
+                    <th scope="col" className="px-4 border-t border-r py-30"style={{ minWidth: '200px' }}>Last Modified By</th>
+                    <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '250px' }}>Last Modified Date</th>
+                    <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '250px' }}>Photo</th>
                   </tr>
                 </thead>
                 <tbody>
                   {currentEmployees.map(employee => (
-                      <tr key={employee.id} className='transition ease-in-out duration-200 transform border border-b-gray-200 hover:bg-indigo-50 '>
+                      <tr key={employee.id} className='transition duration-200 ease-in-out transform border border-b-gray-200 hover:bg-indigo-50 '>
                         <td className='sticky left-0 z-10 flex items-center px-4 py-5 bg-white border-r'>
   <input type="checkbox" className="mr-3 action-checkbox" />
   <FaPen
     className="text-blue-500 cursor-pointer hover:text-blue-700"
     onClick={() => openEditModal(
-      employee.id,
-      employee.staffCode,
-      employee.fullName,
-      employee.latanName,
-      employee.genderCode,
-      employee.height,
-      employee.weight,
-      employee.birthDate,
+      employee.Id,
+      employee.staffcode,
+      employee.engname,
+      employee.KHName,
+      employee.GenderCode,
+      employee.Height,
+      employee.Weight,
+      employee.BOD,
       employee.nationals,
       employee.nationality,
       employee.region,
@@ -733,18 +744,18 @@ const EmployeeInformation = () => {
 </td>
 
                       <td className='px-4 py-1 border-r'>{employee.id}</td>
-                      <td className='px-4 py-1 border-r'>{employee.staffCode}</td>
-                      <td className='px-4 py-1 border-r'>{employee.fullName}</td>
-                      <td className='px-4 py-1 border-r'>{employee.latanName}</td>
-                      <td className='px-4 py-1 border-r'>{employee.genderCode}</td>
+                      <td className='px-4 py-1 border-r'>{employee.staffcode}</td>
+                      <td className='px-4 py-1 border-r'>{employee.engname}</td>
+                      <td className='px-4 py-1 border-r'>{employee.khname}</td>
+                      <td className='px-4 py-1 border-r'>{employee.gendercode}</td>
                       <td className='px-4 py-1 border-r'>{employee.height}</td>
                       <td className='px-4 py-1 border-r'>{employee.weight}</td>
-                      <td className='px-4 py-1 border-r'>{employee.birthDate}</td>
+                      <td className='px-4 py-1 border-r'>{employee.bod}</td>
                       <td className='px-4 py-1 border-r'>{employee.nationals}</td>
                       <td className='px-4 py-1 border-r'>{employee.nationality}</td>
                       <td className='px-4 py-1 border-r'>{employee.region}</td>
                       <td className='px-4 py-1 border-r'>{employee.birthdateAddress}</td>
-                      <td className='px-4 py-1 border-r'>{employee.address}</td>
+                      <td className='px-4 py-1 border-r'>{employee.currentaddress}</td>
                       <td className='px-4 py-1 border-r'>{employee.phoneNumber1}</td>
                       {/* <td className='px-41py-3'>{emoyee.phoneNumber2}</td>
                       <td className='px-4 py-1'>{employ.phoneNumber3}</td> */}
@@ -752,10 +763,10 @@ const EmployeeInformation = () => {
                       <td className='px-4 py-1 border-r'>{employee.specailPhoneNumber}</td>
                       <td className='px-4 py-1 border-r'>{employee.familyStatus ? 'Married' : 'Single'}</td>
                       <td className='px-4 py-1 border-r'>{employee.companyCode}</td>
-                      <td className='px-4 py-1 border-r'>{employee.companyBranchCode}</td>
-                      <td className='px-4 py-1 border-r'>{employee.departmentCode}</td>
+                      <td className='px-4 py-1 border-r'>{employee.branchCode}</td>
+                      <td className='px-4 py-1 border-r'>{employee.departcode}</td>
                       <td className='px-4 py-1 border-r'>{employee.officeCode}</td>
-                      <td className='px-4 py-1 border-r'>{employee.positionCode}</td>
+                      <td className='px-4 py-1 border-r'>{employee.positioncode}</td>
                       <td className='px-4 py-1 border-r'>{employee.lastBy}</td>
                       <td className='px-4 py-1 border-r'>{employee.photo}</td>
                     </tr>
@@ -855,6 +866,7 @@ const EmployeeInformation = () => {
           saveAllModal={saveAllModal}
           offices={offices}
           departments={departments}
+          // disabled={isDisabled} 
         />
       </div>
       {/* <div className="flex justify-center gap-5 p-6 mt-4">
@@ -906,6 +918,7 @@ const EmployeeInformation = () => {
                 closeEditModal={closeAllModals}
                 closeViewModal={closeViewModal}
                 saveAllModal={saveAllModal}
+                // disabled={isDisabled} 
               />
             </div>
           </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaPen, FaTrashAlt } from "react-icons/fa";
 import Select from 'react-select';
-import { GetBranchCode } from '../../../api/user';
+import { GetBranchCode, GetDep } from '../../../api/user';
 import { IoMdRefresh } from "react-icons/io";
 
 const Department = () => {
@@ -15,13 +15,28 @@ const Department = () => {
   const [selectedOption, setSelectedOption] = useState('');
   const [branch, setBranch] = useState([]);
   const [company, setCompany] = useState([]);
+  const [DepList , setDepList] = useState([]);
   
-  const DepList = [
-    { CompanyCode: 'PPAP', DepartmentCode: 'Dep-admin', Department: 'នាយកដ្ឋាន រដ្ឋបាល',  BranchCode: 'TS3' },
-    { CompanyCode: 'PPAP', DepartmentCode: 'Dep-HR', Department: 'នាយកដ្ឋាន បុគ្គលិក/ធនធានមនុស្ស',  BranchCode: 'TS3' },
+  // const DepList = [
+  //   { CompanyCode: 'PPAP', DepartmentCode: 'Dep-admin', Department: 'នាយកដ្ឋាន រដ្ឋបាល',  BranchCode: 'TS3' },
+  //   { CompanyCode: 'PPAP', DepartmentCode: 'Dep-HR', Department: 'នាយកដ្ឋាន បុគ្គលិក/ធនធានមនុស្ស',  BranchCode: 'TS3' },
     
-  ];
+  // ];
   
+  useEffect(() => {
+    const fetchAllDep = async () => {
+      try {
+        const response = await GetDep();
+        console.log(response.data.data); 
+        setDepList(response.data.data);
+        
+      } catch (err) {
+        setError({ message: err.message || 'An error occurred' });
+      }
+    };
+    
+    fetchAllDep();
+  }, []);
 
   // useEffect(() => {
   //   const fetchBranch = async () => {
@@ -34,9 +49,10 @@ const Department = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 8;
   const filteredDepartment = DepList.filter(dep =>
-    dep.Department.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    dep.DepartmentCode.includes(searchTerm)
-  );
+    dep.departEngName?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
+    dep.departCode.includes(searchTerm)
+);
+
   const totalPages = Math.ceil(filteredDepartment.length / recordsPerPage);
 
   const handlePageChange = (pageNumber) => {
@@ -234,16 +250,18 @@ const Department = () => {
               </thead>
               <tbody>
                 {currentDepartment.map((dep, index) => (
-                  <tr key={index} className='transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50'>
+                  <tr key={dep.id} className='transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50'>
                     <td className='sticky left-0 flex px-6 py-5 bg-white border-r'>
-                      <input type="checkbox" className="mr-1 action-checkbox"/>
-                      <FaPen className="ml-2 text-blue-500 cursor-pointer hover:text-blue-700" onClick={() => openEditModal(dep)} />
-                      <FaTrashAlt className="ml-2 text-red-500 cursor-pointer hover:text-red-700" onClick={() => deleteOffice(dep.DepartmentCode)} />
+                      <div className="flex items-center justify-center space-x-3">
+                        <input type="checkbox" className="mr-1 action-checkbox"/>
+                        <FaPen className="ml-2 text-blue-500 cursor-pointer hover:text-blue-700" onClick={() => openEditModal(dep)} />
+                        <FaTrashAlt className="ml-2 text-red-500 cursor-pointer hover:text-red-700" onClick={() => deleteOffice(dep.DepartmentCode)} />
+                      </div>
                     </td>
-                    <td className='px-4 py-4 border-r'>{dep.CompanyCode}</td>
-                    <td className='px-4 py-4 border-r'>{dep.DepartmentCode}</td>
-                    <td className='px-4 py-4 border-r'>{dep.Department}</td>
-                    <td className='px-4 py-4 border-r'>{dep.BranchCode}</td>
+                    <td className='px-4 py-4 border-r'>{dep.departCode}</td>
+                    <td className='px-4 py-4 border-r'>{dep.departEngName}</td>
+                    <td className='px-4 py-4 border-r'>{dep.departKhName}</td>
+                    <td className='px-4 py-4 border-r'>{dep.branchCode}</td>
                    
                   </tr>
                 ))}

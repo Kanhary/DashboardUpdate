@@ -119,7 +119,7 @@ const User = () => {
         const response = await GetAllUser();
         setUsers(response.data.data);
         // Assuming 'avatar' is a field inside each user object in the response:
-        setAvatar(`http://localhost:5174/public/img/${response.data.data[0]?.avatar}`);
+        setAvatar(`http://localhost:5173/public/Img/${response.data.data.avatar}`);
 
       } catch (err) {
         setError(err.message || 'An error occurred');
@@ -668,7 +668,7 @@ const optionsRole = [
                     <td className='px-4 py-3 border-r'>{user.sex}</td>
                     <td className='px-4 py-3 border-r'>{user.staffcode}</td>
                     <td className="px-4 py-3 border-r">
-                    <img src={`http://localhost:5174/public/img/${user.avatar}`} alt="User Avatar" className="object-cover w-10 h-10 rounded-full"/>
+                    <img src={`http://localhost:5173/public/Img/${user.avatar}`} alt="User Avatar" className="object-cover w-10 h-10 rounded-full"/>
 
                     </td>
                     <td className='px-4 py-3 border-r'>{user.status}</td>
