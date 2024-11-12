@@ -61,23 +61,7 @@ export function Login({ username, password }) {
     });
 }
 
-export function GetAllStaff(params){
-    console.log(params);
-    return request({
-        method: "GET",
-        url: '/staffs/getAllStaff',
-        params: params
-    });
-}
 
-export function AddStaff(data){
-    console.log(data);
-    return request({
-        method: "POST",
-        url: '/staffs/AddNew_Staff',
-        data: data
-    })
-}
 
 export function DelStaff(Id){
     return request({
@@ -102,19 +86,8 @@ export function GetUserRole(){
     })
 }
 
-export function GetDep(){
-    return request({
-        method: "GET",
-        url: '',
-    })
-}
 
-export function GetOffice(){
-    return request({
-        method: "GET",
-        url: '',
-    })
-}
+
 
 export function GetBranchCode(){
     return request({
@@ -180,3 +153,64 @@ export function uploadPicture(userId, imageFile) {
         },
     });
 }
+
+export function GetAllStaff(params){
+    console.log(params);
+    return request({
+        method: "GET",
+        url: '/staff/getAllStaff',
+        params: params
+    });
+}
+
+export function AddStaff(data){
+    console.log(data);
+    return request({
+        method: "POST",
+        url: '/staff/addNewStaff',
+        data: data
+    })
+}
+
+export function GetOffice(){
+    return request({
+        method: "GET",
+        url: '/Office/getAllOffice',
+    })
+}
+
+
+
+export function GetDep(){
+    return request({
+        method: "GET",
+        url: '/department/findAllDepartment',
+    })
+}
+export function AddOffice(data){
+    return request({
+        method: "POST",
+        url: '/Office/addNewOffice',
+        data: data
+    })
+}
+
+export function UpdateOffice(id){
+    return request({
+        method: "POST",
+        url: `/Office/updateOffice/${id}`,
+        data: id
+    })
+}
+
+export function DeleteOffice(id) {
+    return request({
+        method: "DELETE",
+        url: `/Office/deleteOffice/${id}`,
+        
+    });
+}
+
+
+
+

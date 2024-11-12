@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { FaPen, FaTrashAlt } from "react-icons/fa";
 import Select from 'react-select';
 import { IoMdRefresh } from "react-icons/io";
+import Swal from 'sweetalert2';
+import { GetOffice , GetDep, AddOffice ,GetUserLogin, DeleteOffice, UpdateOffice} from '../../../api/user';
 
 const OfficeList = () => {
   
-  const INITAIL_FORM_DATA = { OfficeCode: '', OfficeName: '', Department: '', BranchCode: '', CompanyCode: '' }
+  const INITAIL_FORM_DATA = { officeCode: '', officeEngName: '', officeKhName: '', departCode: ''}
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -15,23 +17,60 @@ const OfficeList = () => {
   const [branch, setBranch] = useState([]);
   const [company, setCompany] = useState([]);
   const [department, setDepartment] = useState([]);
+  const [office, setOffice] = useState([]);
+  const [error, setError] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
   // const []
 
-  const officeList = [
-    { OfficeCode: 'ICT', OfficeName: 'ការិយាល័យ បច្ចេកវិទ្យា/ព័ត៏មានវិទ្យា', Department: 'នាយកដ្ឋាន រដ្ឋបាល', BranchCode: 'TS3', CompanyCode: 'PPAP' },
-    { OfficeCode: 'CCTV', OfficeName: 'ការិយាល័យ សន្ដិសុខ/ប្រព័ន្ធ CCTV Camera', Department: 'នាយកដ្ឋាន រដ្ឋបាល', BranchCode: 'TS3', CompanyCode: 'PPAP' },
+  // const officeList = [
+  //   { OfficeCode: 'ICT', OfficeName: 'ការិយាល័យ បច្ចេកវិទ្យា/ព័ត៏មានវិទ្យា', Department: 'នាយកដ្ឋាន រដ្ឋបាល', BranchCode: 'TS3', CompanyCode: 'PPAP' },
+  //   { OfficeCode: 'CCTV', OfficeName: 'ការិយាល័យ សន្ដិសុខ/ប្រព័ន្ធ CCTV Camera', Department: 'នាយកដ្ឋាន រដ្ឋបាល', BranchCode: 'TS3', CompanyCode: 'PPAP' },
   
-  ];
+  // ];
 
-  useEffect(() =>{
+  useEffect(() => {
+    const fetchAllOffice = async () => {
+      try {
+        const response = await GetOffice();
+        console.log(response.data.data); 
+        setOffice(response.data.data);
+        
+      } catch (err) {
+        setError({ message: err.message || 'An error occurred' });
+      }
+    };
+
+    const fetchAllDep = async () => {
+      try {
+        const response = await GetDep();
+        console.log(response.data.data); 
+        setDepartment(response.data.data);
+        
+      } catch (err) {
+        setError({ message: err.message || 'An error occurred' });
+      }
+    };
+
+    const fetchCurrentUser = async () => {
+      try {
+        const response = await GetUserLogin(); // Call the API to get the current user
+        setCurrentUser(response.data.data.username); // Assuming the response contains a username field
+        console.log('Fetched user:', response.data.data.username);
+      } catch (error) {
+        console.error('Error fetching current user:', error);
+      }
+    };
     
-  })
+    fetchCurrentUser
+    fetchAllOffice();
+    fetchAllDep();
+  }, []);
   
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 8;
-  const filteredOffices = officeList.filter(office =>
-    office.OfficeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    office.OfficeCode.includes(searchTerm)
+  const filteredOffices = office.filter(officeList =>
+    officeList.officeEngName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    officeList.officeCode.includes(searchTerm)
   );
   const totalPages = Math.ceil(filteredOffices.length / recordsPerPage);
 
@@ -88,28 +127,112 @@ const OfficeList = () => {
     setFormData({ OfficeCode: '', OfficeName: '', Department: '', BranchCode: '', CompanyCode: '' });
   };
 
-  const handleSave = () => {
-    console.log('Save clicked', formData);
-    closeAddModal();
-  };
+  const handleSave = async () => {
+    const updatedFormData = {
+      ...formData,
+      departCode: selectedOption ? selectedOption.value : '',
+      createdby: currentUser,
+      lastby: currentUser,
+      createTime: new Date().toISOString(),
+      updateTime: new Date().toISOString(),
+    };
+  
+    try {
+      const response = await AddOffice(updatedFormData);
 
-  const handleUpdate = () => {
-    console.log('Update clicked', formData);
-    closeEditModal();
-  };
-
-  const deleteOffice = (code) => {
-    if (window.confirm("Are you sure you want to delete this office?")) {
-      // Your delete logic here...
+      Swal.fire({
+        title: "Deleted!",
+        text: "Office has been deleted.",
+        icon: "success",
+        confirmButtonText: "Okay",
+      });
+      console.log('API Response:', response); 
+      closeAddModal();
+    } catch (error) {
+      console.error('Error saving data', error);
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to delete office.",
+        icon: "error",
+        confirmButtonText: "Okay",
+    });
     }
   };
+  
+  
+
+  const handleUpdate = async () => {
+    console.log('Update clicked', formData);
+    
+    try {
+        // Assuming formData contains the data you want to update
+        const response = await UpdateOffice(formData.id, formData);  // Pass the office ID and data to UpdateOffice
+        console.log('Update response:', response);  // Log the API response
+        
+        closeEditModal();  // Close the modal after the update
+    } catch (error) {
+        console.error('Error updating office:', error);  // Log any errors
+    }
+};
+
+const deleteOffice = async (id) => {
+  try {
+      // Show a confirmation prompt before deleting
+      const result = await Swal.fire({
+          title: "Are you sure?",
+          text: "You won't be able to revert this!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#22c55e",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, delete it!",
+      });
+
+      if (result.isConfirmed) {
+          // Call DeleteOffice function to send the API request
+          const response = await DeleteOffice(id); // Pass the office id here
+          console.log('Response:', response);  // Log the response to confirm deletion
+
+          if (response.status === 200) {  // Check for successful response
+              Swal.fire({
+                  title: "Deleted!",
+                  text: "Office has been deleted.",
+                  icon: "success",
+                  confirmButtonText: "Okay",
+              });
+
+              // Remove the deleted office from the list
+              const updatedOffices = office.filter(officeList => officeList.id !== id);
+              setOffice(updatedOffices);  // Update the state with the remaining offices
+          } else {
+              Swal.fire({
+                  title: "Error!",
+                  text: "Failed to delete office.",
+                  icon: "error",
+                  confirmButtonText: "Okay",
+              });
+          }
+      }
+  } catch (error) {
+      console.error('Error:', error.response ? error.response.data : error.message);
+      Swal.fire({
+          title: 'Error!',
+          text: error.response?.data?.message || 'Failed to connect to the server.',
+          icon: 'error',
+          confirmButtonText: 'Okay',
+      });
+  }
+};
+
+
 
   const handleDepartmentChange = (selectedOption) => {
     setFormData((prevData) => ({
       ...prevData,
-      Department: selectedOption ? selectedOption.value : '',
+      departCode: selectedOption ? selectedOption.value : '',
     }));
   };
+  
   
   const handleBranchChange = (selectedOption) => {
     setFormData((prevData) => ({
@@ -172,16 +295,17 @@ const OfficeList = () => {
   //   label: `${com.CompanyCode} - ${com.CompanyName}`
   // }));
     
-  const optionsDepartment = [
-    {value: 'នាយកដ្ឋាន រដ្ឋបាល', label: 'នាយកដ្ឋាន រដ្ឋបាល'},
-    {value: 'នាយកដ្ឋាន បុគ្គលិក/ធនធានមនុស្ស', label: 'នាយកដ្ឋាន បុគ្គលិក/ធនធានមនុស្ស'},
+  // const optionsDepartment = [
+  //   {value: 'នាយកដ្ឋាន រដ្ឋបាល', label: 'នាយកដ្ឋាន រដ្ឋបាល'},
+  //   {value: 'នាយកដ្ឋាន បុគ្គលិក/ធនធានមនុស្ស', label: 'នាយកដ្ឋាន បុគ្គលិក/ធនធានមនុស្ស'},
     
-  ]
+  // ]
 
-  // const optionsDepartment = department.map(dep => ({
-  //   value: dep.DepartmentCode,
-  //   label: `${dep.DepartmentCode} - ${dep.Department}`
-  // }));
+  const optionsDepartment = department.map(dep => ({
+    value: dep.departcode,
+    label: `${dep.departCode} - ${dep.departEngName}`
+  }));
+  
 
   const handleRefresh = () => {
     window.location.reload();
@@ -243,25 +367,28 @@ const OfficeList = () => {
                 <tr>
                   <th scope="col" className="sticky left-0 px-4 py-3 bg-gray-100 border border-r">Action</th>
                   <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '300px'}}>Office Code</th>
-                  <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '300px'}}>Office Name</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '300px'}}>English Name</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '150px'}}>Khmer Name</th>
                   <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '150px'}}>Department</th>
-                  <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '150px'}}>Branch Code</th>
-                  <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '150px'}}>Company Code</th>
+                  {/* <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '150px'}}>Company Code</th> */}
                 </tr>
               </thead>
               <tbody>
-                {currentOffices.map((office, index) => (
-                  <tr key={index} className='transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50'>
-                    <td className='sticky left-0 flex px-6 py-5 bg-white border-r'>
+                {currentOffices.map(officeList=> (
+                  <tr key={officeList.id} className='transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50'>
+                    
+                    <td className='sticky left-0 w-full h-full px-4 py-3 bg-white border-r'>
+                      <div className="flex items-center justify-center space-x-3">
                       <input type="checkbox" className="mr-1 action-checkbox"/>
                       <FaPen className="ml-2 text-blue-500 cursor-pointer hover:text-blue-700" onClick={() => openEditModal(office)} />
-                      <FaTrashAlt className="ml-2 text-red-500 cursor-pointer hover:text-red-700" onClick={() => deleteOffice(office.OfficeCode)} />
+                      <FaTrashAlt className="ml-2 text-red-500 cursor-pointer hover:text-red-700" onClick={() => deleteOffice(officeList.id)} />
+                      </div>
                     </td>
-                    <td className='px-4 py-4 border-r'>{office.OfficeCode}</td>
-                    <td className='px-4 py-4 border-r'>{office.OfficeName}</td>
-                    <td className='px-4 py-4 border-r'>{office.Department}</td>
-                    <td className='px-4 py-4 border-r'>{office.BranchCode}</td>
-                    <td className='px-4 py-4 border-r'>{office.CompanyCode}</td>
+                    <td className='px-4 py-4 border-r'>{officeList.officeCode}</td>
+                    <td className='px-4 py-4 border-r'>{officeList.officeEngName}</td>
+                    <td className='px-4 py-4 border-r'>{officeList.officeKhName}</td>
+                    <td className='px-4 py-4 border-r'>{officeList.departCode}</td>
+                    {/* <td className='px-4 py-4 border-r'>{officeList.companyCode}</td> */}
                   </tr>
                 ))}
               </tbody>
@@ -340,43 +467,52 @@ const OfficeList = () => {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {/* Input for Office Code */}
           <div>
-            <label htmlFor="OfficeCode" className="block mb-2 text-sm font-semibold text-gray-700">Office Code</label>
+            <label htmlFor="officeCode" className="block mb-2 text-sm font-semibold text-gray-700">Office Code</label>
             <input
-              id="OfficeCode"
+              id="officeCode"
               className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-              value={formData.OfficeCode}
+              value={formData.officeCode}
               onChange={handleChange}
             />
           </div>
 
           {/* Input for Office Name */}
           <div>
-            <label htmlFor="OfficeName" className="block mb-2 text-sm font-semibold text-gray-700">Office Name</label>
+            <label htmlFor="officeKhName" className="block mb-2 text-sm font-semibold text-gray-700">Khmer Name</label>
             <input
-              id="OfficeName"
+              id="officeKhName"
               className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-              value={formData.OfficeName}
+              value={formData.officeKhName}
+              onChange={handleChange}
+            />
+          </div>
+
+          
+          <div>
+            <label htmlFor="officeEngName" className="block mb-2 text-sm font-semibold text-gray-700">English Name</label>
+            <input
+              id="officeEngName"
+              className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+              value={formData.officeEngName}
               onChange={handleChange}
             />
           </div>
 
           {/* Input for Department */}
-          <div>
-            <label htmlFor="Department" className="block mb-2 text-sm font-semibold text-gray-700">Department</label>
-            <Select
-              options={optionsDepartment}
-              onChange={handleDepartmentChange}
-              placeholder="Select Department"
-              value={optionsDepartment.find(option => option.value === formData.Department)}
-              isClearable        
-              className="basic-single"
-              classNamePrefix="select"
-              styles={customStyles}
-            />
-          </div>
+          <Select
+            options={optionsDepartment}
+            onChange={handleDepartmentChange}
+            placeholder="Select Department"
+            value={optionsDepartment.find(option => option.value === formData.departCode)}
+            isClearable        
+            className="basic-single"
+            classNamePrefix="select"
+            styles={customStyles}
+          />
 
-          {/* Input for Branch Code */}
-          <div>
+
+         
+          {/* <div>
             <label htmlFor="BranchCode" className="block mb-2 text-sm font-semibold text-gray-700">Branch Code</label>
             <Select
               options={optionsBranch}
@@ -390,7 +526,7 @@ const OfficeList = () => {
             />
           </div>
 
-          {/* Input for Company Code */}
+          
           <div>
             <label htmlFor="CompanyCode" className="block mb-2 text-sm font-semibold text-gray-700">Company Code</label>
             <Select
@@ -403,7 +539,7 @@ const OfficeList = () => {
               classNamePrefix="select"
               styles={customStyles}
             />
-          </div>
+          </div> */}
         </div>
       </div>
       <footer className="flex flex-col-reverse items-center justify-end px-6 py-4 space-y-3 space-y-reverse bg-gray-100 rounded-b-xl md:flex-row md:space-x-3 md:space-y-0">
@@ -433,76 +569,84 @@ const OfficeList = () => {
               </button>
             </header>
             <div className="px-6 py-6 space-y-6">
-              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                {/* Input for Office Code */}
-                <div className="w-full md:w-1/2">
-                  <label htmlFor="OfficeCode" className="block mb-2 text-sm font-semibold text-gray-700">Office Code</label>
-                  <input
-                    id="OfficeCode"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.OfficeCode}
-                    onChange={handleChange}
-                  />
-                </div>
-                {/* Input for Office Name */}
-                <div className="w-full md:w-1/2">
-                  <label htmlFor="OfficeName" className="block mb-2 text-sm font-semibold text-gray-700">Office Name</label>
-                  <input
-                    id="OfficeName"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.OfficeName}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                {/* Input for Department */}
-                <div className="w-full md:w-1/2">
-                  <label htmlFor="staffCode" className="block mb-2 text-sm font-semibold text-gray-700">Staff Code</label>
-                  <Select
-                    options={optionsDepartment}
-                    onChange={handleDepartmentChange}
-                    placeholder="Select Department"
-                    value={optionsDepartment.find(option => option.value === formData.Department)} // Ensure this correctly matches
-                    isClearable
-                    className="basic-single"
-                    classNamePrefix="select"
-                    styles={customStyles}
-                  />        
-                </div>
-                {/* Input for Branch Code */}
-                <div className="w-full md:w-1/2">
-                  <label htmlFor="staffCode" className="block mb-2 text-sm font-semibold text-gray-700">Staff Code</label>
-                  <Select
-                    options={optionsBranch}
-                    onChange={handleBranchChange}
-                    placeholder="Select Branch"
-                    value={optionsBranch.find(option => option.value === formData.BranchCode)}
-                    isClearable
-                    className="basic-single"
-                    classNamePrefix="select"
-                    styles={customStyles}
-                  />
-                          
-                </div>
-              </div>
-              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                {/* Input for Company Code */}
-                <div className="w-full md:w-1/2">
-                  <label htmlFor="CompanyCode" className="block mb-2 text-sm font-semibold text-gray-700">Company Code</label>
-                  <Select
-                    options={optionCompany}
-                    onChange={handleCompanyChange}
-                    placeholder="Select Branch"
-                    value={optionCompany.find(option => option.value === formData.CompanyCode)}
-                    isClearable
-                    className="basic-single"
-                    classNamePrefix="select"
-                    styles={customStyles}
-                  />
-                </div>
-              </div>
-            </div>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          {/* Input for Office Code */}
+          <div>
+            <label htmlFor="officeCode" className="block mb-2 text-sm font-semibold text-gray-700">Office Code</label>
+            <input
+              id="officeCode"
+              className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+              value={formData.officeCode}
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* Input for Office Name */}
+          <div>
+            <label htmlFor="officeKhName" className="block mb-2 text-sm font-semibold text-gray-700">Khmer Name</label>
+            <input
+              id="officeKhName"
+              className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+              value={formData.officeKhName}
+              onChange={handleChange}
+            />
+          </div>
+
+          
+          <div>
+            <label htmlFor="officeEngName" className="block mb-2 text-sm font-semibold text-gray-700">English Name</label>
+            <input
+              id="officeEngName"
+              className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+              value={formData.officeEngName}
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* Input for Department */}
+          <Select
+            options={optionsDepartment}
+            onChange={handleDepartmentChange}
+            placeholder="Select Department"
+            value={optionsDepartment.find(option => option.value === formData.departCode)}
+            isClearable        
+            className="basic-single"
+            classNamePrefix="select"
+            styles={customStyles}
+          />
+
+
+         
+          {/* <div>
+            <label htmlFor="BranchCode" className="block mb-2 text-sm font-semibold text-gray-700">Branch Code</label>
+            <Select
+              options={optionsBranch}
+              onChange={handleBranchChange}
+              placeholder="Select Branch"
+              value={optionsBranch.find(option => option.value === formData.BranchCode)}
+              isClearable
+              className="basic-single"
+              classNamePrefix="select"
+              styles={customStyles}
+            />
+          </div>
+
+          
+          <div>
+            <label htmlFor="CompanyCode" className="block mb-2 text-sm font-semibold text-gray-700">Company Code</label>
+            <Select
+              options={optionCompany}
+              onChange={handleCompanyChange}
+              placeholder="Select Company"
+              value={optionCompany.find(option => option.value === formData.CompanyCode)}
+              isClearable
+              className="basic-single"
+              classNamePrefix="select"
+              styles={customStyles}
+            />
+          </div> */}
+        </div>
+      </div>
             <footer className="flex flex-col-reverse items-center justify-end px-6 py-4 space-y-3 space-y-reverse bg-gray-100 rounded-b-xl md:flex-row md:space-x-3 md:space-y-0">
               <button onClick={handleSaveNew} className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto">
                 Save & New

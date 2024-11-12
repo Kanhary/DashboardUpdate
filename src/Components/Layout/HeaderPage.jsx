@@ -33,7 +33,7 @@ const HeaderPage = ({ toggleSidebar }) => {
       .then(res => {
         setUsername(res.data.data.username);
         // Set the new avatar URL when the login is successful
-        setAvatar(`http://localhost:5174/public/img/${res.data.data.avatar}`); 
+        setAvatar(`http://localhost:5173/public/img/${res.data.data.avatar}`); 
       })
       .catch(error => {
         console.error('Error fetching user data:', error);

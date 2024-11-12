@@ -12,6 +12,7 @@ export default defineConfig({
     }
   },
   server: {
+    port: 5173,
     proxy: {
       '/auth': {
         target: 'http://192.168.168.14:8899',
