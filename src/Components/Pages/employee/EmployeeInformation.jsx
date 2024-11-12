@@ -193,12 +193,12 @@ const EmployeeInformation = () => {
       }));
     }
     // Handle default case
-    // else {
-    //   setFormData((prevData) => ({
-    //     ...prevData,
-    //     [id]: value,
-    //   }));
-    // }
+    else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [id]: value,
+      }));
+    }
   };
   
 
