@@ -61,7 +61,7 @@ const TabMenu = ({
   // });
 
   // const isDisabled = !isAddModalOpen && !isEdi
-
+  
   const [newCourse, setNewCourse] = useState({
     from: '',
     to: '',
@@ -104,6 +104,7 @@ const TabMenu = ({
       office: selectedOffice,
     }));
   };
+  
   const options = [
     // { value: 'manager', label: 'Manager' },
     // { value: 'developer', label: 'Developer' },
@@ -120,6 +121,8 @@ const TabMenu = ({
   
   ];
 
+  
+
   // const closeEmployeeModal = () => {
   //   setIsAddModalOpen(false);
   // };
@@ -134,7 +137,7 @@ const TabMenu = ({
     closeViewModal();
   };
   
- 
+  
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -281,7 +284,7 @@ const TabMenu = ({
             <input
               type={type}
               id={id}
-              value={formData[id] || ''}
+              value={formData[id]}
               onChange={handleChange}
               disabled={disabled}
               className={`block w-full p-2 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1 ${errors[id] ? 'border-red-500' : ''}`}
@@ -297,7 +300,7 @@ const TabMenu = ({
                     ភេទ</label>
                   <select
                     id="genderCode"
-                    value={formData.genderCode || ''}
+                    value={formData.genderCode}
                     onChange={handleChange}
                     required
                     disabled={disabled ? true : undefined}
@@ -317,15 +320,15 @@ const TabMenu = ({
                   </label>
                   <select
                     id="familyStatus"
-                    value={formData.familyStatus !== undefined ? formData.familyStatus.toString() : ''}
+                    value={formData.familyStatus}
                     onChange={handleChange}
                     required
                     disabled={disabled ? true : undefined}
                     className="block w-full p-3 text-sm text-gray-500 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1"
                   >
                     <option value="" disabled hidden>Select the status</option>
-                    <option value="false">លីវ</option> {/* Single */}
-                    <option value="true">មានគូរ</option> {/* Married */}
+                    <option value="single">លីវ</option> {/* Single */}
+                    <option value="married">មានគូរ</option> {/* Married */}
                   </select>
                 </div>
                <div className="flex flex-col gap-2">
@@ -334,7 +337,7 @@ const TabMenu = ({
                     ប្រទេស</label>
                   <select
                     id="region"
-                    value={formData.region || ''}
+                    value={formData.region }
                     onChange={handleChange}
                     required
                     disabled={disabled ? true : undefined}
@@ -355,7 +358,7 @@ const TabMenu = ({
                   <input
                     type="text"
                     id="nationals"
-                    value={formData.nationals || ''}
+                    value={formData.nationals}
                     onChange={handleChange}
                     disabled={disabled ? true : undefined}
                     className="block w-full p-2 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1"
@@ -369,7 +372,7 @@ const TabMenu = ({
                   <input
                     type="text"
                     id="nationality"
-                    value={formData.nationality || ''}
+                    value={formData.nationality }
                     onChange={handleChange}
                     disabled={disabled ? true : undefined}
                     className="block w-full p-2 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1"
@@ -424,7 +427,7 @@ const TabMenu = ({
                     <input
                       type={type}
                       id={id}
-                      value={formData[id] || ''}
+                      value={formData[id]}
                       onChange={handleChange}
                       disabled={disabled ? true : undefined}
                       className="block w-full p-2 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1"
@@ -445,7 +448,7 @@ const TabMenu = ({
                     <input
                       type={type}
                       id={id}
-                      value={formData[id] || ''}
+                      value={formData[id]}
                       onChange={handleChange}
                       disabled={disabled ? true : undefined}
                       className="block w-full p-2 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1"
@@ -494,9 +497,6 @@ const TabMenu = ({
     </div>
   ))
 }
-
-
-
               <div className="flex flex-col gap-2">
                   <label htmlFor="fileUpload" className="flex gap-1 text-sm font-medium text-gray-700">
                     រូបភាព
@@ -511,8 +511,7 @@ const TabMenu = ({
                   {errors.fileUpload && <p className="mt-1 text-xs text-red-500">{errors.fileUpload}</p>}
               </div>
             </div>
-              
-
+            
 
               {/* <div className="flex justify-center gap-5 p-6 mt-4">
                 <button
@@ -551,7 +550,7 @@ const TabMenu = ({
                     required
                   />
                 </div>
-
+                
                 {/* To Date Input */}
                 <div>
                   <label htmlFor="to" className="block text-sm font-medium text-gray-800">ដល់</label>
