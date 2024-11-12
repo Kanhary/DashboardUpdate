@@ -216,7 +216,7 @@ const EmployeeInformation = () => {
     // Add any additional logic here, such as filtering data based on the selected date
   };
 
-  const handleDelete = async (Id) => {
+  const handleDelete = async (id) => {
     try {
         const result = await Swal.fire({
             title: "Are you sure?",
@@ -229,7 +229,7 @@ const EmployeeInformation = () => {
         });
 
         if (result.isConfirmed) {
-            const response = await DelStaff(Id);
+            const response = await DelStaff(id);
             console.log('Response:', response);  // Log the response to debug
 
             if (response.status === 200) {  // Check HTTP status code directly
@@ -240,7 +240,7 @@ const EmployeeInformation = () => {
                   confirmButtonText: "Okay",
               });
           
-              const deleteStaff = employees.filter(employee => employee.id !== Id);
+              const deleteStaff = employees.filter(employee => employee.id !== id);
               setEmployees(deleteStaff);
           } else {
               Swal.fire({

@@ -63,10 +63,10 @@ export function Login({ username, password }) {
 
 
 
-export function DelStaff(Id){
+export function DelStaff(id){
     return request({
-        method: "POST",
-        url: `/staffs/staffDel/${Id}`
+        method: "DELETE",
+        url: `/staff/deleteStaff/${id}`
     })
 }
 

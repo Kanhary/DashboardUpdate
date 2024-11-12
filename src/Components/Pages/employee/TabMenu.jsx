@@ -241,9 +241,9 @@ const TabMenu = ({
               <div className="grid grid-cols-1 gap-6 px-8 py-2 mt-4 sm:grid-cols-2"
               data-aos='zoom-in'>
               {[
-        { id: 'staffCode', label: 'អត្ថលេខ', type: 'text', required: true },
-        { id: 'fullName', label: 'គោត្តនាម/នាម', type: 'text', required: true },
-        { id: 'latanName', label: 'អក្សរឡាតាំង', type: 'text', required: true },
+        { id: 'staffcode', label: 'អត្ថលេខ', type: 'text', required: true },
+        { id: 'engname', label: 'គោត្តនាម/នាម', type: 'text', required: true },
+        { id: 'khname', label: 'អក្សរឡាតាំង', type: 'text', required: true },
         { id: 'height', label: 'កម្ពស់', type: 'text' },
         { id: 'weight', label: 'ទម្ងន់', type: 'text' },
         { id: 'birthDate', label: 'ថ្ងៃខែឆ្នាំកំណើត', type: 'date' },

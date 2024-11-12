@@ -7,11 +7,17 @@ import { GetOffice , GetDep, AddOffice ,GetUserLogin, DeleteOffice, UpdateOffice
 
 const OfficeList = () => {
   
-  const INITAIL_FORM_DATA = { officeCode: '', officeEngName: '', officeKhName: '', departCode: ''}
+  const [formData, setFormData] = useState({
+    officeCode: '',
+    officeEngName: '',
+    officeKhName: '',
+    departCode: '', // Initial value for department code
+  });
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [formData, setFormData] = useState(INITAIL_FORM_DATA);
+  // const [formData, setFormData] = useState(INITAIL_FORM_DATA);
   const [editingOffice, setEditingOffice] = useState(null);
   const [selectedOption, setSelectedOption] = useState('');
   const [branch, setBranch] = useState([]);
@@ -302,7 +308,7 @@ const deleteOffice = async (id) => {
   // ]
 
   const optionsDepartment = department.map(dep => ({
-    value: dep.departcode,
+    value: dep.departCode,
     label: `${dep.departCode} - ${dep.departEngName}`
   }));
   
