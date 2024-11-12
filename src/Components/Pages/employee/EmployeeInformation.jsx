@@ -404,7 +404,7 @@ const EmployeeInformation = () => {
     } else if (isViewModalOpen) {
       await handleViewSave();
     }
-  };
+  }; 
   
   
   
@@ -635,11 +635,6 @@ const EmployeeInformation = () => {
   </div>
 </div>
 
-
-
-
-
-          
             <div className='w-full overflow-x-auto'
             data-aos='fade-right'>
               <table className='w-full text-sm text-left text-gray-500'>
@@ -850,11 +845,9 @@ const EmployeeInformation = () => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
           </svg>
         </button>
- 
       </div>
      
       <div className="px-4">
-      
         <TabMenu
           formData={formData}
           errors={errors}
@@ -889,7 +882,6 @@ const EmployeeInformation = () => {
     </div>
   </div>
 )}
-
 
       {isEditModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -964,6 +956,5 @@ const EmployeeInformation = () => {
     </section> 
   );
 };
-
 export default EmployeeInformation;
 

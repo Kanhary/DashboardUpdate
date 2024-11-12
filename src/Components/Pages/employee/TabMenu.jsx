@@ -32,13 +32,6 @@ const TabMenu = ({
   const [filteredOffices, setFilteredOffices] = useState([]);
 
   const [formData, setFormData] = useState({
-    staffcode: '',
-    engname: '',
-    khname: '',
-    height: '',
-    weight: '',
-    birthDate: '',
-    currentaddress: '',
     department: '',
     office: '',
   });
@@ -68,7 +61,7 @@ const TabMenu = ({
   // });
 
   // const isDisabled = !isAddModalOpen && !isEdi
-
+  
   const [newCourse, setNewCourse] = useState({
     from: '',
     to: '',
@@ -111,6 +104,7 @@ const TabMenu = ({
       office: selectedOffice,
     }));
   };
+  
   const options = [
     // { value: 'manager', label: 'Manager' },
     // { value: 'developer', label: 'Developer' },
@@ -127,6 +121,8 @@ const TabMenu = ({
   
   ];
 
+  
+
   // const closeEmployeeModal = () => {
   //   setIsAddModalOpen(false);
   // };
@@ -141,7 +137,7 @@ const TabMenu = ({
     closeViewModal();
   };
   
- 
+  
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -244,15 +240,15 @@ const TabMenu = ({
           <form>
               <div className="grid grid-cols-1 gap-6 px-8 py-2 mt-4 sm:grid-cols-2"
               data-aos='zoom-in'>
-      {[
-        { id: 'staffcode', label: 'អត្ថលេខ', type: 'text', required: true },
-        { id: 'engname', label: 'គោត្តនាម/នាម', type: 'text', required: true },
-        { id: 'khname', label: 'អក្សរឡាតាំង', type: 'text', required: true },
+              {[
+        { id: 'staffCode', label: 'អត្ថលេខ', type: 'text', required: true },
+        { id: 'fullName', label: 'គោត្តនាម/នាម', type: 'text', required: true },
+        { id: 'latanName', label: 'អក្សរឡាតាំង', type: 'text', required: true },
         { id: 'height', label: 'កម្ពស់', type: 'text' },
         { id: 'weight', label: 'ទម្ងន់', type: 'text' },
-        { id: 'bod', label: 'ថ្ងៃខែឆ្នាំកំណើត', type: 'date' },
-        // { id: 'bod', label: 'ទីកន្លែងកំណើត', type: 'text' },
-        { id: 'currentaddress', label: 'អាស័យដ្ឋានបច្ចុប្បន្ន', type: 'text' },
+        { id: 'birthDate', label: 'ថ្ងៃខែឆ្នាំកំណើត', type: 'date' },
+        { id: 'birthdateAddress', label: 'ទីកន្លែងកំណើត', type: 'text' },
+        { id: 'address', label: 'អាស័យដ្ឋានបច្ចុប្បន្ន', type: 'text' },
         { id: 'phoneNumber1', label: 'លេខទូរសព្ទ', type: 'text' },
         { id: 'email', label: 'អ៊ីម៉ែល', type: 'email' },
         { id: 'specailPhoneNumber', label: 'លេខទូរសព្ទក្រុមហ៊ុន', type: 'text' }
@@ -288,7 +284,7 @@ const TabMenu = ({
             <input
               type={type}
               id={id}
-              value={formData[id]}  
+              value={formData[id]}
               onChange={handleChange}
               disabled={disabled}
               className={`block w-full p-2 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1 ${errors[id] ? 'border-red-500' : ''}`}
@@ -297,24 +293,17 @@ const TabMenu = ({
           {errors[id] && <p className="mt-1 text-xs text-red-500">{errors[id]}</p>}
         </div>
       ))}
-
-                {/* <input
-                  type='text'
-                  id="staffcode"  // Make sure this matches with the key in formData
-                  value={formData.staffcode}  // This should correspond to the formData state
-                  onChange={(e) => handleChange(e, setFormData)}
-                /> */}
-
+                  
                 <div className="flex flex-col gap-2">
                   <label htmlFor="genderCode" className="flex gap-1 text-sm font-medium text-gray-70">
                     {/* {!formData.genderCode && <p className="text-sm text-red-600">*</p>} */}
                     ភេទ</label>
                   <select
-                    id="GenderCode"
-                    value={formData.gendercode || ''}
+                    id="genderCode"
+                    value={formData.genderCode}
                     onChange={handleChange}
                     required
-                    // {...(disabled ? { disabled: true } : {})}
+                    disabled={disabled ? true : undefined}
                     className="block w-full p-3 text-sm text-gray-500 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1"
                   >
                     <option value="" disabled hidden>Select the Gender</option>
@@ -323,32 +312,32 @@ const TabMenu = ({
                   </select>
                   {/* {!formData.gender && <p className="text-sm text-red-600">This field is required</p>} */}
                 </div>
-{/* 
+
                 <div className="flex flex-col gap-2">
                   <label htmlFor="familyStatus" className="flex gap-1 text-sm font-medium text-gray-700">
-                    {!formData.familyStatus && <p className="text-sm text-red-600">*</p>}
+                    {/* {!formData.familyStatus && <p className="text-sm text-red-600">*</p>} */}
                     ស្ថានភាពគ្រួសារ
                   </label>
                   <select
                     id="familyStatus"
-                    value={formData.familyStatus !== undefined ? formData.familyStatus.toString() : ''}
+                    value={formData.familyStatus}
                     onChange={handleChange}
                     required
                     disabled={disabled ? true : undefined}
                     className="block w-full p-3 text-sm text-gray-500 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1"
                   >
                     <option value="" disabled hidden>Select the status</option>
-                    <option value="false">លីវ</option> 
-                    <option value="true">មានគូរ</option> 
+                    <option value="single">លីវ</option> {/* Single */}
+                    <option value="married">មានគូរ</option> {/* Married */}
                   </select>
-                </div> */}
-               {/* <div className="flex flex-col gap-2">
+                </div>
+               <div className="flex flex-col gap-2">
                   <label htmlFor="region" className="flex gap-1 text-sm font-medium text-gray-700">
-                    {!formData.region && <p className="text-sm text-red-600">*</p>}
+                    {/* {!formData.region && <p className="text-sm text-red-600">*</p>} */}
                     ប្រទេស</label>
                   <select
                     id="region"
-                    value={formData.region || ''}
+                    value={formData.region }
                     onChange={handleChange}
                     required
                     disabled={disabled ? true : undefined}
@@ -358,37 +347,37 @@ const TabMenu = ({
                     <option value="កម្ពុជា">កម្ពុជា</option>
                     <option value="ថៃ">ថៃ</option>
                     <option value="វៀតណាម">វៀតណាម</option>
-                    
+                    {/* Add more regions as needed */}
                   </select>
-                </div> */}
+                </div>
 
-                {/* <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2">
                   <label htmlFor="nationals" className="flex gap-1 text-sm font-medium text-gray-700">
-                    {!formData.nationals && <p className="text-sm text-red-600">*</p>}
+                    {/* {!formData.nationals && <p className="text-sm text-red-600">*</p>} */}
                     ជនជាតិ</label>
                   <input
                     type="text"
                     id="nationals"
-                    value={formData.nationals || ''}
+                    value={formData.nationals}
                     onChange={handleChange}
                     disabled={disabled ? true : undefined}
                     className="block w-full p-2 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1"
                   />
-                </div>   */}
+                </div>  
                 
-                {/* <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2">
                   <label htmlFor="nationality" className="flex gap-1 text-sm font-medium text-gray-700">
-                    {!formData.nationality && <p className="text-sm text-red-600">*</p>}
+                    {/* {!formData.nationality && <p className="text-sm text-red-600">*</p>} */}
                     សញ្ជាតិ</label>
                   <input
                     type="text"
                     id="nationality"
-                    value={formData.nationality || ''}
+                    value={formData.nationality }
                     onChange={handleChange}
                     disabled={disabled ? true : undefined}
                     className="block w-full p-2 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1"
                   />
-                </div> */}
+                </div>
 
                 <div className="flex flex-col gap-2">
         <label htmlFor="department" className="text-sm font-medium text-gray-700">
@@ -400,13 +389,13 @@ const TabMenu = ({
           onChange={handleDepartmentChange}
           className="block w-full p-3 text-sm text-gray-700 border border-gray-300 rounded-lg"
         >
-          <option value="" disabled hidden>Select Department</option>
+          <option value="" disable hidden>Select Department</option>
           {departments.map(dept => (
             <option key={dept.id} value={dept.id}>{dept.name}</option>
           ))}
         </select>
       </div>
-      
+
       {/* Office Dropdown */}
       <div className="flex flex-col gap-2">
         <label htmlFor="office" className="text-sm font-medium text-gray-700">
@@ -419,32 +408,32 @@ const TabMenu = ({
           className="block w-full p-3 text-sm text-gray-700 border border-gray-300 rounded-lg"
           disabled={!filteredOffices.length} // Disable if no offices available
         >
-          <option value="" disabled hidden>Select Office</option>
+          <option value="" disable hidden>Select Office</option>
           {filteredOffices.map((office, index) => (
             <option key={index} value={office}>{office}</option>
           ))}
         </select>
       </div>
 
-                {/* {[
+                {[
                   { id: 'companyCode', label: 'ក្រុមហ៊ុន', type: 'text' },
                   // { id: 'position', label: 'តួនាទី', type: 'text' }
                 ].map(({ id, label, type }) => (
                   <div key={id} className="flex flex-col gap-2">
                     <label htmlFor={id} className="flex gap-1 text-sm font-medium text-gray-700">
-                      {!formData.companyCode && <p className="text-sm text-red-600">*</p>}
+                      {/* {!formData.companyCode && <p className="text-sm text-red-600">*</p>} */}
                       {label}</label>
                     
                     <input
                       type={type}
                       id={id}
-                      value={formData[id] || ''}
+                      value={formData[id]}
                       onChange={handleChange}
                       disabled={disabled ? true : undefined}
                       className="block w-full p-2 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1"
                     />
                   </div>
-                ))} */}
+                ))}
 
                  {[
                   { id: 'companyBranchCode', label: 'សាខា', type: 'text' },
@@ -459,9 +448,9 @@ const TabMenu = ({
                     <input
                       type={type}
                       id={id}
-                      value={formData[id] || ''}
+                      value={formData[id]}
                       onChange={handleChange}
-                      // {...(disabled ? { disabled: true } : {})}
+                      disabled={disabled ? true : undefined}
                       className="block w-full p-2 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1"
                     />
                   </div>
@@ -487,7 +476,7 @@ const TabMenu = ({
           onChange={(selectedOption) =>
             handleChange({ target: { id, value: selectedOption.value } })
           }
-          {...(disabled ? { disabled: true } : {})}
+          isDisabled={disabled}
           styles={customStyles} // Custom styles applied to Select
           menuPortalTarget={document.body} // Renders dropdown at body level to avoid positioning issues
           menuPosition="fixed" // Fixed position to prevent clipping inside other elements
@@ -501,16 +490,13 @@ const TabMenu = ({
           id={id}
           value={formData[id] || ''}
           onChange={handleChange}
-          {...(disabled ? { disabled: true } : {})}
+          disabled={disabled ? true : undefined}
           className="block w-full p-2 border border-gray-300 shadow-sm outline-none rounded-xl focus:ring-primary-500 focus:border-primary-500"
         />
       )}
     </div>
   ))
 }
-
-
-
               <div className="flex flex-col gap-2">
                   <label htmlFor="fileUpload" className="flex gap-1 text-sm font-medium text-gray-700">
                     រូបភាព
@@ -519,14 +505,13 @@ const TabMenu = ({
                     type="file"
                     id="fileUpload"
                     onChange={handleChange}
-                    {...(disabled ? { disabled: true } : {})}
+                    disabled={disabled ? true : undefined}
                     className="block w-full text-sm border border-gray-300 rounded-lg shadow-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 focus:ring-1 disabled:opacity-50 disabled:pointer-events-none text-neutral-400 file:border-0 file:me-4 file:py-3 file:px-4 file:bg-blue-600 file:text-white"
                   />
                   {errors.fileUpload && <p className="mt-1 text-xs text-red-500">{errors.fileUpload}</p>}
               </div>
             </div>
-              
-
+            
 
               {/* <div className="flex justify-center gap-5 p-6 mt-4">
                 <button
@@ -565,7 +550,7 @@ const TabMenu = ({
                     required
                   />
                 </div>
-
+                
                 {/* To Date Input */}
                 <div>
                   <label htmlFor="to" className="block text-sm font-medium text-gray-800">ដល់</label>

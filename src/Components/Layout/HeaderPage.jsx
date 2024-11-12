@@ -90,7 +90,6 @@ const HeaderPage = ({ toggleSidebar }) => {
   
       // Get the token from local storage
       const token = localStorage.getItem('token');
-  
       // Make API call to upload only the file name
       axios.post('http://192.168.168.4:8888/user/4/upload-image', formData, {
         headers: {
@@ -259,7 +258,8 @@ const HeaderPage = ({ toggleSidebar }) => {
                         {/* <p className='py-1 text-sm font-medium text-gray-400 truncate'>{userEmail}</p> */}
                       </div>
                 </div>
-
+                
+                {/* Ruler line bottom */}
                 <hr className='mx-auto w-52' />
 
                 <ul className="py-1">
@@ -319,7 +319,7 @@ const HeaderPage = ({ toggleSidebar }) => {
         {/* Upload Button */}
         <label 
           htmlFor="file-input"
-          className="inline-flex items-center w-full px-4 py-2 text-sm text-green-600 duration-300 border-2 border-green-500 border-dashed rounded-lg cursor-pointer hover:bg-green-200"
+          className="inline-flex items-center w-full px-4 py-2 text-sm bg-blue-600 text-white duration-300 border border-blue-600 rounded-full cursor-pointer hover:bg-blue-700"
         >
           <div className='flex justify-center mx-auto'>
           <p className=''>Upload Image</p>
@@ -336,7 +336,7 @@ const HeaderPage = ({ toggleSidebar }) => {
 
         {/* Remove Button */}
         <span
-          className="inline-flex items-center w-full px-4 py-2 text-sm text-yellow-600 duration-300 bg-yellow-100 border-2 border-yellow-500 border-dashed rounded-lg cursor-pointer hover:bg-yellow-200"
+          className="inline-flex items-center w-full px-4 py-2 text-sm text-gray-600 duration-300 border border-gray-500 rounded-full cursor-pointer hover:text-gray-700"
           onClick={handleRemoveProfileImage}
         >
           <p className='mx-auto'>Remove Image</p>
