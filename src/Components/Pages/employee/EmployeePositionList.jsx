@@ -1,44 +1,64 @@
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import { FaPen, FaTrashAlt } from "react-icons/fa";
 import { IoMdRefresh } from "react-icons/io";
+import { GetPosition } from '../../../api/user';
 
 
 const EmployeePositionList = () => {
-  const INITAIL_FORM_DATA = {code: '', position: ''}
+  const INITAIL_FORM_DATA = {positionCode: '', positionName: ''}
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [formData, setFormData] = useState(INITAIL_FORM_DATA);
   const [editingEmployee, setEditingEmployee] = useState(null);
+  const [employees, setEmployees] = useState([]);
 
+
+
+  useEffect(() => {
+    const fetchAllPostition = async () => {
+      try {
+        const response = await GetPosition();
+        console.log(response.data.data); 
+        setEmployees(response.data.data);
+        
+      } catch (err) {
+        setError({ message: err.message || 'An error occurred' });
+      }
+    };
+
+
+    fetchAllPostition();
+  },[]);
   
 
-  const employees = [
-    { ID: '1', Position: 'អង្គនាយក',description: '...' },
-    { ID: '2', Position: 'អង្គនាយករង​ រដ្ឋបាល/ហិរញ្ញវត្ថុ',description: '...' },
-    { ID: '3', Position: 'អង្គនាយករង បច្ចេកទេស',description: '...' },
-    { ID: '4', Position: 'អង្គនាយករង កិច្ចការផែ',description: '...' },
-    { ID: '5', Position: 'អង្គនាយករង​​ អាជីវកម្ម/ប្រតិបត្តិការផែ',description: '...' },
-    { ID: '6', Position: 'ប្រធាននាយកដ្ឋាន រដ្ឋបាល' },
-    { ID: '7', Position: 'ប្រធាននាយកដ្ឋាន​ បុគ្គលិក/ធនធានមនុស្ស',description: '...' },
-    { ID: '8', Position: 'នាយក',description: '...' },
-    { ID: '9', Position: 'នាយករង',description: '...' },
-    { ID: '10', Position: 'អ្នកគ្រប់គ្រង',description: '...' },
-    { ID: '11', Position: 'អង្គនាយក',description: '...' },
-    { ID: '12', Position: 'អង្គនាយករង​ រដ្ឋបាល/ហិរញ្ញវត្ថុ',description: '...' },
-    { ID: '13', Position: 'អង្គនាយករង បច្ចេកទេស',description: '...' },
-    { ID: '14', Position: 'អង្គនាយករង កិច្ចការផែ',description: '...' },
-    { ID: '15', Position: 'អង្គនាយករង​​ អាជីវកម្ម/ប្រតិបត្តិការផែ',description: '...' },
-    { ID: '16', Position: 'ប្រធាននាយកដ្ឋាន រដ្ឋបាល',description: '...' },
-    { ID: '17', Position: 'ប្រធាននាយកដ្ឋាន​ បុគ្គលិក/ធនធានមនុស្ស',description: '...' },
+  // const employees = [
+  //   { ID: '1', Position: 'អង្គនាយក',description: '...' },
+  //   { ID: '2', Position: 'អង្គនាយករង​ រដ្ឋបាល/ហិរញ្ញវត្ថុ',description: '...' },
+  //   { ID: '3', Position: 'អង្គនាយករង បច្ចេកទេស',description: '...' },
+  //   { ID: '4', Position: 'អង្គនាយករង កិច្ចការផែ',description: '...' },
+  //   { ID: '5', Position: 'អង្គនាយករង​​ អាជីវកម្ម/ប្រតិបត្តិការផែ',description: '...' },
+  //   { ID: '6', Position: 'ប្រធាននាយកដ្ឋាន រដ្ឋបាល' },
+  //   { ID: '7', Position: 'ប្រធាននាយកដ្ឋាន​ បុគ្គលិក/ធនធានមនុស្ស',description: '...' },
+  //   { ID: '8', Position: 'នាយក',description: '...' },
+  //   { ID: '9', Position: 'នាយករង',description: '...' },
+  //   { ID: '10', Position: 'អ្នកគ្រប់គ្រង',description: '...' },
+  //   { ID: '11', Position: 'អង្គនាយក',description: '...' },
+  //   { ID: '12', Position: 'អង្គនាយករង​ រដ្ឋបាល/ហិរញ្ញវត្ថុ',description: '...' },
+  //   { ID: '13', Position: 'អង្គនាយករង បច្ចេកទេស',description: '...' },
+  //   { ID: '14', Position: 'អង្គនាយករង កិច្ចការផែ',description: '...' },
+  //   { ID: '15', Position: 'អង្គនាយករង​​ អាជីវកម្ម/ប្រតិបត្តិការផែ',description: '...' },
+  //   { ID: '16', Position: 'ប្រធាននាយកដ្ឋាន រដ្ឋបាល',description: '...' },
+  //   { ID: '17', Position: 'ប្រធាននាយកដ្ឋាន​ បុគ្គលិក/ធនធានមនុស្ស',description: '...' },
     
-  ];
+  // ];
 
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 8;
   const filteredEmployees = employees.filter(employee =>
-    employee.Position.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    employee.ID.includes(searchTerm)
+    employee.positionName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    employee.positionCode.includes(searchTerm)
   );
   const totalPages = Math.ceil(filteredEmployees.length / recordsPerPage);
 
@@ -169,8 +189,8 @@ const EmployeePositionList = () => {
               <thead className='text-xs text-gray-700 uppercase bg-gray-100 '>
                 <tr>
                   <th scope="col" className="sticky left-0 px-4 py-3 bg-gray-100 border-t border-r text-start" >Action</th>
-                  <th scope="col" className="px-4 py-3 border-t border-r text-start" style={{ minWidth: '50px'}}>ID</th>
-                  <th scope="col" className="px-4 py-3 border-t border-r text-start" style={{ minWidth: '300px' }}>Position</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r text-start">ID</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r text-start" style={{ minWidth: '150px' }}>Position</th>
                   {/* <th scope="col" className="px-4 py-3 border-r text-s border-ttart" style={{ minWidth: '200px' }}>Description</th> */}
                   <th scope="col" className="px-4 py-3 border-t border-r text-start" style={{ minWidth: '150px' }}>Last By</th>
                   <th scope="col" className="px-4 py-3 border-t border-r text-start" style={{ minWidth: '150px' }}>Last Date</th>
@@ -184,8 +204,8 @@ const EmployeePositionList = () => {
                       <FaPen className="text-blue-500 cursor-pointer hover:text-blue-700" onClick={() => openEditModal(employee.ID, employee.Position)} />
                       <FaTrashAlt className="ml-3 text-red-500 cursor-pointer hover:text-red-700" onClick={() => deleteEmployee(employee.ID)} />
                     </td>
-                    <td className='px-2 py-3 border-r '>{employee.ID}</td>
-                    <td className='px-2 py-3 border-r ' style={{ minWidth: '250px' }}>{employee.Position}</td>
+                    <td className='px-2 py-3 border-r '>{employee.positionCode}</td>
+                    <td className='px-2 py-3 border-r '>{employee.positionName}</td>
                     {/* <td className='px-4 py-3 border-r' style={{ minWidth: '250px' }}>{employee.description}</td> */}
                     <td className='px-2 py-3 border-r ' style={{ minWidth: '150px' }}>Last Edited By</td>
                     <td className='px-2 py-3 border-r ' style={{ minWidth: '160px' }}>Last Edited Date</td>
@@ -273,7 +293,7 @@ const EmployeePositionList = () => {
                   <input
                     type="text"
                     id="ID"
-                    value={formData.ID}
+                    value={formData.positionCode}
                     onChange={handleChange}
                     disabled
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
@@ -285,7 +305,7 @@ const EmployeePositionList = () => {
                   <input
                     type="text"
                     id="Position"
-                    value={formData.Position}
+                    value={formData.positionName}
                     onChange={handleChange}
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                   />
@@ -331,7 +351,7 @@ const EmployeePositionList = () => {
                 <input
                   type="text"
                   id="ID"
-                  value={formData.ID}
+                  value={formData.positionCode}
                   onChange={handleChange}
                   className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                   disabled
@@ -343,7 +363,7 @@ const EmployeePositionList = () => {
                 <input
                   type="text"
                   id="Position"
-                  value={formData.Position}
+                  value={formData.positionName}
                   onChange={handleChange}
                   className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                 />

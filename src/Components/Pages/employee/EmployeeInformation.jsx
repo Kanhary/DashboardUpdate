@@ -7,7 +7,7 @@ import 'aos/dist/aos.css';
 import { AiOutlineClose } from 'react-icons/ai';
 // import LongCourse from './LongCourse';
 import { DelStaff, GetAllStaff } from '../../../api/user';
-import { AddStaff , UpdateStaff} from '../../../api/user';
+import { AddStaff , UpdateStaff, GetDep, GetUserLogin, GetPosition} from '../../../api/user';
 import { motion, useScroll } from "framer-motion";
 
 const EmployeeInformation = () => {
@@ -21,7 +21,8 @@ const EmployeeInformation = () => {
   const [employees, setEmployees] = useState([]); 
   const { scrollYProgress } = useScroll();
 
-
+  const [department, setDepartment] = useState([]);
+  const [position, setPosition] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [photoName, setPhotoName] = useState('');
@@ -30,6 +31,7 @@ const EmployeeInformation = () => {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [selectedDate, setSelectedDate] = useState('');
+  const [currentUser, setCurrentUser] = useState(null);
 
   const [errors, setErrors] = useState({});
 
@@ -66,27 +68,22 @@ const EmployeeInformation = () => {
   };
 
   const [formData, setFormData] = useState({
-    staffcode: '',
-    engname: '',
-    khname: '',
+    staffCode: '',
+    engName: '',
+    khName: '',
     height: '',
     weight: '',
     bod: '',
-    currentaddress: '',
-    gendercode: '',
-    departcode: '',
+    currentAddress: '',
+    genderCode: '',
+    departCode: '',
     office: '',
     branchCode: '',
     positionCode: '',
     fileUpload: null,
   });
   
-
-  const departments = [
-    { id: '1', name: 'HR' },
-    { id: '2', name: 'IT' },
-    { id: '3', name: 'Finance' },
-  ];
+  
   
   const offices = {
     '1': ['HR Office 1', 'HR Office 2'],   // Offices under HR
@@ -116,11 +113,78 @@ const EmployeeInformation = () => {
         setErrors({ message: errorMessage });
       }
     };
+
+    const fetchAllDep = async () => {
+      try {
+        const response = await GetDep();
+        console.log(response.data.data); 
+        setDepartment(response.data.data);
+        
+      } catch (err) {
+        setErrors({ message: err.message || 'An error occurred' });
+      }
+    };
+    const fetchCurrentUser = async () => {
+      try {
+        const response = await GetUserLogin(); 
+        setCurrentUser(response.data.data.username); // Assuming the response contains a username field
+        console.log('Fetched user:', response.data.data.username);
+      } catch (error) {
+        console.error('Error fetching current user:', error);
+      }
+    };
+
+    const fetchAllPostition = async () => {
+      try {
+        const response = await GetPosition();
+        console.log(response.data.data); 
+        setEmployees(response.data.data);
+        
+      } catch (err) {
+        setErrors({ message: err.message || 'An error occurred' });
+      }
+    };
   
     fetchAllStaff();
+    fetchAllDep();
+    fetchCurrentUser();
+    fetchAllPostition();
   }, []);
   
+  const handleDepartmentChange = (selectedOption) => {
+    console.log('Selected department option:', selectedOption);
   
+    setFormData((prevData) => {
+      const updatedData = {
+        ...prevData,
+        departCode: selectedOption ? selectedOption.value : '',
+      };
+      console.log('Updated formData:', updatedData); // Check if the updated data is correct
+      return updatedData;
+    });
+  };
+
+  const handlePositionChange = (selectedOption) => {
+    console.log('Selected department option:', selectedOption);
+  
+    setFormData((prevData) => {
+      const updatedData = {
+        ...prevData,
+        positionCode: selectedOption ? selectedOption.value : '',
+      };
+      console.log('Updated formData:', updatedData); // Check if the updated data is correct
+      return updatedData;
+    });
+  };
+  const optionsDepartment = department.map(dep => ({
+    value: dep.departCode,
+    label: `${dep.departCode} - ${dep.departEngName}`
+  }));
+
+  const optionsPosiotn = position.map(pos => ({
+    value: pos.positionCode,
+    label: `${pos.positionCode} - ${pos.positionName}`
+  }));
   
   
   
@@ -157,12 +221,12 @@ const EmployeeInformation = () => {
   
 
 
-  const handleChange = (e, setFormData) => {
-    const { id, value } = e.target;
+  const handleChange = (e) => {
+    const { id, value, files } = e.target;
   
     // Handle file input
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
+    if (files && files[0]) {
+      const file = files[0];
       const reader = new FileReader();
   
       reader.onloadend = () => {
@@ -174,16 +238,15 @@ const EmployeeInformation = () => {
       };
   
       reader.readAsDataURL(file);
-    }
-  
+    } 
     // Handle date formatting
-    if (id === "bod") {
+    else if (id === "bod") {
       const formattedDate = new Date(value).toISOString().split("T")[0];
       setFormData((prevData) => ({
         ...prevData,
         [id]: formattedDate,
       }));
-    }
+    } 
     // Handle family status as boolean
     else if (id === "familyStatus") {
       const booleanValue = value === "true"; // "true" for married, "false" for single
@@ -191,7 +254,7 @@ const EmployeeInformation = () => {
         ...prevData,
         [id]: booleanValue,
       }));
-    }
+    } 
     // Handle default case
     else {
       setFormData((prevData) => ({
@@ -271,14 +334,39 @@ const EmployeeInformation = () => {
   };
 
 
-
+  const formatDateTime = (isoString) => {
+    const date = new Date(isoString);
+    return date.toLocaleString();
+  };
   const handleSaveEmployee = async () => {
-
-
+    // Ensure formData has the correct structure with all fields
+    const updatedFormData = {
+      ...formData, // Spread existing form data
+      departCode: formData.departCode || '', // Ensure departcode is properly populated
+      staffCode: formData.staffCode || '', // Ensure staffcode is set
+      engName: formData.engName || '', // Ensure engname is set
+      khName: formData.khName || '', // Ensure khname is set
+      branchCode: formData.branchCode || '', // Ensure branchCode is set
+      positionCode: formData.positionCode || '', // Ensure positioncode is set
+      genderCode: formData.genderCode || '', // Ensure gendercode is set
+      height: formData.height || null, // Set height if provided
+      weight: formData.weight || null, // Set weight if provided
+      bod: formData.bod || null, // Set bod (birthday) if provided
+      currentAddress: formData.currentAddress || '', // Ensure address is set
+      isRetire: formData.isRetire || false, // Set isretire if provided
+      resign: formData.resign || false, // Set resign if provided
+      isHoldWork: formData.isHoldWork || false, // Set isholdwork if provided
+      photo: formData.photo || null, // If there's a photo, include it; otherwise, null
+      createBy: currentUser, // Use the fetched username as creator
+      lastBy: currentUser, // Use the fetched username as updater
+      lastDate: new Date().toISOString(),
+      updateTime: new Date().toISOString(),
+    };
+  
     try {
-      console.log('Saving employee data:', formData);
-      const response = await AddStaff(formData);
-
+      console.log('Saving employee data:', updatedFormData);
+      const response = await AddStaff(updatedFormData);
+  
       if (response.status === 200) {
         console.log('Employee saved successfully:', response);
         Swal.fire({
@@ -288,17 +376,15 @@ const EmployeeInformation = () => {
         });
         setIsAddModalOpen(false);
       } else {
-        // Check for specific error messages from the API
+        // Handle errors based on status codes
         const errorMessage = response.data.message || 'An unexpected error occurred.';
-        if (response.status === 409) { // Example: Handle conflict status
-          //alert('Staff already exists: ' + errorMessage);
+        if (response.status === 409) { // Conflict error
           Swal.fire({
             title: "Error",
-            text: "Staff already exists :" + errorMessage,
+            text: "Staff already exists: " + errorMessage,
             icon: "warning"
           });
         } else {
-          //alert('Error: ' + errorMessage);
           Swal.fire({
             title: "Error",
             text: "Error: " + errorMessage,
@@ -308,40 +394,35 @@ const EmployeeInformation = () => {
       }
     } catch (error) {
       if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
         console.error('Error response data:', error.response.data);
         console.error('Error response status:', error.response.status);
         console.error('Error response headers:', error.response.headers);
-       // alert(`Error: ${error.response.data.message || 'An unexpected error occurred.'}`);
+  
         Swal.fire({
           title: "Error",
           text: `Error: ${error.response.data.message || 'An unexpected error occurred.'}`,
           icon: "warning"
         });
       } else if (error.request) {
-        // The request was made but no response was received
         console.error('Error request:', error.request);
-        //alert('No response received from the server.');
+  
         Swal.fire({
           title: "Error",
-          text: "No response recieved from the server.",
+          text: "No response received from the server.",
           icon: "warning"
         });
       } else {
-        // Something happened in setting up the request that triggered an Error
         console.error('Error message:', error.message);
-        //alert('An error occurred while setting up the request.');
+  
         Swal.fire({
           title: "Error",
-          text: "An error occured while setting up the request.",
+          text: "An error occurred while setting up the request.",
           icon: "warning"
         });
       }
     }
-    
   };
-
+  
 
   const handleSaveEdit = async () => {
     try {
@@ -411,30 +492,26 @@ const EmployeeInformation = () => {
   const recordsPerPage = 8;
   //open edit modal
   const openEditModal = (
-    Id, staffCode, fullName, latanName, genderCode, height, weight, birthDate, nationals, nationality, region, 
-    birthdateAddress, address, phoneNumber1, email, specailPhoneNumber, familyStatus, companyCode, 
-    companyBranchCode, departmentCode, officeCode, positionCode, last_modified_by, last_modified_date
+    id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode
   ) => {
-    console.log({ Id, staffCode, fullName, latanName, genderCode, height, weight, birthDate, nationals, nationality });
+    console.log({ id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode });
     
-    setEditingEmployees({ Id, staffCode, fullName, latanName, genderCode, height, weight, birthDate, nationals, nationality, region, birthdateAddress, address, phoneNumber1, email, specailPhoneNumber, familyStatus, companyCode, companyBranchCode, departmentCode, officeCode, positionCode, last_modified_by, last_modified_date });
+    setEditingEmployees({ id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode });
     
-    setFormData({ Id, staffCode, fullName, latanName, genderCode, height, weight, birthDate, nationals, nationality, region, birthdateAddress, address, phoneNumber1, email, specailPhoneNumber, familyStatus, companyCode, companyBranchCode, departmentCode, officeCode, positionCode, last_modified_by, last_modified_date });
+    setFormData({ id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode });
     
     setIsEditModalOpen(true);
   };
   
   
   const openViewModal= (
-    staffCode, fullName, latanName, genderCode, height, weight, birthDate, nationals, nationality, region, 
-    birthdateAddress, address, phoneNumber1, email, specailPhoneNumber, familyStatus, companyCode, 
-    companyBranchCode, departmentCode, officeCode, positionCode, last_modified_by, last_modified_date
+    id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode
   ) => {
-    console.log({ staffCode, fullName, latanName, genderCode, height, weight, birthDate, nationals, nationality });
+    console.log({ id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode });
     
-    setEditingEmployees({ staffCode, fullName, latanName, genderCode, height, weight, birthDate, nationals, nationality, region, birthdateAddress, address, phoneNumber1, email, specailPhoneNumber, familyStatus, companyCode, companyBranchCode, departmentCode, officeCode, positionCode, last_modified_by, last_modified_date });
+    setEditingEmployees({ id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode });
     
-    setFormData({ staffCode, fullName, latanName, genderCode, height, weight, birthDate, nationals, nationality, region, birthdateAddress, address, phoneNumber1, email, specailPhoneNumber, familyStatus, companyCode, companyBranchCode, departmentCode, officeCode, positionCode, last_modified_by, last_modified_date });
+    setFormData({ id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode });
     setIsViewModalOpen(true);
   };
   const isDisabled = openViewModal;
@@ -445,19 +522,13 @@ const EmployeeInformation = () => {
   //close edit modal
   const closeEditModal = () => {
     setEditingEmployees(null);
-    setFormData({ id: '', code: '', fullname: '', lastname: '',gender: '', height: '', weight: '',
-      birthdate: '', nation: '', nationality: '', region: '', birthdate_address: '', address: '',
-      phone_number: '',email: '', specialNumber: '', marital_status: '', company: '', branch: '', 
-      department: '', office: '', position: '',last_modified_by: '', last_modified_date: '' });
+    setFormData({ id: '', staffCodeode: '', engName: '', khName: '',genderCode: '', height: '', weight: '',bod: '', currentAddress: '', branchCode: '', departCode: '',  positionCode: ''});
     setIsEditModalOpen(false);
   };
 
   const closeViewModal = () => {
     setEditingEmployees(null);
-    setFormData({ id: '', code: '', fullname: '', lastname: '',gender: '', height: '', weight: '',
-      birthdate: '', nation: '', nationality: '', region: '', birthdate_address: '', address: '',
-      phone_number: '',email: '', specialNumber: '', marital_status: '', company: '', branch: '', 
-      department: '', office: '', position: '',last_modified_by: '', last_modified_date: '' });
+    setFormData({ id: '', staffCodeode: '', engName: '', khName: '',genderCode: '', height: '', weight: '',bod: '', currentAddress: '', branchCode: '', departCode: '',  positionCode: ''});
     setIsViewModalOpen(false);
   };
 
@@ -643,25 +714,25 @@ const EmployeeInformation = () => {
                     <th scope="col" className="sticky left-0 px-4 py-3 mr-3 bg-gray-100 border-t border-r">Action</th>
                     <th scope="col" className="px-4 py-3 border-t border-r">NO</th>
                     <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '120px' }}>staff Code</th>
-                    <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '200px' }}>Full Name</th>
-                    <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '200px' }}>Latan name</th>
+                    <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '200px' }}>English Name</th>
+                    <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '200px' }}>Khhmer Name</th>
                     <th scope="col" className="px-4 py-3 border-t border-r">Gender</th>
                     <th scope="col" className="px-4 py-3 border-t border-r">Height</th>
                     <th scope="col" className="px-4 py-3 border-t border-r ">Weight</th>
                     <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '120px' }}>Birthdate</th>
-                    <th scope="col" className="px-4 py-3 border-t border-r">Nation</th>
-                    <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '120px' }}>Nationality</th>
+                    {/* <th scope="col" className="px-4 py-3 border-t border-r">Nation</th> */}
+                    {/* <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '120px' }}>Nationality</th>
                     <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '120px' }}>Region</th>
-                    <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '330px' }}>Birthdate Address</th>
+                    <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '330px' }}>Birthdate Address</th> */}
                     <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '330px' }}>Address</th>
-                    <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px'}}>Phone Number</th>
+                    {/* <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px'}}>Phone Number</th>
                     <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '220px' }}>Email</th>
                     <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '150px' }}>Special Number</th>
                     <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '140px' }}>Marital Status</th>
-                    <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '200px' }}>Company</th>
+                    <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '200px' }}>Company</th> */}
                     <th scope="col" className="px-4 py-3 border-t border-r">Branch</th>
                     <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '150px' }}>Department</th>
-                    <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '250px' }}>Office</th>
+                    {/* <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '250px' }}>Office</th> */}
                     <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '250px' }}>Position</th>
                     <th scope="col" className="px-4 border-t border-r py-30"style={{ minWidth: '200px' }}>Last Modified By</th>
                     <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '250px' }}>Last Modified Date</th>
@@ -676,27 +747,17 @@ const EmployeeInformation = () => {
   <FaPen
     className="text-blue-500 cursor-pointer hover:text-blue-700"
     onClick={() => openEditModal(
-      employee.Id,
-      employee.staffcode,
-      employee.engname,
-      employee.KHName,
-      employee.GenderCode,
-      employee.Height,
-      employee.Weight,
-      employee.BOD,
-      employee.nationals,
-      employee.nationality,
-      employee.region,
-      employee.birthdateAddress,
-      employee.address,
-      employee.phoneNumber1,
-      employee.email,
-      employee.specailPhoneNumber,
-      employee.familyStatus,
-      employee.companyCode,
-      employee.companyBranchCode,
-      employee.departmentCode,
-      employee.officeCode,
+      employee.id,
+      employee.staffCode,
+      employee.engName,
+      employee.khName,
+      employee.genderCode,
+      employee.height,
+      employee.weight,
+      employee.bod,
+      employee.currentAddress,
+      employee.branchCode,
+      employee.departCode,
       employee.positionCode,
       employee.lastBy,
       employee.lastDate,
@@ -706,26 +767,17 @@ const EmployeeInformation = () => {
   <FaEye
     className="ml-3 text-indigo-500 cursor-pointer hover:text-indigo-700"
     onClick={() => openViewModal(
+      employee.id,
       employee.staffCode,
-      employee.fullName,
-      employee.latanName,
+      employee.engName,
+      employee.khName,
       employee.genderCode,
       employee.height,
       employee.weight,
-      employee.birthDate,
-      employee.nationals,
-      employee.nationality,
-      employee.region,
-      employee.birthdateAddress,
-      employee.address,
-      employee.phoneNumber1,
-      employee.email,
-      employee.specailPhoneNumber,
-      employee.familyStatus,
-      employee.companyCode,
-      employee.companyBranchCode,
-      employee.departmentCode,
-      employee.officeCode,
+      employee.bod,
+      employee.currentAddress,
+      employee.branchCode,
+      employee.departCode,
       employee.positionCode,
       employee.lastBy,
       employee.lastDate,
@@ -739,30 +791,31 @@ const EmployeeInformation = () => {
 </td>
 
                       <td className='px-4 py-1 border-r'>{employee.id}</td>
-                      <td className='px-4 py-1 border-r'>{employee.staffcode}</td>
-                      <td className='px-4 py-1 border-r'>{employee.engname}</td>
-                      <td className='px-4 py-1 border-r'>{employee.khname}</td>
-                      <td className='px-4 py-1 border-r'>{employee.gendercode}</td>
+                      <td className='px-4 py-1 border-r'>{employee.staffCode}</td>
+                      <td className='px-4 py-1 border-r'>{employee.engName}</td>
+                      <td className='px-4 py-1 border-r'>{employee.khName}</td>
+                      <td className='px-4 py-1 border-r'>{employee.genderCode}</td>
                       <td className='px-4 py-1 border-r'>{employee.height}</td>
                       <td className='px-4 py-1 border-r'>{employee.weight}</td>
-                      <td className='px-4 py-1 border-r'>{employee.bod}</td>
-                      <td className='px-4 py-1 border-r'>{employee.nationals}</td>
+                      <td className='px-4 py-1 border-r'>{formatDateTime(employee.bod)}</td>
+                      {/* <td className='px-4 py-1 border-r'>{employee.nationals}</td>
                       <td className='px-4 py-1 border-r'>{employee.nationality}</td>
-                      <td className='px-4 py-1 border-r'>{employee.region}</td>
-                      <td className='px-4 py-1 border-r'>{employee.birthdateAddress}</td>
-                      <td className='px-4 py-1 border-r'>{employee.currentaddress}</td>
-                      <td className='px-4 py-1 border-r'>{employee.phoneNumber1}</td>
+                      <td className='px-4 py-1 border-r'>{employee.region}</td> */}
+                      {/* <td className='px-4 py-1 border-r'>{employee.birthdateAddress}</td> */}
+                      <td className='px-4 py-1 border-r'>{employee.currentAddress}</td>
+                      {/* <td className='px-4 py-1 border-r'>{employee.phoneNumber1}</td> */}
                       {/* <td className='px-41py-3'>{emoyee.phoneNumber2}</td>
                       <td className='px-4 py-1'>{employ.phoneNumber3}</td> */}
-                      <td className='px-4 py-1 border-r'>{employee.email}</td>
-                      <td className='px-4 py-1 border-r'>{employee.specailPhoneNumber}</td>
-                      <td className='px-4 py-1 border-r'>{employee.familyStatus ? 'Married' : 'Single'}</td>
-                      <td className='px-4 py-1 border-r'>{employee.companyCode}</td>
+                      {/* <td className='px-4 py-1 border-r'>{employee.email}</td>
+                      <td className='px-4 py-1 border-r'>{employee.specailPhoneNumber}</td> */}
+                      {/* <td className='px-4 py-1 border-r'>{employee.familyStatus ? 'Married' : 'Single'}</td> */}
+                      {/* <td className='px-4 py-1 border-r'>{employee.companyCode}</td> */}
                       <td className='px-4 py-1 border-r'>{employee.branchCode}</td>
-                      <td className='px-4 py-1 border-r'>{employee.departcode}</td>
-                      <td className='px-4 py-1 border-r'>{employee.officeCode}</td>
-                      <td className='px-4 py-1 border-r'>{employee.positioncode}</td>
+                      <td className='px-4 py-1 border-r'>{employee.departCode}</td>
+                      {/* <td className='px-4 py-1 border-r'>{employee.officeCode}</td> */}
+                      <td className='px-4 py-1 border-r'>{employee.positionCode}</td>
                       <td className='px-4 py-1 border-r'>{employee.lastBy}</td>
+                      <td className='px-4 py-1 border-r'>{formatDateTime(employee.lastDate)}</td>
                       <td className='px-4 py-1 border-r'>{employee.photo}</td>
                     </tr>
                   ))}
@@ -858,7 +911,9 @@ const EmployeeInformation = () => {
           closeViewModal={closeViewModal}     
           saveAllModal={saveAllModal}
           offices={offices}
-          departments={departments}
+          department={optionsDepartment}
+          handleDepartmentChange={handleDepartmentChange}
+          handlePositionChange={handlePositionChange}
           // disabled={isDisabled} 
         />
       </div>

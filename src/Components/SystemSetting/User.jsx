@@ -74,8 +74,7 @@ const User = () => {
       const { id, value } = e.target;
       setFormData(prev => ({ ...prev, [id]: value }));
     } else {
-      // This is for react-select (or other similar libraries)
-      // Assume `e` is the value from react-select
+      
       const selectedValue = e; // e might be an object, use e.value if needed
       setFormData(prev => ({ ...prev, selectedOption: selectedValue }));
     }

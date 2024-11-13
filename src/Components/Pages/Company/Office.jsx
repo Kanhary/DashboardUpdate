@@ -67,7 +67,7 @@ const OfficeList = () => {
       }
     };
     
-    fetchCurrentUser
+    fetchCurrentUser();
     fetchAllOffice();
     fetchAllDep();
   }, []);
@@ -110,16 +110,16 @@ const OfficeList = () => {
   const closeAddModal = () => setIsAddModalOpen(false);
 
   // Assuming you have a function to open the edit modal
-  const openEditModal = (officeData) => {
-    setEditingOffice(officeData);
-    setFormData(officeData);
+  const openEditModal = (office) => {
+    setEditingOffice(office);
+    setFormData(office);
     setIsEditModalOpen(true);
   };
 
 
   const closeEditModal = () => {
     setEditingOffice(null);
-    setFormData({ OfficeCode: '', OfficeName: '', Department: '', BranchCode: '', CompanyCode: '' });
+    setFormData({ officeCode: '', officeEngName: '', officeKhName: '', departCode: ''});
     setIsEditModalOpen(false);
   };
 
@@ -134,9 +134,10 @@ const OfficeList = () => {
   };
 
   const handleSave = async () => {
+    // Prepare the data for submission
     const updatedFormData = {
-      ...formData,
-      departCode: selectedOption ? selectedOption.value : '',
+      ...formData, // Spread the current formData state
+      departCode: formData.departCode || '', // Use formData.departCode instead of selectedOption
       createdby: currentUser,
       lastby: currentUser,
       createTime: new Date().toISOString(),
@@ -144,35 +145,40 @@ const OfficeList = () => {
     };
   
     try {
+      // Call your API to save the data
       const response = await AddOffice(updatedFormData);
-
+  
+      // Show success alert
       Swal.fire({
-        title: "Deleted!",
-        text: "Office has been deleted.",
+        title: "Saved!",
+        text: "Office has been saved successfully.",
         icon: "success",
         confirmButtonText: "Okay",
       });
-      console.log('API Response:', response); 
-      closeAddModal();
+  
+      console.log('API Response:', response);
+      closeAddModal(); // Close the modal on successful save
     } catch (error) {
       console.error('Error saving data', error);
+  
+      // Show error alert if something goes wrong
       Swal.fire({
         title: "Error!",
-        text: "Failed to delete office.",
+        text: "Failed to save office.",
         icon: "error",
         confirmButtonText: "Okay",
-    });
+      });
     }
   };
   
   
 
-  const handleUpdate = async () => {
+  const handleUpdate = async (id) => {
     console.log('Update clicked', formData);
-    
+
     try {
-        // Assuming formData contains the data you want to update
-        const response = await UpdateOffice(formData.id, formData);  // Pass the office ID and data to UpdateOffice
+        // Send formData and id to UpdateOffice
+        const response = await UpdateOffice(editingOffice.id, formData);  // Pass both ID and formData to UpdateOffice
         console.log('Update response:', response);  // Log the API response
         
         closeEditModal();  // Close the modal after the update
@@ -231,13 +237,20 @@ const deleteOffice = async (id) => {
 };
 
 
+const handleDepartmentChange = (selectedOption) => {
+  console.log('Selected department option:', selectedOption);
 
-  const handleDepartmentChange = (selectedOption) => {
-    setFormData((prevData) => ({
+  setFormData((prevData) => {
+    const updatedData = {
       ...prevData,
       departCode: selectedOption ? selectedOption.value : '',
-    }));
-  };
+    };
+    console.log('Updated formData:', updatedData); // Check if the updated data is correct
+    return updatedData;
+  });
+};
+
+
   
   
   const handleBranchChange = (selectedOption) => {
@@ -370,29 +383,41 @@ const deleteOffice = async (id) => {
           <div className='w-full overflow-x-auto' data-aos='fade-right'>
             <table className='w-full text-sm text-left text-gray-500'>
               <thead className='text-xs text-gray-700 uppercase bg-gray-100'>
-                <tr>
-                  <th scope="col" className="sticky left-0 px-4 py-3 bg-gray-100 border border-r">Action</th>
-                  <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '300px'}}>Office Code</th>
-                  <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '300px'}}>English Name</th>
-                  <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '150px'}}>Khmer Name</th>
-                  <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '150px'}}>Department</th>
-                  {/* <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '150px'}}>Company Code</th> */}
-                </tr>
+              <tr>
+                <th scope="col" className="sticky left-0 px-4 py-3 bg-gray-100 border-t border-r" style={{ minWidth: '30px' }}>Action</th> 
+                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '100px' }}>Office Code</th>
+                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '200px' }}>English Name</th>
+                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Khmer Name</th>
+                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Department</th>
+                {/* <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Company Code</th> */}
+              </tr>
+
               </thead>
               <tbody>
                 {currentOffices.map(officeList=> (
                   <tr key={officeList.id} className='transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50'>
                     
-                    <td className='sticky left-0 w-full h-full px-4 py-3 bg-white border-r'>
-                      <div className="flex items-center justify-center space-x-3">
-                      <input type="checkbox" className="mr-1 action-checkbox"/>
-                      <FaPen className="ml-2 text-blue-500 cursor-pointer hover:text-blue-700" onClick={() => openEditModal(office)} />
-                      <FaTrashAlt className="ml-2 text-red-500 cursor-pointer hover:text-red-700" onClick={() => deleteOffice(officeList.id)} />
+                    <td className="sticky left-0 h-full px-4 py-3 bg-white border-r" >
+                      <div className="flex justify-start space-x-3" style={{minWidth: '30px'}}>
+                      {/* <input type="checkbox" className="mr-1 action-checkbox"/> */}
+                        <button
+                          className="text-blue-600 hover:text-blue-800"
+                          onClick={() => openEditModal(officeList)}
+                        >
+                          <FaPen />
+                        </button>
+                        <button
+                          key={officeList.id}
+                          className="text-red-600 hover:text-red-800"
+                          onClick={() => deleteOffice(officeList.id)}
+                        >
+                          <FaTrashAlt />
+                        </button>
                       </div>
                     </td>
-                    <td className='px-4 py-4 border-r'>{officeList.officeCode}</td>
+                    <td className='px-4 py-4 border-r' >{officeList.officeCode}</td>
                     <td className='px-4 py-4 border-r'>{officeList.officeEngName}</td>
-                    <td className='px-4 py-4 border-r'>{officeList.officeKhName}</td>
+                    <td className='px-4 py-4 border-r' style={{minWidth: '300px'}}>{officeList.officeKhName}</td>
                     <td className='px-4 py-4 border-r'>{officeList.departCode}</td>
                     {/* <td className='px-4 py-4 border-r'>{officeList.companyCode}</td> */}
                   </tr>
@@ -515,6 +540,7 @@ const deleteOffice = async (id) => {
             classNamePrefix="select"
             styles={customStyles}
           />
+
 
 
          
@@ -654,10 +680,8 @@ const deleteOffice = async (id) => {
         </div>
       </div>
             <footer className="flex flex-col-reverse items-center justify-end px-6 py-4 space-y-3 space-y-reverse bg-gray-100 rounded-b-xl md:flex-row md:space-x-3 md:space-y-0">
-              <button onClick={handleSaveNew} className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto">
-                Save & New
-              </button>
-              <button onClick={handleSave} className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-green-500 to-green-700 hover:shadow-lg hover:scale-105 md:w-auto">
+              
+              <button onClick={handleUpdate} className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-green-500 to-green-700 hover:shadow-lg hover:scale-105 md:w-auto">
                 Save
               </button>
               <button onClick={closeEditModal} className="w-full px-5 py-2 text-sm font-medium text-gray-700 transition duration-200 transform bg-gray-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105 md:w-auto">

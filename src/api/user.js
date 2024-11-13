@@ -73,7 +73,7 @@ export function DelStaff(id){
 export function UpdateStaff(id, data) {
     return request({
         method: "POST",
-        url: `/staffs/updateUser/${id}`,  // Use the Id to construct the URL
+        url: `/staff/updateStaff/${id}`,  // Use the Id to construct the URL
         data: data  // Include the data in the request body
     });
 }
@@ -195,7 +195,7 @@ export function AddOffice(data){
     })
 }
 
-export function UpdateOffice(id){
+export function UpdateOffice(id, data){
     return request({
         method: "POST",
         url: `/Office/updateOffice/${id}`,
@@ -211,6 +211,13 @@ export function DeleteOffice(id) {
     });
 }
 
+
+export function GetPosition() {
+    return request({
+        method: "GET",
+        url: '/position/getAllPosition',    
+    });
+}
 
 
 
