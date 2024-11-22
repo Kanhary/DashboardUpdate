@@ -7,7 +7,7 @@ import { IoMdRefresh } from "react-icons/io";
 import ReactPaginate from 'react-paginate';
 import Select from 'react-select';
 import { GiShipBow } from "react-icons/gi";
-import { GetAllUser, AddUser, GetUserLogin, UpdateUser, DeleteUser } from '../../api/user';
+import { GetAllUser, AddUser, GetUserLogin, UpdateUser, DeleteUser, GetAllStaff } from '../../api/user';
 import axios from 'axios';
 import { getToken } from '../../utils/token/Token';
 
@@ -129,7 +129,7 @@ const User = () => {
 
     const fetchEmployees = async () => {
       try {
-        const response = await GetEmp();
+        const response = await GetAllStaff();
         setEmployees(response.data.data)
       } catch (err) {
         setError(err.message || 'An error occurred');
@@ -536,15 +536,15 @@ const handleStaffCode = (option) => {
 
 
 
-const optionsStaffCode = [
-  {value: 'staff-005', label: 'staff-005'}
-]
+// const optionsStaffCode = [
+//   {value: 'staff-005', label: 'staff-005'}
+// ]
 
 // Format options for react-select
-// const optionsStaffCode = employees.map(employee => ({
-//   value: employee.staffcode,
-//   label: `${employee.staffcode}`
-// }));
+const optionsStaffCode = employees.map(employee => ({
+  value: employee.staffCode,
+  label: `${employee.staffCode}-${employee.khName}`
+}));
 
 const optionsRole = [
   {value: 'Admin', label: 'Admin'},

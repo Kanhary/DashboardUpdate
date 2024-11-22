@@ -5,7 +5,8 @@ const companies = [
     nameEn: 'Phnom Penh Autonomous Port',
     nameKh: 'កំពង់ផែស្វយ័តភ្នំពេញ',
     phone: '+855 123 456 789',
-    email: 'info@pp.com', // Added email field
+    email: 'info@pp.com', 
+    address: 'Phnom Penh',
     photo: '/LOGO PPAP.png',
   },
   // You can add more companies here
@@ -18,7 +19,7 @@ const Company = () => {
     <section className='mt-10'>
         <h1 className='text-xl font-medium text-blue-800'>តារាងក្រុមហ៊ុន</h1>
         <div className='my-3 border '></div>
-        <div className="flex items-center justify-center" data-aos='fade-up'>
+        <div className="w-full overflow-x-auto" data-aos='fade-up'>
             <div className="w-full bg-white border border-gray-200 rounded-lg shadow-md" data-aos='fade-right'>
                 <table className="w-full bg-white border-collapse table-auto">
                     <thead>
@@ -34,7 +35,10 @@ const Company = () => {
                         </th>
                         <th className="px-6 py-4 text-sm font-semibold tracking-wide text-left text-gray-600 uppercase">
                         Email
-                        </th> {/* New email column */}
+                        </th> 
+                        <th className="px-6 py-4 text-sm font-semibold tracking-wide text-left text-gray-600 uppercase">
+                        Address
+                        </th>
                         <th className="px-6 py-4 text-sm font-semibold tracking-wide text-left text-gray-600 uppercase">
                         Logo
                         </th>
@@ -59,6 +63,9 @@ const Company = () => {
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-800">
                             {company.email} {/* Displaying email */}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-800">
+                            {company.address} {/* Displaying email */}
                         </td>
                         <td className="px-6 py-4">
                             <img

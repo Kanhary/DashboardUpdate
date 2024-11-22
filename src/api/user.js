@@ -195,13 +195,14 @@ export function AddOffice(data){
     })
 }
 
-export function UpdateOffice(id, data){
+export function UpdateOffice(id, data) {
     return request({
-        method: "POST",
-        url: `/Office/updateOffice/${id}`,
-        data: id
-    })
-}
+      method: 'POST', // Assuming a POST request is required
+      url: `/Office/updateOffice/${id}`, // Use query parameter for the office ID
+      data: data
+    });
+  }
+  
 
 export function DeleteOffice(id) {
     return request({

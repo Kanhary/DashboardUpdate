@@ -110,9 +110,9 @@ const OfficeList = () => {
   const closeAddModal = () => setIsAddModalOpen(false);
 
   // Assuming you have a function to open the edit modal
-  const openEditModal = (office) => {
-    setEditingOffice(office);
-    setFormData(office);
+  const openEditModal = (officeList) => {
+    setEditingOffice(officeList);
+    setFormData(officeList);
     setIsEditModalOpen(true);
   };
 
@@ -173,19 +173,62 @@ const OfficeList = () => {
   
   
 
-  const handleUpdate = async (id) => {
-    console.log('Update clicked', formData);
-
+  const handleUpdate = async () => {
     try {
-        // Send formData and id to UpdateOffice
-        const response = await UpdateOffice(editingOffice.id, formData);  // Pass both ID and formData to UpdateOffice
-        console.log('Update response:', response);  // Log the API response
-        
-        closeEditModal();  // Close the modal after the update
+      console.log('Saving office data:', formData);
+      const officeId = formData.id;  // Ensure this is valid
+      if (!officeId) {
+        Swal.fire({
+          title: "Error",
+          text: "Office ID is missing",
+          icon: "warning"
+        });
+        return;
+      }
+  
+      const response = await UpdateOffice(officeId, formData);
+  
+      if (response.status === 200) {
+        console.log('Office updated successfully:', response.data);
+        Swal.fire({
+          title: "Successful",
+          text: "Office updated successfully",
+          icon: "success"
+        });
+        setIsEditModalOpen(false);  // Close the edit modal
+      } else {
+        const errorMessage = response.data.message || 'An unexpected error occurred.';
+        Swal.fire({
+          title: "Error",
+          text: "Error: " + errorMessage,
+          icon: "warning"
+        });
+      }
     } catch (error) {
-        console.error('Error updating office:', error);  // Log any errors
+      if (error.response) {
+        console.error('Error response data:', error.response.data);
+        Swal.fire({
+          title: "Error",
+          text: error.response.data.message || 'An unexpected error occurred.',
+          icon: "error"
+        });
+      } else if (error.request) {
+        console.error('Error request:', error.request);
+        Swal.fire({
+          title: "Error",
+          text: "No response received from the server.",
+          icon: "error"
+        });
+      } else {
+        console.error('Error message:', error.message);
+        Swal.fire({
+          title: "Error",
+          text: "An error occurred while setting up the request.",
+          icon: "error"
+        });
+      }
     }
-};
+  };
 
 const deleteOffice = async (id) => {
   try {

@@ -492,26 +492,26 @@ const EmployeeInformation = () => {
   const recordsPerPage = 8;
   //open edit modal
   const openEditModal = (
-    id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode
-  ) => {
-    console.log({ id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode });
-    
-    setEditingEmployees({ id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode });
-    
-    setFormData({ id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode });
+    id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode, positionCode
+    ) => {
+      console.log({ id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode, positionCode });
+      
+      setEditingEmployees({ id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode, positionCode });
+      
+      setFormData({ id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode, positionCode });
     
     setIsEditModalOpen(true);
   };
   
   
   const openViewModal= (
-    id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode
+    id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode, positionCode
   ) => {
-    console.log({ id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode });
+    console.log({ id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode, positionCode });
     
-    setEditingEmployees({ id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode });
+    setEditingEmployees({ id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode, positionCode });
     
-    setFormData({ id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode });
+    setFormData({ id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode, positionCode });
     setIsViewModalOpen(true);
   };
   const isDisabled = openViewModal;
@@ -999,7 +999,7 @@ const EmployeeInformation = () => {
                 closeEditModal={closeAllModals}
                 closeViewModal={closeViewModal}
                 saveAllModal={saveAllModal}
-                disabled={isDisabled}  // Pass disabled prop to disable fields
+                disabled={isDisabled} 
               />
             </div>
           </div>
@@ -1012,4 +1012,3 @@ const EmployeeInformation = () => {
   );
 };
 export default EmployeeInformation;
-

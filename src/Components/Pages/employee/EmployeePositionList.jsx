@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { FaPen, FaTrashAlt } from "react-icons/fa";
 import { IoMdRefresh } from "react-icons/io";
-import { GetPosition } from '../../../api/user';
+import { GetPosition, GetUserLogin } from '../../../api/user';
 
 
 const EmployeePositionList = () => {
@@ -13,6 +13,7 @@ const EmployeePositionList = () => {
   const [formData, setFormData] = useState(INITAIL_FORM_DATA);
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [employees, setEmployees] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
 
 
 
@@ -27,9 +28,19 @@ const EmployeePositionList = () => {
         setError({ message: err.message || 'An error occurred' });
       }
     };
+    const fetchCurrentUser = async () => {
+      try {
+        const response = await GetUserLogin(); 
+        setCurrentUser(response.data.data.username); // Assuming the response contains a username field
+        console.log('Fetched user:', response.data.data.username);
+      } catch (error) {
+        console.error('Error fetching current user:', error);
+      }
+    };
 
 
     fetchAllPostition();
+    fetchCurrentUser();
   },[]);
   
 
@@ -207,8 +218,8 @@ const EmployeePositionList = () => {
                     <td className='px-2 py-3 border-r '>{employee.positionCode}</td>
                     <td className='px-2 py-3 border-r '>{employee.positionName}</td>
                     {/* <td className='px-4 py-3 border-r' style={{ minWidth: '250px' }}>{employee.description}</td> */}
-                    <td className='px-2 py-3 border-r ' style={{ minWidth: '150px' }}>Last Edited By</td>
-                    <td className='px-2 py-3 border-r ' style={{ minWidth: '160px' }}>Last Edited Date</td>
+                    <td className='px-2 py-3 border-r ' style={{ minWidth: '150px' }}>{employee.createdBy}</td>
+                    <td className='px-2 py-3 border-r ' style={{ minWidth: '160px' }}></td>
                   </tr>
                 ))}
               </tbody>
