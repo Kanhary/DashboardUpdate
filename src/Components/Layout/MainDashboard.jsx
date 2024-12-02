@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
 // import Header_page from './HeaderPage';
 import Sidebar from './Sidebar';
-import Computer from '../Pages/Computer';
+import Computer from '../Pages/Computer/Computer';
 import EmployeePositionList from '../Pages/employee/EmployeePositionList';
 import GenderList from '../Pages/employee/GenderList';
 import Maintenance from '../Pages/Maintenance';

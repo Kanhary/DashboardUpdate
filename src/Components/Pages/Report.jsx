@@ -3,6 +3,7 @@ import axios from "axios";
 import * as XLSX from "xlsx";
 import { GetAllStaff } from "../../api/user";
 import Swal from 'sweetalert2';
+import { AiOutlineFileExcel } from "react-icons/ai";
 
 const Report = () => {
   const [loading, setLoading] = useState(false);
@@ -60,9 +61,10 @@ const Report = () => {
 
   return (
     <section className="p-4 mt-10">
-      <h1 className="mb-4 text-xl font-bold">Generate Computer Report</h1>
+      <h1 className='text-xl font-medium text-blue-800'>របាយការណ៍</h1>
+      <div className='mt-3 border'></div>
 
-      <div className='w-full overflow-x-auto'>
+      {/* <div className='w-full overflow-x-auto'>
         <table className='w-full text-sm text-left text-gray-500'>
             <thead className='text-xs text-gray-700 uppercase bg-gray-100'>
                 <tr>
@@ -90,18 +92,19 @@ const Report = () => {
                 </tr>
             </tbody>
         </table>
-      </div>
+      </div> */}
 
       {/* Generate Report Button */}
-      {/* <button
+      <button
         onClick={generateExcelReport}
         disabled={loading}
-        className={`px-4 py-2 text-white rounded ${
-          loading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
-        }`}
+        className={`mt-4 flex items-center px-4 py-2 text-white text-sm font-medium rounded-lg shadow-md ${
+            loading ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"
+          }`}
       >
+        <AiOutlineFileExcel className="mr-2" size={20} />
         {loading ? "Generating..." : "Download Excel Report"}
-      </button> */}
+      </button>
     </section>
   );
 };

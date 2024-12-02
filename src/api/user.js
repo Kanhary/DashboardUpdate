@@ -220,5 +220,129 @@ export function GetPosition() {
     });
 }
 
+// export function AddPosition(data) {
+//     return request({
+//         method: "POST",
+//         url: '/position/addNewPosition', 
+//         data: data   
+//     });
+// }
 
 
+export function AddPosition(data){
+    return request({
+        method: "POST",
+        url: '/position/addNewPosition',
+        data: data
+    })
+}
+
+
+export function DeletePosition(id) {
+    return request({
+        method: "DELETE",
+        url: `/position/deletePosition/${id}`,
+        
+    });
+}
+
+export function UpdatePosition(id, data) {
+    return request({
+      method: 'POST', // Assuming a POST request is required
+      url: `/position/updatePosition/${id}`, // Use query parameter for the office ID
+      data: data
+    });
+}
+
+export function GetCategory() {
+    return request({
+        method: "GET",
+        url: '/Category/getAllCategory',    
+    });
+}
+
+export function AddCategory(data){
+    return request({
+        method: "POST",
+        url: '/Category/addNewCategory',
+        data: data
+    })
+}
+
+export function UpdateCategory(id, data) {
+    return request({
+      method: 'POST', // Assuming a POST request is required
+      url: `/Category/updateCategory/${id}`, // Use query parameter for the office ID
+      data: data
+    });
+}
+
+export function DeleteCategory(id) {
+    return request({
+        method: "DELETE",
+        url: `/Category/DeleteCategory/${id}`,
+        
+    });
+}
+
+export function GetSubCategory() {
+    return request({
+        method: "GET",
+        url: '/SubCategory/findAllSubCategory',    
+    });
+}
+
+export function AddSubCategory(data){
+    return request({
+        method: "POST",
+        url: '/SubCategory/AddNewSubCategory',
+        data: data
+    })
+}
+
+export function UpdateSubCategory(id, data) {
+    return request({
+      method: 'POST', // Assuming a POST request is required
+      url: `/SubCategory/UpdateSubCate/${id}`, // Use query parameter for the office ID
+      data: data
+    });
+}
+
+export function DeleteSubCategory(id) {
+    return request({
+        method: "DELETE",
+        url: `/SubCategory/DeleteSubCate/${id}`,
+        
+    });
+}
+
+export function GetProduct() {
+    return request({
+        method: "GET",
+        url: '/Product/findAllPro',    
+    });
+}
+
+export function AddProduct(data){
+    return request({
+        method: "POST",
+        url: '/Product/addNewPro',
+        data: data
+    })
+}
+
+export function UpdateProduct(id, data) {
+    return request({
+      method: 'POST', // Assuming a POST request is required
+      url: `/Product/updatePro/${id}`, // Use query parameter for the office ID
+      data: data
+    });
+}
+
+export function DeleteProduct(id) {
+    return request({
+        method: "DELETE",
+        url: `/Product/deletePro/${id}`,
+        
+    });
+}

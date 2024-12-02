@@ -2,17 +2,18 @@ import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { FaPen, FaTrashAlt } from "react-icons/fa";
 import { IoMdRefresh } from "react-icons/io";
-import { GetPosition, GetUserLogin } from '../../../api/user';
+import Swal from 'sweetalert2';
+import { AddOffice, GetPosition, GetUserLogin, AddPosition , DeletePosition, UpdatePosition} from '../../../api/user';
 
 
 const EmployeePositionList = () => {
-  const INITAIL_FORM_DATA = {positionCode: '', positionName: ''}
+  const INITAIL_FORM_DATA = {positionCode: '', positionName: '', CreatedBy: '', LastBy: ''}
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [formData, setFormData] = useState(INITAIL_FORM_DATA);
   const [editingEmployee, setEditingEmployee] = useState(null);
-  const [employees, setEmployees] = useState([]);
+  const [positions, setPosition] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
 
 
@@ -22,7 +23,7 @@ const EmployeePositionList = () => {
       try {
         const response = await GetPosition();
         console.log(response.data.data); 
-        setEmployees(response.data.data);
+        setPosition(response.data.data);
         
       } catch (err) {
         setError({ message: err.message || 'An error occurred' });
@@ -67,11 +68,11 @@ const EmployeePositionList = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 8;
-  const filteredEmployees = employees.filter(employee =>
-    employee.positionName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    employee.positionCode.includes(searchTerm)
+  const filteredPosition = positions.filter(position =>
+    position.positionName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    position.positionCode.includes(searchTerm)
   );
-  const totalPages = Math.ceil(filteredEmployees.length / recordsPerPage);
+  const totalPages = Math.ceil(filteredPosition.length / recordsPerPage);
 
   const handlePageChange = (pageNumber) => {
     if (pageNumber > 0 && pageNumber <= totalPages) {
@@ -81,7 +82,7 @@ const EmployeePositionList = () => {
 
   const indexOfLastRecord = currentPage * recordsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-  const currentEmployees = filteredEmployees.slice(indexOfFirstRecord, indexOfLastRecord);
+  const currentPositions = filteredPosition.slice(indexOfFirstRecord, indexOfLastRecord);
 
   const getPaginationItems = () => {
     let pages = [];
@@ -102,11 +103,12 @@ const EmployeePositionList = () => {
   const openAddModal = () => setIsAddModalOpen(true);
   const closeAddModal = () => setIsAddModalOpen(false);
 
-  const openEditModal = (ID, Position) => {
-    setEditingEmployee({ ID, Position });
-    setFormData({ ID, Position });
-    setIsEditModalOpen(true);
-  };
+  const openEditModal = (position) => {
+    setEditingEmployee(position); // Set the position directly for tracking
+    setFormData({ ...position }); // Spread the position object to populate formData fields
+    setIsEditModalOpen(true); // Open the modal
+};
+
 
   const closeEditModal = () => {
     setEditingEmployee(null);
@@ -116,27 +118,159 @@ const EmployeePositionList = () => {
 
   const handleChange = (e) => {
     const { id, value } = e.target;
-    setFormData(prev => ({ ...prev, [id]: value }));
+    setFormData((prevData) => ({
+      ...prevData,
+      [id]: value, // Update the specific field by its ID
+    }));
   };
+  
 
   const handleSaveNew = () => {
     console.log('Save & New clicked', formData);
     setFormData(INITAIL_FORM_DATA);
   };
 
-  const handleSave = () => {
-    console.log('Save clicked', formData);
-    closeAddModal();
+  const handleSave = async () => {
+    // Prepare the data for submission
+    const updatedFormData = {
+      ...formData, // Spread the current formData state
+    
+      Createdby: currentUser,
+      Lastby: currentUser,
+      createTime: new Date().toISOString(),
+      updateTime: new Date().toISOString(),
+    };
+  
+    try {
+      // Call your API to save the data
+      const response = await AddPosition(updatedFormData);
+  
+      // Show success alert
+      Swal.fire({
+        title: "Saved!",
+        text: "Office has been saved successfully.",
+        icon: "success",
+        confirmButtonText: "Okay",
+      });
+  
+      console.log('API Response:', response);
+      closeAddModal(); // Close the modal on successful save
+    } catch (error) {
+      console.error('Error saving data', error);
+  
+      // Show error alert if something goes wrong
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to save office.",
+        icon: "error",
+        confirmButtonText: "Okay",
+      });
+    }
   };
 
-  const handleUpdate = () => {
-    console.log('Update clicked', formData);
-    closeEditModal();
+  const handleUpdate = async () => {
+    try {
+      console.log('Saving office data:', formData);
+      const Id = formData.id;  // Ensure this is valid
+      if (!Id) {
+        Swal.fire({
+          title: "Error",
+          text: "Office ID is missing",
+          icon: "warning"
+        });
+        return;
+      }
+  
+      const response = await UpdatePosition(Id, formData);
+  
+      if (response.status === 200) {
+        console.log('Office updated successfully:', response.data);
+        Swal.fire({
+          title: "Successful",
+          text: "Office updated successfully",
+          icon: "success"
+        });
+        setIsEditModalOpen(false);  // Close the edit modal
+      } else {
+        const errorMessage = response.data.message || 'An unexpected error occurred.';
+        Swal.fire({
+          title: "Error",
+          text: "Error: " + errorMessage,
+          icon: "warning"
+        });
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error('Error response data:', error.response.data);
+        Swal.fire({
+          title: "Error",
+          text: error.response.data.message || 'An unexpected error occurred.',
+          icon: "error"
+        });
+      } else if (error.request) {
+        console.error('Error request:', error.request);
+        Swal.fire({
+          title: "Error",
+          text: "No response received from the server.",
+          icon: "error"
+        });
+      } else {
+        console.error('Error message:', error.message);
+        Swal.fire({
+          title: "Error",
+          text: "An error occurred while setting up the request.",
+          icon: "error"
+        });
+      }
+    }
   };
 
-  const deleteEmployee = (ID) => {
-    if (window.confirm("Are you sure you want to delete this employee?")) {
-      
+  const deletePosition = async (id) => {
+    try {
+        // Show a confirmation prompt before deleting
+        const result = await Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#22c55e",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
+        });
+  
+        if (result.isConfirmed) {
+            // Call DeleteOffice function to send the API request
+            const response = await DeletePosition(id); // Pass the office id here
+            console.log('Response:', response);  // Log the response to confirm deletion
+  
+            if (response.status === 200) {  // Check for successful response
+                Swal.fire({
+                    title: "Deleted!",
+                    text: "Office has been deleted.",
+                    icon: "success",
+                    confirmButtonText: "Okay",
+                });
+  
+                // Remove the deleted office from the list
+                const updatedOffices = positions.filter(position => position.id !== id);
+                setPosition(updatedOffices);  // Update the state with the remaining offices
+            } else {
+                Swal.fire({
+                    title: "Error!",
+                    text: "Failed to delete office.",
+                    icon: "error",
+                    confirmButtonText: "Okay",
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Error:', error.response ? error.response.data : error.message);
+        Swal.fire({
+            title: 'Error!',
+            text: error.response?.data?.message || 'Failed to connect to the server.',
+            icon: 'error',
+            confirmButtonText: 'Okay',
+        });
     }
   };
 
@@ -208,17 +342,17 @@ const EmployeePositionList = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentEmployees.map(employee => (
-                  <tr key={employee.ID} className='transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50'>
+                {currentPositions.map(position => (
+                  <tr key={position.ID} className='transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50'>
                     <td className='sticky left-0 flex px-6 py-4 bg-white border-r'>
                       <input type="checkbox" className="mr-3 action-checkbox" />
-                      <FaPen className="text-blue-500 cursor-pointer hover:text-blue-700" onClick={() => openEditModal(employee.ID, employee.Position)} />
-                      <FaTrashAlt className="ml-3 text-red-500 cursor-pointer hover:text-red-700" onClick={() => deleteEmployee(employee.ID)} />
+                      <FaPen className="text-blue-500 cursor-pointer hover:text-blue-700" onClick={() => openEditModal(position)} />
+                      <FaTrashAlt className="ml-3 text-red-500 cursor-pointer hover:text-red-700" key={position.id} onClick={() => deletePosition(position.id)} />
                     </td>
-                    <td className='px-2 py-3 border-r '>{employee.positionCode}</td>
-                    <td className='px-2 py-3 border-r '>{employee.positionName}</td>
+                    <td className='px-2 py-3 border-r '>{position.positionCode}</td>
+                    <td className='px-2 py-3 border-r '>{position.positionName}</td>
                     {/* <td className='px-4 py-3 border-r' style={{ minWidth: '250px' }}>{employee.description}</td> */}
-                    <td className='px-2 py-3 border-r ' style={{ minWidth: '150px' }}>{employee.createdBy}</td>
+                    <td className='px-2 py-3 border-r ' style={{ minWidth: '150px' }}>{position.createdBy}</td>
                     <td className='px-2 py-3 border-r ' style={{ minWidth: '160px' }}></td>
                   </tr>
                 ))}
@@ -300,24 +434,23 @@ const EmployeePositionList = () => {
               <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
                 {/* Input for Code */}
                 <div className="w-full md:w-1/2">
-                  <label htmlFor="ID" className="block mb-2 text-sm font-semibold text-gray-700">ID</label>
+                  <label htmlFor="positionCode" className="block mb-2 text-sm font-semibold text-gray-700">ID</label>
                   <input
                     type="text"
-                    id="ID"
+                    id="positionCode"
                     value={formData.positionCode}
                     onChange={handleChange}
-                    disabled
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                   />
                 </div>
                 {/* Input for Position */}
                 <div className="w-full md:w-1/2">
-                  <label htmlFor="position" className="block mb-2 text-sm font-semibold text-gray-700">Position</label>
+                  <label htmlFor="positionName" className="block mb-2 text-sm font-semibold text-gray-700">Position</label>
                   <input
                     type="text"
-                    id="Position"
+                    id="positionName"
                     value={formData.positionName}
-                    onChange={handleChange}
+                   onChange={handleChange}
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                   />
                 </div>
@@ -358,10 +491,10 @@ const EmployeePositionList = () => {
             <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
               {/* Input for Code */}
               <div className="w-full md:w-1/2">
-                <label htmlFor="code" className="block mb-2 text-sm font-semibold text-gray-700 ">ID</label>
+                <label htmlFor="positionCode" className="block mb-2 text-sm font-semibold text-gray-700 ">ID</label>
                 <input
                   type="text"
-                  id="ID"
+                  id="positionCode"
                   value={formData.positionCode}
                   onChange={handleChange}
                   className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
@@ -370,10 +503,10 @@ const EmployeePositionList = () => {
               </div>
               {/* Input for Position */}
               <div className="w-full md:w-1/2">
-                <label htmlFor="position" className="block mb-2 text-sm font-semibold text-gray-700">Position</label>
+                <label htmlFor="positionName" className="block mb-2 text-sm font-semibold text-gray-700">Position</label>
                 <input
                   type="text"
-                  id="Position"
+                  id="positionName"
                   value={formData.positionName}
                   onChange={handleChange}
                   className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
@@ -384,7 +517,7 @@ const EmployeePositionList = () => {
           </div>
           <footer className="flex flex-col-reverse items-center justify-end px-6 py-4 space-y-3 space-y-reverse bg-gray-100 rounded-b-xl md:flex-row md:space-x-3 md:space-y-0">
             
-            <button onClick={handleSave} className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto">
+            <button onClick={handleUpdate} className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto">
               Save
             </button>
             <button onClick={closeEditModal} className="w-full px-5 py-2 text-sm font-medium text-gray-700 transition duration-200 transform bg-gray-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105 md:w-auto">
