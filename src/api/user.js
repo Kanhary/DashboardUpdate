@@ -47,9 +47,6 @@ export function DeleteUser(username) {
     });
 }
 
-
-
-
 export function Login({ username, password }) {
     return request({
         method: 'POST',
@@ -60,8 +57,6 @@ export function Login({ username, password }) {
         }
     });
 }
-
-
 
 export function DelStaff(id){
     return request({
@@ -76,24 +71,6 @@ export function UpdateStaff(id, data) {
         url: `/staff/updateStaff/${id}`,  // Use the Id to construct the URL
         data: data  // Include the data in the request body
     });
-}
-
-export function GetUserRole(){
-    return request({
-        method: "GET",
-        url: '',
-
-    })
-}
-
-
-
-
-export function GetBranchCode(){
-    return request({
-        method: "",
-        url: '',
-    })
 }
 
 
@@ -343,6 +320,100 @@ export function DeleteProduct(id) {
     return request({
         method: "DELETE",
         url: `/Product/deletePro/${id}`,
+        
+    });
+}
+
+export function GetAllChild(){
+    return request({
+        method: "GET",
+        url: '/Children/findallchild'
+    })
+}
+
+export function AddChild(data){
+    return request({
+        method: "POST",
+        url: '/Children/addnewchild',
+        data: data
+    })
+}
+
+export function UpdateChild(id, data) {
+    return request({
+      method: 'POST', 
+      url: `/Children/updateChildById/${id}`, 
+      data: data
+    });
+}
+
+export function DeleteChild(id) {
+    return request({
+        method: "DELETE",
+        url: `/Children/deleteChildById/${id}`,
+        
+    });
+}
+
+
+export function GetAllwife(){
+    return request({
+        method: "GET",
+        url: '/Wife/findAllWife'
+    })
+}
+
+export function AddWife(data){
+    return request({
+        method: "POST",
+        url: '/Wife/addNewWife',
+        data: data
+    })
+}
+
+export function UpdateWife(id, data) {
+    return request({
+      method: 'POST', 
+      url: `/Wife/UpdateWifeById/${id}`, 
+      data: data
+    });
+}
+
+export function DeleteWife(id) {
+    return request({
+        method: "DELETE",
+        url: `/Wife/DeleteWifeById/${id}`,
+        
+    });
+}
+
+export function GetAllComputerCourse(){
+    return request({
+        method: "GET",
+        url: '/ComputerCourse/findAllComCourse'
+    })
+}
+
+export function AddComputerCourse(data){
+    return request({
+        method: "POST",
+        url: '/ComputerCourse/addNewCourse',
+        data: data
+    })
+}
+
+export function UpdateComputerCourse(id, data) {
+    return request({
+      method: 'POST', 
+      url: `/ComputerCourse/updateCourseById/${id}`, 
+      data: data
+    });
+}
+
+export function DeleteComputerCourse(id) {
+    return request({
+        method: "DELETE",
+        url: `/ComputerCourse/deleteComCourseById/${id}`,
         
     });
 }

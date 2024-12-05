@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaPen, FaTrashAlt } from "react-icons/fa";
 import Select from 'react-select';
-import { GetBranchCode, GetDep } from '../../../api/user';
+import { GetDep } from '../../../api/user';
 import { IoMdRefresh } from "react-icons/io";
 
 const Department = () => {
