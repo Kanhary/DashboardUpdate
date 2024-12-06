@@ -129,7 +129,7 @@ const Category = () => {
       // Show success alert
       Swal.fire({
         title: "Saved!",
-        text: "Office has been saved successfully.",
+        text: "Category has been saved successfully.",
         icon: "success",
         confirmButtonText: "Okay",
       });
@@ -142,7 +142,7 @@ const Category = () => {
       // Show error alert if something goes wrong
       Swal.fire({
         title: "Error!",
-        text: "Failed to save office.",
+        text: "Failed to save category.",
         icon: "error",
         confirmButtonText: "Okay",
       });
@@ -153,12 +153,12 @@ const Category = () => {
 
   const handleUpdate = async () => {
     try {
-      console.log('Saving office data:', formData);
+      console.log('Saving category data:', formData);
       const id = formData.id;  // Ensure this is valid
       if (!id) {
         Swal.fire({
           title: "Error",
-          text: "Office ID is missing",
+          text: "Category ID is missing",
           icon: "warning"
         });
         return;
@@ -167,10 +167,10 @@ const Category = () => {
       const response = await UpdateCategory(id, formData);
   
       if (response.status === 200) {
-        console.log('Office updated successfully:', response.data);
+        console.log('Category updated successfully:', response.data);
         Swal.fire({
           title: "Successful",
-          text: "Office updated successfully",
+          text: "Category updated successfully",
           icon: "success"
         });
         setIsEditModalOpen(false);  // Close the edit modal
@@ -229,7 +229,7 @@ const handleDeleteCategory = async (id) => {
           if (response.status === 200) {  // Check for successful response
               Swal.fire({
                   title: "Deleted!",
-                  text: "Office has been deleted.",
+                  text: "Category has been deleted.",
                   icon: "success",
                   confirmButtonText: "Okay",
               });
@@ -240,7 +240,7 @@ const handleDeleteCategory = async (id) => {
           } else {
               Swal.fire({
                   title: "Error!",
-                  text: "Failed to delete office.",
+                  text: "Failed to delete category.",
                   icon: "error",
                   confirmButtonText: "Okay",
               });

@@ -160,7 +160,7 @@ const Product = () => {
       // Show success alert
       Swal.fire({
         title: "Saved!",
-        text: "Office has been saved successfully.",
+        text: "Product has been saved successfully.",
         icon: "success",
         confirmButtonText: "Okay",
       });
@@ -173,7 +173,7 @@ const Product = () => {
       // Show error alert if something goes wrong
       Swal.fire({
         title: "Error!",
-        text: "Failed to save office.",
+        text: "Failed to save product.",
         icon: "error",
         confirmButtonText: "Okay",
       });
@@ -183,12 +183,12 @@ const Product = () => {
 
   const handleUpdate = async () => {
     try {
-      console.log('Saving office data:', formData);
+      console.log('Saving product data:', formData);
       const id = formData.id;  // Ensure this is valid
       if (!id) {
         Swal.fire({
           title: "Error",
-          text: "Office ID is missing",
+          text: "product ID is missing",
           icon: "warning"
         });
         return;
@@ -197,10 +197,10 @@ const Product = () => {
       const response = await UpdateProduct(id, formData);
   
       if (response.status === 200) {
-        console.log('Office updated successfully:', response.data);
+        console.log('product updated successfully:', response.data);
         Swal.fire({
           title: "Successful",
-          text: "Office updated successfully",
+          text: "product updated successfully",
           icon: "success"
         });
         setIsEditModalOpen(false);  // Close the edit modal
@@ -259,7 +259,7 @@ const Product = () => {
             if (response.status === 200) {  // Check for successful response
                 Swal.fire({
                     title: "Deleted!",
-                    text: "Office has been deleted.",
+                    text: "Product has been deleted.",
                     icon: "success",
                     confirmButtonText: "Okay",
                 });
@@ -270,7 +270,7 @@ const Product = () => {
             } else {
                 Swal.fire({
                     title: "Error!",
-                    text: "Failed to delete office.",
+                    text: "Failed to delete Sub-Category.",
                     icon: "error",
                     confirmButtonText: "Okay",
                 });

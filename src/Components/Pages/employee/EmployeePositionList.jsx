@@ -148,7 +148,7 @@ const EmployeePositionList = () => {
       // Show success alert
       Swal.fire({
         title: "Saved!",
-        text: "Office has been saved successfully.",
+        text: "Position has been saved successfully.",
         icon: "success",
         confirmButtonText: "Okay",
       });
@@ -161,7 +161,7 @@ const EmployeePositionList = () => {
       // Show error alert if something goes wrong
       Swal.fire({
         title: "Error!",
-        text: "Failed to save office.",
+        text: "Failed to save position.",
         icon: "error",
         confirmButtonText: "Okay",
       });
@@ -170,12 +170,12 @@ const EmployeePositionList = () => {
 
   const handleUpdate = async () => {
     try {
-      console.log('Saving office data:', formData);
+      console.log('Saving position data:', formData);
       const Id = formData.id;  // Ensure this is valid
       if (!Id) {
         Swal.fire({
           title: "Error",
-          text: "Office ID is missing",
+          text: "Position ID is missing",
           icon: "warning"
         });
         return;
@@ -184,10 +184,10 @@ const EmployeePositionList = () => {
       const response = await UpdatePosition(Id, formData);
   
       if (response.status === 200) {
-        console.log('Office updated successfully:', response.data);
+        console.log('Position updated successfully:', response.data);
         Swal.fire({
           title: "Successful",
-          text: "Office updated successfully",
+          text: "Position updated successfully",
           icon: "success"
         });
         setIsEditModalOpen(false);  // Close the edit modal
@@ -246,7 +246,7 @@ const EmployeePositionList = () => {
             if (response.status === 200) {  // Check for successful response
                 Swal.fire({
                     title: "Deleted!",
-                    text: "Office has been deleted.",
+                    text: "Position has been deleted.",
                     icon: "success",
                     confirmButtonText: "Okay",
                 });
@@ -257,7 +257,7 @@ const EmployeePositionList = () => {
             } else {
                 Swal.fire({
                     title: "Error!",
-                    text: "Failed to delete office.",
+                    text: "Failed to delete position.",
                     icon: "error",
                     confirmButtonText: "Okay",
                 });

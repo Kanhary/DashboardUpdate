@@ -150,7 +150,7 @@ const EmployeeChild = () => {
       // Show success alert
       Swal.fire({
         title: "Saved!",
-        text: "Office has been saved successfully.",
+        text: "Staff's child has been saved successfully.",
         icon: "success",
         confirmButtonText: "Okay",
       });
@@ -174,7 +174,7 @@ const EmployeeChild = () => {
 
   const handleUpdate = async () => {
     try {
-      console.log('Saving office data:', formData);
+      console.log("Saving staff's child data:", formData);
       const id = formData.id;  // Ensure this is valid
       if (!id) {
         Swal.fire({
@@ -188,10 +188,10 @@ const EmployeeChild = () => {
       const response = await UpdateChild(id, formData);
   
       if (response.status === 200) {
-        console.log('Office updated successfully:', response.data);
+        console.log("Staff's child updated successfully:", response.data);
         Swal.fire({
           title: "Successful",
-          text: "Office updated successfully",
+          text: "Staff's child updated successfully",
           icon: "success"
         });
         setIsEditModalOpen(false);  // Close the edit modal
@@ -250,7 +250,7 @@ const handleDeleteChild = async (id) => {
           if (response.status === 200) {  // Check for successful response
               Swal.fire({
                   title: "Deleted!",
-                  text: "Office has been deleted.",
+                  text: "Staff's child has been deleted.",
                   icon: "success",
                   confirmButtonText: "Okay",
               });

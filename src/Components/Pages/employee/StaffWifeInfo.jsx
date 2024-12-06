@@ -148,7 +148,7 @@ const StaffWifeInfo = () => {
       // Show success alert
       Swal.fire({
         title: "Saved!",
-        text: "Office has been saved successfully.",
+        text: "Spouse has been saved successfully.",
         icon: "success",
         confirmButtonText: "Okay",
       });
@@ -161,7 +161,7 @@ const StaffWifeInfo = () => {
       // Show error alert if something goes wrong
       Swal.fire({
         title: "Error!",
-        text: "Failed to save office.",
+        text: "Failed to save spouse.",
         icon: "error",
         confirmButtonText: "Okay",
       });
@@ -177,7 +177,7 @@ const StaffWifeInfo = () => {
       if (!id) {
         Swal.fire({
           title: "Error",
-          text: "Office ID is missing",
+          text: "Spouse ID is missing",
           icon: "warning"
         });
         return;
@@ -186,10 +186,10 @@ const StaffWifeInfo = () => {
       const response = await UpdateWife(id, formData);
   
       if (response.status === 200) {
-        console.log('Office updated successfully:', response.data);
+        console.log('Spouse updated successfully:', response.data);
         Swal.fire({
           title: "Successful",
-          text: "Office updated successfully",
+          text: "Spouse updated successfully",
           icon: "success"
         });
         setIsEditModalOpen(false);  // Close the edit modal
@@ -248,7 +248,7 @@ const handleDeleteWife = async (id) => {
           if (response.status === 200) {  // Check for successful response
               Swal.fire({
                   title: "Deleted!",
-                  text: "Office has been deleted.",
+                  text: "Spouse has been deleted.",
                   icon: "success",
                   confirmButtonText: "Okay",
               });
@@ -259,7 +259,7 @@ const handleDeleteWife = async (id) => {
           } else {
               Swal.fire({
                   title: "Error!",
-                  text: "Failed to delete office.",
+                  text: "Failed to delete spouse.",
                   icon: "error",
                   confirmButtonText: "Okay",
               });

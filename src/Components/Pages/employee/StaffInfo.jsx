@@ -569,7 +569,7 @@ const StaffInfo = () => {
       if (result.isConfirmed) {
         Swal.fire({
           title: "Deleted!",
-          text: "Your file has been deleted.",
+          text: "Staff has been deleted.",
           icon: "success"
         });
       }

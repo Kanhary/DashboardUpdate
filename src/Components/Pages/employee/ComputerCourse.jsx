@@ -136,7 +136,7 @@ const ComputerCourse = () => {
       // Show success alert
       Swal.fire({
         title: "Saved!",
-        text: "Office has been saved successfully.",
+        text: "Course has been saved successfully.",
         icon: "success",
         confirmButtonText: "Okay",
       });
@@ -149,7 +149,7 @@ const ComputerCourse = () => {
       // Show error alert if something goes wrong
       Swal.fire({
         title: "Error!",
-        text: "Failed to save office.",
+        text: "Failed to save course.",
         icon: "error",
         confirmButtonText: "Okay",
       });
@@ -160,12 +160,12 @@ const ComputerCourse = () => {
 
   const handleUpdate = async () => {
     try {
-      console.log('Saving office data:', formData);
+      console.log('Saving course data:', formData);
       const id = formData.id;  // Ensure this is valid
       if (!id) {
         Swal.fire({
           title: "Error",
-          text: "Office ID is missing",
+          text: "Course ID is missing",
           icon: "warning"
         });
         return;
@@ -174,10 +174,10 @@ const ComputerCourse = () => {
       const response = await UpdateComputerCourse(id, formData);
   
       if (response.status === 200) {
-        console.log('Office updated successfully:', response.data);
+        console.log('Course updated successfully:', response.data);
         Swal.fire({
           title: "Successful",
-          text: "Office updated successfully",
+          text: "Course updated successfully",
           icon: "success"
         });
         setIsEditModalOpen(false);  // Close the edit modal
@@ -236,7 +236,7 @@ const handleDeleteCourse = async (id) => {
           if (response.status === 200) {  // Check for successful response
               Swal.fire({
                   title: "Deleted!",
-                  text: "Office has been deleted.",
+                  text: "Course has been deleted.",
                   icon: "success",
                   confirmButtonText: "Okay",
               });
@@ -247,7 +247,7 @@ const handleDeleteCourse = async (id) => {
           } else {
               Swal.fire({
                   title: "Error!",
-                  text: "Failed to delete office.",
+                  text: "Failed to delete course.",
                   icon: "error",
                   confirmButtonText: "Okay",
               });
