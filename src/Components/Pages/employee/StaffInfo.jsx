@@ -81,6 +81,7 @@ const StaffInfo = () => {
     branchCode: '',
     positionCode: '',
     fileUpload: null,
+    Course_Code: ''
   });
   
   
@@ -720,7 +721,7 @@ const StaffInfo = () => {
                     <th scope="col" className="px-4 py-3 border-t border-r">Height</th>
                     <th scope="col" className="px-4 py-3 border-t border-r ">Weight</th>
                     <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '120px' }}>Birthdate</th>
-                    {/* <th scope="col" className="px-4 py-3 border-t border-r">Nation</th> */}
+                    <th scope="col" className="px-4 py-3 border-t border-r">Course</th>
                     {/* <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '120px' }}>Nationality</th>
                     <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '120px' }}>Region</th>
                     <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '330px' }}>Birthdate Address</th> */}
@@ -798,8 +799,8 @@ const StaffInfo = () => {
                       <td className='px-4 py-1 border-r'>{employee.height}</td>
                       <td className='px-4 py-1 border-r'>{employee.weight}</td>
                       <td className='px-4 py-1 border-r'>{formatDateTime(employee.bod)}</td>
-                      {/* <td className='px-4 py-1 border-r'>{employee.nationals}</td>
-                      <td className='px-4 py-1 border-r'>{employee.nationality}</td>
+                      <td className='px-4 py-1 border-r'>{employee.courseCode}</td>
+                      {/* <td className='px-4 py-1 border-r'>{employee.nationality}</td>
                       <td className='px-4 py-1 border-r'>{employee.region}</td> */}
                       {/* <td className='px-4 py-1 border-r'>{employee.birthdateAddress}</td> */}
                       <td className='px-4 py-1 border-r'>{employee.currentAddress}</td>

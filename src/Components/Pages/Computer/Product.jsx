@@ -3,12 +3,12 @@ import { FaPen, FaTrashAlt } from "react-icons/fa";
 import Select from 'react-select';
 import { IoMdRefresh } from "react-icons/io";
 import Swal from 'sweetalert2';
-import { GetProduct, GetCategory ,GetSubCategory, AddProduct, GetUserLogin,UpdateProduct, DeleteProduct} from '../../../api/user';
+import { GetProduct, GetCategory ,GetSubCategory, AddProduct, GetUserLogin,UpdateProduct, DeleteProduct, GetAllStaff} from '../../../api/user';
 import Category from './Category';
 
 const Product = () => {
   
-  const INITAIL_FORM_DATA = { productCode: '', engName: '', khName: '', categoryId: '',subCategoryId: '',model: '', serialNumber: '', purchaseDate: '', wanrreantyExpiration: '',location: '',unitorSet: '', price: '', ipAddress: '', macAddress: ''}
+  const INITAIL_FORM_DATA = { productCode: '', engName: '', khName: '', categoryId: '',subCategoryId: '',model: '', serialNumber: '', purchaseDate: '', wanrreantyExpiration: '',location: '',unitorSet: '', price: '', ipAddress: '', macAddress: '', staffCode: ''}
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -20,6 +20,7 @@ const Product = () => {
   const [categories, setCategory] = useState([]);
   const [SubCategories, setSubCategory] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
+  const [Staffs, setStaff] = useState([]);
   
   // const DepList = [
   //   { CompanyCode: 'PPAP', DepartmentCode: 'Dep-admin', Department: 'នាយកដ្ឋាន រដ្ឋបាល',  BranchCode: 'TS3' },
@@ -67,7 +68,18 @@ const Product = () => {
           console.error('Error fetching current user:', error);
         }
       };
-    
+
+      const fetchAllStaff = async () => {
+        try {
+          const response = await GetAllStaff();
+          console.log("Get Staff code :",response.data.data); 
+          setStaff(response.data.data);
+          
+        } catch (err) {
+          setError({ message: err.message || 'An error occurred' });
+        }
+      };
+    fetchAllStaff();
     fetchSubCategory();
     fetchCategory();
     fetchComputer();
@@ -378,6 +390,19 @@ const Product = () => {
     }));
   };
   
+  const handleStaffCode = (option) => {
+    console.log('Selected option:', option); // Check if selectedOption has the correct value
+    setSelectedOption(option);
+    setFormData((prevData) => ({
+      ...prevData,
+      staffCode: option ? option.value : '',
+    }));
+  };
+
+  const optionsStaffCode = (Staffs || []).map(staff => ({
+    value: staff.staffCode,
+    label: `${staff.staffCode}-${staff.khName}`
+  }));
 
 
   const handleRefresh = () => {
@@ -441,6 +466,7 @@ const Product = () => {
                   <th scope="col" className="px-4 py-3 border-r" style={{minWidth: '180px'}}>Product Code</th>
                   <th scope="col" className="px-4 py-3 border-r" style={{minWidth: '180px'}}>English Name</th>
                   <th scope="col" className="px-4 py-3 border-r" style={{minWidth: '250px'}}>Khmer Name</th>
+                  <th scope="col" className="px-4 py-3 border-r" style={{minWidth: '250px'}}>Staff Code</th>
                   <th scope="col" className="px-4 py-3 border-r" style={{minWidth: '150px'}}>Category</th>
                   <th scope="col" className="px-4 py-3 border-r" style={{minWidth: '150px'}}>SubCategory</th>
                   <th scope="col" className="px-4 py-3 border-r" style={{minWidth: '150px'}}>Model</th>
@@ -466,8 +492,9 @@ const Product = () => {
                       </div>
                     </td>
                     <td className='px-4 py-4 border-r'>{computer.productCode}</td>
-                    <td className='px-4 py-4 border-r'>{computer.khName}</td>
                     <td className='px-4 py-4 border-r'>{computer.engName}</td>
+                    <td className='px-4 py-4 border-r'>{computer.khName}</td>
+                    <td className='px-4 py-4 border-r'>{computer.staffCode}</td>
                     <td className='px-4 py-4 border-r'>{computer.categoryId}</td>
                     <td className='px-4 py-4 border-r'>{computer.subCategoryId}</td>
                     <td className='px-4 py-4 border-r'>{computer.model}</td>
@@ -577,7 +604,7 @@ const Product = () => {
                 </div>
                 
               </div>
-                            <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
                 <div className="w-full md:w-1/2">
                   <label htmlFor="khName" className="block mb-2 text-sm font-semibold text-gray-700">Khmer Name</label>
                   <input
@@ -590,16 +617,12 @@ const Product = () => {
                 </div>
                
                 <div className="w-full md:w-1/2">
-                  <label htmlFor="CompanyCode" className="block mb-2 text-sm font-semibold text-gray-700">Category ID</label>
-                  <Select
-                    options={optionsCategoryId}
-                    onChange={handleCategoryId}
-                    placeholder="Select Company Code"
-                    value={optionsCategoryId.find(option => option.value === formData.categoryId)}
-                    isClearable
-                    className="basic-single"
-                    classNamePrefix="select"
-                    styles={customStyles}
+                  <label htmlFor="model" className="block mb-2 text-sm font-semibold text-gray-700">Model</label>
+                  <input
+                    id="model"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.model}
+                    onChange={handleChange}
                   />
                 </div>
                 
@@ -620,22 +643,27 @@ const Product = () => {
                 </div>
                
                 <div className="w-full md:w-1/2">
-                  <label htmlFor="model" className="block mb-2 text-sm font-semibold text-gray-700">Model</label>
-                  <input
-                    id="model"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.model}
-                    onChange={handleChange}
+                  <label htmlFor="CompanyCode" className="block mb-2 text-sm font-semibold text-gray-700">Category ID</label>
+                  <Select
+                    options={optionsCategoryId}
+                    onChange={handleCategoryId}
+                    placeholder="Select Company Code"
+                    value={optionsCategoryId.find(option => option.value === formData.categoryId)}
+                    isClearable
+                    className="basic-single"
+                    classNamePrefix="select"
+                    styles={customStyles}
                   />
                 </div>
                 
               </div>
 
               <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                <div className="w-full md:w-1/2">
-                  <label htmlFor="serialNumber" className="block mb-2 text-sm font-semibold text-gray-700">Serial Number</label>
+              <div className="w-full md:w-1/2">
+                  <label htmlFor="productCode" className="block mb-2 text-sm font-semibold text-gray-700">Warranty Expiration</label>
                   <input
                     id="serialNumber"
+                    type='date'
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                     value={formData.serialNumber}
                     onChange={handleChange}
@@ -656,46 +684,17 @@ const Product = () => {
                 
               </div>
               <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                
                 <div className="w-full md:w-1/2">
-                  <label htmlFor="productCode" className="block mb-2 text-sm font-semibold text-gray-700">Warranty Expiration</label>
+                  <label htmlFor="serialNumber" className="block mb-2 text-sm font-semibold text-gray-700">Serial Number</label>
                   <input
                     id="serialNumber"
-                    type='date'
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                     value={formData.serialNumber}
                     onChange={handleChange}
                     required
                   />
                 </div>
-               
-                <div className="w-full md:w-1/2">
-                  <label htmlFor="location" className="block mb-2 text-sm font-semibold text-gray-700">Location</label>
-                  <input
-                   
-                    id="location"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.location}
-                    onChange={handleChange}
-                  />
-                </div>
-                
-              </div>
-
-              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-              <div className="w-full md:w-1/2">
-                  <label htmlFor="CompanyCode" className="block mb-2 text-sm font-semibold text-gray-700">Unit Or Set</label>
-                  <Select
-                    options={optionUnitOrSet}
-                    onChange={handleUnitOrSet}
-                    placeholder="Select Company Code"
-                    value={optionUnitOrSet.find(option => option.value === formData.unitorSet)}
-                    isClearable
-                    className="basic-single"
-                    classNamePrefix="select"
-                    styles={customStyles}
-                  />
-                </div>
-               
                 <div className="w-full md:w-1/2">
                   <label htmlFor="engName" className="block mb-2 text-sm font-semibold text-gray-700">Price</label>
                   <input
@@ -708,7 +707,38 @@ const Product = () => {
                 </div>
                 
               </div>
-                            <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+
+              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                
+              <div className="w-full md:w-1/2">
+                <label htmlFor="staffcode" className="block mb-2 text-sm font-semibold text-gray-700">Staff Code</label>
+                <Select
+                  options={optionsStaffCode}
+                  onChange={handleStaffCode}  // Ensure handleStaffCode is passed correctly here
+                  value={optionsStaffCode.find(option => option.value === formData.staffCode)}
+                  placeholder="Select or type to search"
+                  className="basic-single"
+                  classNamePrefix="select"
+                  styles={customStyles}
+                />    
+                </div>
+                <div className="w-full md:w-1/2">
+                  <label htmlFor="CompanyCode" className="block mb-2 text-sm font-semibold text-gray-700">Unit Or Set</label>
+                  <Select
+                    options={optionUnitOrSet}
+                    onChange={handleUnitOrSet}
+                    placeholder="Select Company Code"
+                    value={optionUnitOrSet.find(option => option.value === formData.unitorSet)}
+                    isClearable
+                    className="basic-single"
+                    classNamePrefix="select"
+                    styles={customStyles}
+                  />
+                </div>
+                
+                
+              </div>
+              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
                 <div className="w-full md:w-1/2">
                   <label htmlFor="productCode" className="block mb-2 text-sm font-semibold text-gray-700">IP Address</label>
                   <input
@@ -732,7 +762,20 @@ const Product = () => {
                 </div>
                 
               </div>
-
+              <div className="flex ">
+                
+                <div className="w-full">
+                  <label htmlFor="engName" className="block mb-2 text-sm font-semibold text-gray-700">Location</label>
+                  <input
+                    
+                    id="macAddress"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.macAddress}
+                    onChange={handleChange}
+                  />
+                </div>
+                
+              </div>
               
             </div>
             <footer className="flex flex-col-reverse items-center justify-end px-6 py-4 space-y-3 space-y-reverse bg-gray-100 rounded-b-xl md:flex-row md:space-x-3 md:space-y-0">
@@ -784,7 +827,7 @@ const Product = () => {
                 </div>
                 
               </div>
-                            <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
                 <div className="w-full md:w-1/2">
                   <label htmlFor="khName" className="block mb-2 text-sm font-semibold text-gray-700">Khmer Name</label>
                   <input
@@ -797,16 +840,12 @@ const Product = () => {
                 </div>
                
                 <div className="w-full md:w-1/2">
-                  <label htmlFor="CompanyCode" className="block mb-2 text-sm font-semibold text-gray-700">Category ID</label>
-                  <Select
-                    options={optionsCategoryId}
-                    onChange={handleCategoryId}
-                    placeholder="Select Company Code"
-                    value={optionsCategoryId.find(option => option.value === formData.categoryId)}
-                    isClearable
-                    className="basic-single"
-                    classNamePrefix="select"
-                    styles={customStyles}
+                  <label htmlFor="model" className="block mb-2 text-sm font-semibold text-gray-700">Model</label>
+                  <input
+                    id="model"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.model}
+                    onChange={handleChange}
                   />
                 </div>
                 
@@ -827,22 +866,27 @@ const Product = () => {
                 </div>
                
                 <div className="w-full md:w-1/2">
-                  <label htmlFor="model" className="block mb-2 text-sm font-semibold text-gray-700">Model</label>
-                  <input
-                    id="model"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.model}
-                    onChange={handleChange}
+                  <label htmlFor="CompanyCode" className="block mb-2 text-sm font-semibold text-gray-700">Category ID</label>
+                  <Select
+                    options={optionsCategoryId}
+                    onChange={handleCategoryId}
+                    placeholder="Select Company Code"
+                    value={optionsCategoryId.find(option => option.value === formData.categoryId)}
+                    isClearable
+                    className="basic-single"
+                    classNamePrefix="select"
+                    styles={customStyles}
                   />
                 </div>
                 
               </div>
 
               <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                <div className="w-full md:w-1/2">
-                  <label htmlFor="serialNumber" className="block mb-2 text-sm font-semibold text-gray-700">Serial Number</label>
+              <div className="w-full md:w-1/2">
+                  <label htmlFor="productCode" className="block mb-2 text-sm font-semibold text-gray-700">Warranty Expiration</label>
                   <input
                     id="serialNumber"
+                    type='date'
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                     value={formData.serialNumber}
                     onChange={handleChange}
@@ -863,46 +907,17 @@ const Product = () => {
                 
               </div>
               <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                
                 <div className="w-full md:w-1/2">
-                  <label htmlFor="productCode" className="block mb-2 text-sm font-semibold text-gray-700">Warranty Expiration</label>
+                  <label htmlFor="serialNumber" className="block mb-2 text-sm font-semibold text-gray-700">Serial Number</label>
                   <input
                     id="serialNumber"
-                    type='date'
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                     value={formData.serialNumber}
                     onChange={handleChange}
                     required
                   />
                 </div>
-               
-                <div className="w-full md:w-1/2">
-                  <label htmlFor="location" className="block mb-2 text-sm font-semibold text-gray-700">Location</label>
-                  <input
-                   
-                    id="location"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.location}
-                    onChange={handleChange}
-                  />
-                </div>
-                
-              </div>
-
-              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-              <div className="w-full md:w-1/2">
-                  <label htmlFor="CompanyCode" className="block mb-2 text-sm font-semibold text-gray-700">Unit Or Set</label>
-                  <Select
-                    options={optionUnitOrSet}
-                    onChange={handleUnitOrSet}
-                    placeholder="Select Company Code"
-                    value={optionUnitOrSet.find(option => option.value === formData.unitorSet)}
-                    isClearable
-                    className="basic-single"
-                    classNamePrefix="select"
-                    styles={customStyles}
-                  />
-                </div>
-               
                 <div className="w-full md:w-1/2">
                   <label htmlFor="engName" className="block mb-2 text-sm font-semibold text-gray-700">Price</label>
                   <input
@@ -915,7 +930,38 @@ const Product = () => {
                 </div>
                 
               </div>
-                            <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+
+              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                
+              <div className="w-full md:w-1/2">
+                <label htmlFor="staffcode" className="block mb-2 text-sm font-semibold text-gray-700">Staff Code</label>
+                <Select
+                  options={optionsStaffCode}
+                  onChange={handleStaffCode}  // Ensure handleStaffCode is passed correctly here
+                  value={optionsStaffCode.find(option => option.value === formData.staffCode)}
+                  placeholder="Select or type to search"
+                  className="basic-single"
+                  classNamePrefix="select"
+                  styles={customStyles}
+                />    
+                </div>
+                <div className="w-full md:w-1/2">
+                  <label htmlFor="CompanyCode" className="block mb-2 text-sm font-semibold text-gray-700">Unit Or Set</label>
+                  <Select
+                    options={optionUnitOrSet}
+                    onChange={handleUnitOrSet}
+                    placeholder="Select Company Code"
+                    value={optionUnitOrSet.find(option => option.value === formData.unitorSet)}
+                    isClearable
+                    className="basic-single"
+                    classNamePrefix="select"
+                    styles={customStyles}
+                  />
+                </div>
+                
+                
+              </div>
+              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
                 <div className="w-full md:w-1/2">
                   <label htmlFor="productCode" className="block mb-2 text-sm font-semibold text-gray-700">IP Address</label>
                   <input
@@ -939,7 +985,20 @@ const Product = () => {
                 </div>
                 
               </div>
-
+              <div className="flex ">
+                
+                <div className="w-full">
+                  <label htmlFor="engName" className="block mb-2 text-sm font-semibold text-gray-700">Location</label>
+                  <input
+                    
+                    id="macAddress"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.macAddress}
+                    onChange={handleChange}
+                  />
+                </div>
+                
+              </div>
               
             </div>
             <footer className="flex flex-col-reverse items-center justify-end px-6 py-4 space-y-3 space-y-reverse bg-gray-100 rounded-b-xl md:flex-row md:space-x-3 md:space-y-0">
