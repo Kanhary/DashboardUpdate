@@ -417,3 +417,91 @@ export function DeleteComputerCourse(id) {
         
     });
 }
+
+export function AddNewDep(data){
+    return request({
+        method: "POST",
+        url: '/department/AddNewDepart',
+        data: data
+    })
+}
+
+export function DeleteDep(id) {
+    return request({
+        method: "DELETE",
+        url: `/department/DeleteDepart/${id}`,
+        
+    });
+}
+
+export function UpdateDep(id, data) {
+    return request({
+      method: 'POST', 
+      url: `/department/updateDepartment/${id}`, 
+      data: data
+    });
+}
+
+export function GetAllBranch(){
+    return request({
+        method: "GET",
+        url: '/Branch/FindAllBranch'
+    })
+}
+
+export function AddNewBranch(data){
+    return request({
+        method: "POST",
+        url: '/Branch/addNewBranch',
+        data: data
+    })
+}
+
+
+export function UpdateBranch(id, data) {
+    return request({
+      method: 'POST', 
+      url: `/UpdateBranchById/${id}`, 
+      data: data
+    });
+}
+
+export function DeleteBranch(id) {
+    return request({
+        method: "DELETE",
+        url: `/Branch/DeleteBranchById/${id}`,
+        
+    });
+}
+
+export function GetCompany(){
+    return request({
+        method: "GET",
+        url: '/Company/findAllCompany'
+    })
+}
+
+export function AddNewCompany(data){
+    return request({
+        method: "POST",
+        url: '/Company/AddNewCompany',
+        data: data
+    })
+}
+
+export function UpdateCompany(id, data) {
+    return request({
+      method: 'POST', 
+      url: `/Company/UpdateCompanyById/${id}`, 
+      data: data
+    });
+}
+
+
+export function DeleteCompany(id) {
+    return request({
+        method: "DELETE",
+        url: `/Company/DeleteCompanyById/${id}`,
+        
+    });
+}

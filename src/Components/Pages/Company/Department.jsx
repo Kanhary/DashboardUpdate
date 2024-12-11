@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { FaPen, FaTrashAlt } from "react-icons/fa";
 import Select from 'react-select';
-import { GetDep } from '../../../api/user';
+import { GetDep, AddNewDep, DeleteDep, UpdateDep} from '../../../api/user';
 import { IoMdRefresh } from "react-icons/io";
+import Swal from 'sweetalert2';
 
 const Department = () => {
   
-  const INITAIL_FORM_DATA = { CompanyCode: '', DepartmentCode: '', Department: '', BranchCode: ''}
+  const INITAIL_FORM_DATA = { departCode: '', departKhName: '', departEngName: '', branchCode: ''}
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -106,26 +107,155 @@ const Department = () => {
     setFormData(INITAIL_FORM_DATA);
   };
 
-  const handleSave = () => {
-    console.log('Save clicked', formData);
-    closeAddModal();
-  };
-
-  const handleUpdate = () => {
-    console.log('Update clicked', formData);
-    closeEditModal();
-  };
-
-  const deleteOffice = (code) => {
-    if (window.confirm("Are you sure you want to delete this office?")) {
-      // Your delete logic here...
+  const handleSave = async () => {
+    // Prepare the data for submission
+    const updatedFormData = {
+      ...formData, // Spread the current formData state
+      branchCode: formData.branchCode || '', // Use formData.departCode instead of selectedOption
+      // createdby: currentUser,
+      // lastby: currentUser,
+      createTime: new Date().toISOString(),
+      updateTime: new Date().toISOString(),
+    };
+  
+    try {
+      // Call your API to save the data
+      const response = await AddNewDep(updatedFormData);
+  
+      // Show success alert
+      Swal.fire({
+        title: "Saved!",
+        text: "Office has been saved successfully.",
+        icon: "success",
+        confirmButtonText: "Okay",
+      });
+  
+      console.log('API Response:', response);
+      closeAddModal(); // Close the modal on successful save
+    } catch (error) {
+      console.error('Error saving data', error);
+  
+      // Show error alert if something goes wrong
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to save office.",
+        icon: "error",
+        confirmButtonText: "Okay",
+      });
     }
   };
+
+  const handleUpdate = async () => {
+    try {
+      console.log('Saving office data:', formData);
+      const id = formData.id;  // Ensure this is valid
+      if (!id) {
+        Swal.fire({
+          title: "Error",
+          text: "Office ID is missing",
+          icon: "warning"
+        });
+        return;
+      }
+  
+      const response = await UpdateDep(id, formData);
+  
+      if (response.status === 200) {
+        console.log('Office updated successfully:', response.data);
+        Swal.fire({
+          title: "Successful",
+          text: "Office updated successfully",
+          icon: "success"
+        });
+        setIsEditModalOpen(false);  // Close the edit modal
+      } else {
+        const errorMessage = response.data.message || 'An unexpected error occurred.';
+        Swal.fire({
+          title: "Error",
+          text: "Error: " + errorMessage,
+          icon: "warning"
+        });
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error('Error response data:', error.response.data);
+        Swal.fire({
+          title: "Error",
+          text: error.response.data.message || 'An unexpected error occurred.',
+          icon: "error"
+        });
+      } else if (error.request) {
+        console.error('Error request:', error.request);
+        Swal.fire({
+          title: "Error",
+          text: "No response received from the server.",
+          icon: "error"
+        });
+      } else {
+        console.error('Error message:', error.message);
+        Swal.fire({
+          title: "Error",
+          text: "An error occurred while setting up the request.",
+          icon: "error"
+        });
+      }
+    }
+  };
+
+  const handleDeleteDep = async (id) => {
+    try {
+        // Show a confirmation prompt before deleting
+        const result = await Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#22c55e",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
+        });
+  
+        if (result.isConfirmed) {
+            // Call DeleteOffice function to send the API request
+            const response = await DeleteDep(id); // Pass the office id here
+            console.log('Response:', response);  // Log the response to confirm deletion
+  
+            if (response.status === 200) {  // Check for successful response
+                Swal.fire({
+                    title: "Deleted!",
+                    text: "Spouse has been deleted.",
+                    icon: "success",
+                    confirmButtonText: "Okay",
+                });
+  
+                // Remove the deleted office from the list
+                const updatedCategory = DepList.filter(dep => dep.id !== id);
+                setDepList(updatedCategory);  // Update the state with the remaining offices
+            } else {
+                Swal.fire({
+                    title: "Error!",
+                    text: "Failed to delete spouse.",
+                    icon: "error",
+                    confirmButtonText: "Okay",
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Error:', error.response ? error.response.data : error.message);
+        Swal.fire({
+            title: 'Error!',
+            text: error.response?.data?.message || 'Failed to connect to the server.',
+            icon: 'error',
+            confirmButtonText: 'Okay',
+        });
+    }
+  };
+  
 
   const handleBranchChange = (selectedOption) => {
     setFormData((prevData) => ({
       ...prevData,
-      BranchCode: selectedOption ? selectedOption.value : '',
+      branchCode: selectedOption ? selectedOption.value : '',
     }));
   };
 
@@ -255,7 +385,7 @@ const Department = () => {
                       <div className="flex items-center justify-center space-x-3">
                         <input type="checkbox" className="mr-1 action-checkbox"/>
                         <FaPen className="ml-2 text-blue-500 cursor-pointer hover:text-blue-700" onClick={() => openEditModal(dep)} />
-                        <FaTrashAlt className="ml-2 text-red-500 cursor-pointer hover:text-red-700" onClick={() => deleteOffice(dep.DepartmentCode)} />
+                        <FaTrashAlt className="ml-2 text-red-500 cursor-pointer hover:text-red-700" onClick={() => handleDeleteDep(dep.id)} />
                       </div>
                     </td>
                     <td className='px-4 py-4 border-r'>{dep.departCode}</td>
@@ -340,42 +470,38 @@ const Department = () => {
             <div className="px-6 py-6 space-y-6">
               <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
                 <div className="w-full md:w-1/2">
-                  <label htmlFor="DepartmentCode" className="block mb-2 text-sm font-semibold text-gray-700">Department Code</label>
+                  <label htmlFor="departCode" className="block mb-2 text-sm font-semibold text-gray-700">Department Code</label>
                   <input
-                    id="DepartmentCode"
+                    id="departCode"
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.DepartmentCode}
+                    value={formData.departCode}
                     onChange={handleChange}
                     required
                   />
                 </div>
                
                 <div className="w-full md:w-1/2">
-                  <label htmlFor="Department" className="block mb-2 text-sm font-semibold text-gray-700">Department Name</label>
+                  <label htmlFor="departKhName" className="block mb-2 text-sm font-semibold text-gray-700">Khmer Name</label>
                   <input
-                    id="Department"
+                    id="departKhName"
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.Department}
+                    value={formData.departKhName}
                     onChange={handleChange}
                   />
                 </div>
                 
               </div>
               <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                
                 <div className="w-full md:w-1/2">
-                  <label htmlFor="CompanyCode" className="block mb-2 text-sm font-semibold text-gray-700">Company Code</label>
-                  <Select
-                    options={optionCompany}
-                    onChange={handleCompanyCodeChange}
-                    placeholder="Select Company Code"
-                    value={optionCompany.find(option => option.value === formData.CompanyCode)}
-                    isClearable
-                    className="basic-single"
-                    classNamePrefix="select"
-                    styles={customStyles}
+                  <label htmlFor="departEngName" className="block mb-2 text-sm font-semibold text-gray-700">English Name</label>
+                  <input
+                    id="departEngName"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.departEngName}
+                    onChange={handleChange}
                   />
                 </div>
+           
                 {/* Input for Branch Code */}
                 <div className="w-full md:w-1/2">
                   <label htmlFor="staffCode" className="block mb-2 text-sm font-semibold text-gray-700">Branch Code</label>
@@ -383,7 +509,7 @@ const Department = () => {
                     options={optionsBranch}
                     onChange={handleBranchChange}
                     placeholder="Select Branch"
-                    value={optionsBranch.find(option => option.value === formData.BranchCode)}
+                    value={optionsBranch.find(option => option.value === formData.branchCode)}
                     isClearable
                     className="basic-single"
                     classNamePrefix="select"
@@ -422,42 +548,39 @@ const Department = () => {
             </header>
             <div className="px-6 py-6 space-y-6">
               <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-
                 <div className="w-full md:w-1/2">
-                  <label htmlFor="DepartmentCode" className="block mb-2 text-sm font-semibold text-gray-700">Department Code</label>
+                  <label htmlFor="departCode" className="block mb-2 text-sm font-semibold text-gray-700">Department Code</label>
                   <input
-                    id="DepartmentCode"
+                    id="departCode"
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.DepartmentCode}
+                    value={formData.departCode}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+               
+                <div className="w-full md:w-1/2">
+                  <label htmlFor="departKhName" className="block mb-2 text-sm font-semibold text-gray-700">Khmer Name</label>
+                  <input
+                    id="departKhName"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.departKhName}
                     onChange={handleChange}
                   />
                 </div>
                 
-                <div className="w-full md:w-1/2">
-                  <label htmlFor="Department" className="block mb-2 text-sm font-semibold text-gray-700">Department Name</label>
-                  <input
-                    id="Department"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.Department}
-                    onChange={handleChange}
-                  />
-                </div>
               </div>
               <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                
                 <div className="w-full md:w-1/2">
-                  <label htmlFor="CompanyCode" className="block mb-2 text-sm font-semibold text-gray-700">Company Code</label>
-                  <Select
-                    options={optionCompany}
-                    onChange={handleCompanyCodeChange}
-                    placeholder="Select Company Code"
-                    value={optionCompany.find(option => option.value === formData.CompanyCode)}
-                    isClearable
-                    className="basic-single"
-                    classNamePrefix="select"
-                    styles={customStyles}
+                  <label htmlFor="departEngName" className="block mb-2 text-sm font-semibold text-gray-700">English Name</label>
+                  <input
+                    id="departEngName"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.departEngName}
+                    onChange={handleChange}
                   />
                 </div>
+           
                 {/* Input for Branch Code */}
                 <div className="w-full md:w-1/2">
                   <label htmlFor="staffCode" className="block mb-2 text-sm font-semibold text-gray-700">Branch Code</label>
@@ -465,7 +588,7 @@ const Department = () => {
                     options={optionsBranch}
                     onChange={handleBranchChange}
                     placeholder="Select Branch"
-                    value={optionsBranch.find(option => option.value === formData.BranchCode)}
+                    value={optionsBranch.find(option => option.value === formData.branchCode)}
                     isClearable
                     className="basic-single"
                     classNamePrefix="select"
@@ -477,10 +600,8 @@ const Department = () => {
               
             </div>
             <footer className="flex flex-col-reverse items-center justify-end px-6 py-4 space-y-3 space-y-reverse bg-gray-100 rounded-b-xl md:flex-row md:space-x-3 md:space-y-0">
-              <button onClick={handleSaveNew} className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto">
-                Save & New
-              </button>
-              <button onClick={handleSave} className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-green-500 to-green-700 hover:shadow-lg hover:scale-105 md:w-auto">
+              
+              <button onClick={handleUpdate} className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-green-500 to-green-700 hover:shadow-lg hover:scale-105 md:w-auto">
                 Save
               </button>
               <button onClick={closeEditModal} className="w-full px-5 py-2 text-sm font-medium text-gray-700 transition duration-200 transform bg-gray-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105 md:w-auto">

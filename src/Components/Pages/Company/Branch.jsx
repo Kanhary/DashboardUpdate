@@ -1,14 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import { FaPen, FaTrashAlt, FaEye } from 'react-icons/fa';
 import { IoMdRefresh } from "react-icons/io";
+import Swal from 'sweetalert2';
+import Select from 'react-select';
+import { GetAllBranch , GetCompany, AddNewBranch, UpdateBranch, DeleteBranch} from '../../../api/user';
 
 const Branch = () => {
   const INITIAL_FORM_DATA = {
-    CompanyCode: '',
-    BranchCode: '',
-    Branch: '',
-    LastBy: '',
-    LastDate: '',
+    companyCode: '',
+    branchCode: '',
+    engName: '',
+    khName: '',
+    phone: '',
+    address: '',
+    email: '',
+    vatNo: '',
+    isUse: '',
+    bankName: '',
+    bankAccName: '',
+    bankAccNo: '',
+    bankBranch: '',
+    companyLogo: ''
   };
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -18,24 +30,65 @@ const Branch = () => {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [editingBranch, setEditingBranch] = useState(null);
-
+  const [branchList, setBranchList] = useState([]);
+  const [currentUser, setCurrentUser] = useState([]);
+  const [companies, setCompany] = useState([]);
   
 
-  const branchList = [
-    {
-      CompanyCode: 'PPAP',
-      BranchCode: 'branch-1',
-      Branch: 'នាយកដ្ឋានសាខា',
-      LastBy: 'John Doe',
-      LastDate: '2024-10-10',
-    },
-  ];
+  // const branchList = [
+  //   {
+  //     CompanyCode: 'PPAP',
+  //     BranchCode: 'branch-1',
+  //     Branch: 'នាយកដ្ឋានសាខា',
+  //     LastBy: 'John Doe',
+  //     LastDate: '2024-10-10',
+  //   },
+  // ];
+
+  useEffect(() => {
+    const fetchAllbranch = async () => {
+      try {
+        const response = await GetAllBranch();
+        console.log(response.data.data); 
+        setBranchList(response.data.data);
+        
+      } catch (err) {
+        setError({ message: err.message || 'An error occurred' });
+      }
+    };
+
+    const fetchCompany = async () => {
+      try {
+        const response = await GetCompany();
+        console.log(response.data.data); 
+        setCompany(response.data.data);
+        
+      } catch (err) {
+        setError({ message: err.message || 'An error occurred' });
+      }
+    };
+
+    const fetchCurrentUser = async () => {
+      try {
+        const response = await GetUserLogin(); // Call the API to get the current user
+        setCurrentUser(response.data.data.username); // Assuming the response contains a username field
+        console.log('Fetched user:', response.data.data.username);
+      } catch (error) {
+        console.error('Error fetching current user:', error);
+      }
+    };
+    
+    fetchCurrentUser();
+    fetchAllbranch();
+    fetchCompany();
+  }, []);
 
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 8;
   const filteredBranches = branchList.filter(branch =>
-    branch.Branch.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    branch.BranchCode.includes(searchTerm)
+    branch.engName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    branch.khName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    branch.branchCode.includes(searchTerm)
   );
   const totalPages = Math.ceil(filteredBranches.length / recordsPerPage);
 
@@ -81,7 +134,7 @@ const Branch = () => {
   
     try {
       // Replace `AddBranch` with the actual API call function to save the branch data
-      const response = await AddBranch(formData); 
+      const response = await AddNewBranch(formData); 
   
       console.log(response); // Log the response for debugging
   
@@ -133,9 +186,67 @@ const Branch = () => {
     }
   };
   
-  
-  const handleDelete = async (Id) => {
+
+  const handleUpdate = async () => {
     try {
+      console.log('Saving office data:', formData);
+      const id = formData.id;  // Ensure this is valid
+      if (!id) {
+        Swal.fire({
+          title: "Error",
+          text: "Office ID is missing",
+          icon: "warning"
+        });
+        return;
+      }
+  
+      const response = await UpdateBranch(id, formData);
+  
+      if (response.status === 200) {
+        console.log('Office updated successfully:', response.data);
+        Swal.fire({
+          title: "Successful",
+          text: "Office updated successfully",
+          icon: "success"
+        });
+        setIsEditModalOpen(false);  // Close the edit modal
+      } else {
+        const errorMessage = response.data.message || 'An unexpected error occurred.';
+        Swal.fire({
+          title: "Error",
+          text: "Error: " + errorMessage,
+          icon: "warning"
+        });
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error('Error response data:', error.response.data);
+        Swal.fire({
+          title: "Error",
+          text: error.response.data.message || 'An unexpected error occurred.',
+          icon: "error"
+        });
+      } else if (error.request) {
+        console.error('Error request:', error.request);
+        Swal.fire({
+          title: "Error",
+          text: "No response received from the server.",
+          icon: "error"
+        });
+      } else {
+        console.error('Error message:', error.message);
+        Swal.fire({
+          title: "Error",
+          text: "An error occurred while setting up the request.",
+          icon: "error"
+        });
+      }
+    }
+  };
+  
+  const deleteBranch = async (id) => {
+    try {
+        // Show a confirmation prompt before deleting
         const result = await Swal.fire({
             title: "Are you sure?",
             text: "You won't be able to revert this!",
@@ -145,40 +256,34 @@ const Branch = () => {
             cancelButtonColor: "#d33",
             confirmButtonText: "Yes, delete it!",
         });
-
+  
         if (result.isConfirmed) {
-            const response = await DelStaff(Id);
-            console.log('Response:', response);  // Log the response to debug
-
-            if (response.status === 200) {  // Check HTTP status code directly
-              Swal.fire({
-                  title: "Deleted!",
-                  text: "User has been deleted.",
-                  icon: "success",
-                  confirmButtonText: "Okay",
-              });
-          
-              const deleteStaff = employees.filter(employee => employee.id !== Id);
-              setEmployees(deleteStaff);
-          } else {
-              Swal.fire({
-                  title: "Error!",
-                  text: "Failed to delete user.",
-                  icon: "error",
-                  confirmButtonText: "Okay",
-              });
-          }
-          
+            // Call DeleteOffice function to send the API request
+            const response = await DeleteBranch(id); // Pass the office id here
+            console.log('Response:', response);  // Log the response to confirm deletion
+  
+            if (response.status === 200) {  // Check for successful response
+                Swal.fire({
+                    title: "Deleted!",
+                    text: "Office has been deleted.",
+                    icon: "success",
+                    confirmButtonText: "Okay",
+                });
+  
+                // Remove the deleted office from the list
+                const updatedOffices = branchList.filter(branch => branch.id !== id);
+                setBranchList(updatedOffices);  // Update the state with the remaining offices
+            } else {
+                Swal.fire({
+                    title: "Error!",
+                    text: "Failed to delete office.",
+                    icon: "error",
+                    confirmButtonText: "Okay",
+                });
+            }
         }
     } catch (error) {
         console.error('Error:', error.response ? error.response.data : error.message);
-        
-        if (error.response) {
-            console.log('Error response:', error.response);  // Full error response
-        } else {
-            console.log('Error message:', error.message);  // Error message if no response
-        }
-
         Swal.fire({
             title: 'Error!',
             text: error.response?.data?.message || 'Failed to connect to the server.',
@@ -192,13 +297,10 @@ const Branch = () => {
     setFormData(INITIAL_FORM_DATA);  // Reset the form data before opening the Add Modal
     setIsAddModalOpen(true);
   };
-  const openEditModal = (branchCode) => {
-    const branchToEdit = branchList.find(branch => branch.BranchCode === branchCode);
-    if (branchToEdit) {
-      setFormData(branchToEdit);  // Set form data for editing
-      setEditingBranch(branchCode);
-      setIsEditModalOpen(true);
-    }
+  const openEditModal = (branch) => {
+    setEditingBranch(branch);
+    setFormData(branch);
+    setIsEditModalOpen(true);
   };
 
   const openViewModal = (branchCode) => {
@@ -215,15 +317,52 @@ const Branch = () => {
     setFormData(INITIAL_FORM_DATA);
   };
 
-  const deleteBranch = (branchCode) => {
-    const confirmed = window.confirm('Are you sure you want to delete this branch?');
-    if (confirmed) {
-      // Remove branch logic
-    }
-  };
+
 
   const handleRefresh = () => {
     window.location.reload();
+  };
+
+
+  const optionsCompany = companies.map(company => ({
+    value: company.companyCode,
+    label: `${company.companyCode} - ${company.engName}`
+  }));
+
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      background: '#fff',
+      borderColor: '#9e9e9e',
+      minHeight: '30px',
+      height: '37px',
+      boxShadow: state.isFocused ? null : null,
+    }),
+
+    valueContainer: (provided, state) => ({
+      ...provided,
+      height: '30px',
+      padding: '0 6px'
+    }),
+
+    input: (provided, state) => ({
+      ...provided,
+      margin: '0px',
+    }),
+    indicatorSeparator: state => ({
+      display: 'none',
+    }),
+    indicatorsContainer: (provided, state) => ({
+      ...provided,
+      height: '30px',
+    }),
+  };
+
+  const handleCompanyChange = (selectedOption) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      companyCode: selectedOption ? selectedOption.value : '',
+    }));
   };
 
   return (
@@ -281,7 +420,17 @@ const Branch = () => {
                   <th scope="col" className="sticky left-0 px-4 py-3 mr-3 bg-gray-100 border-t border-r" >Action</th>
                   <th scope="col" className="px-4 py-3 border-t border-r-2" style={{minWidth: '150px'}}>Company Code</th>
                   <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '200px'}}>Branch Code</th>
-                  <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '200px'}}>Branch Name</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '200px'}}>Khmer Name</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '200px'}}>English Name</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '200px'}}>Phone</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '200px'}}>Address</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '200px'}}>Email</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '200px'}}>VAT Number</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '200px'}}>Bank Name</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '200px'}}>Bank Acoount Name</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '200px'}}>Bank Account Number</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '200px'}}>Back branch</th>
+                  <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '200px'}}>Company Logo</th>
                   <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '200px'}}>Last By</th>
                   <th scope="col" className="px-4 py-3 border-t border-r" style={{minWidth: '200px'}}>Last Date</th>
             </tr>
@@ -289,7 +438,7 @@ const Branch = () => {
               <tbody>
   {currentBranches.map((branch, index) => (
     <tr
-      key={index}
+      key={branch.id}
       className='transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50'
     >
       <td className="sticky left-0 z-10 flex items-center px-4 py-6 bg-white border-r" >
@@ -298,7 +447,7 @@ const Branch = () => {
           <input type="checkbox" className="mr-2" />
 
           {/* Edit Button */}
-          <button onClick={() => openEditModal(branch.BranchCode, branch.Branch)}>
+          <button onClick={() => openEditModal(branch)}>
             <FaPen className='text-blue-500 cursor-pointer hover:text-blue-700' />
           </button>
 
@@ -309,14 +458,24 @@ const Branch = () => {
 
 
           {/* Delete Button */}
-          <button onClick={() => handleDelete(branch.BranchCode)}>
+          <button onClick={() => deleteBranch(branch.id)}>
             <FaTrashAlt className='ml-1 text-red-500 cursor-pointer hover:text-red-700' />
           </button>
         </div>
       </td>
-      <td className="px-4 py-4 border-r">{branch.CompanyCode}</td>
-      <td className="px-4 py-4 border-r">{branch.BranchCode}</td>
-      <td className="px-4 py-4 border-r">{branch.Branch}</td>
+      <td className="px-4 py-4 border-r">{branch.companyCode}</td>
+      <td className="px-4 py-4 border-r">{branch.branchCode}</td>
+      <td className="px-4 py-4 border-r">{branch.khName}</td>
+      <td className="px-4 py-4 border-r">{branch.engName}</td>
+      <td className="px-4 py-4 border-r">{branch.phone}</td>
+      <td className="px-4 py-4 border-r">{branch.address}</td>
+      <td className="px-4 py-4 border-r">{branch.email}</td>
+      <td className="px-4 py-4 border-r">{branch.vatNo}</td>
+      <td className="px-4 py-4 border-r">{branch.bankName}</td>
+      <td className="px-4 py-4 border-r">{branch.bankAccName}</td>
+      <td className="px-4 py-4 border-r">{branch.bankAccNo}</td>
+      <td className="px-4 py-4 border-r">{branch.bankBranch}</td>
+      <td className="px-4 py-4 border-r">{branch.companyLogo}</td>
       <td className="px-4 py-4 border-r">{branch.LastBy}</td>
       <td className="px-4 py-4 border-r">{branch.LastDate}</td>
     </tr>
@@ -401,39 +560,35 @@ const Branch = () => {
             </div>
 
             <div className="px-8">
-              <form className="space-y-4" onSubmit={handleSave}> {/* Form submission handler */}
+              <form className="grid grid-cols-1 gap-6 md:grid-cols-2" onSubmit={handleSave}> {/* Form submission handler */}
                 {/* Company Code Dropdown */}
                 <div className='mb-4'>
-                  <label htmlFor="CompanyCode" className='block text-sm font-medium text-gray-700'>Company Code</label>
-                  <select 
-                    id='CompanyCode'
-                    name="CompanyCode" // Added name attribute for form data
-                    value={formData.CompanyCode} 
-                    onChange={handleChange} 
-                    className='block w-full p-2 mt-1 text-sm text-gray-700 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1'
-                    required
-                  >
-                    <option value="" disabled hidden>Select a Company Code</option>
-                    <option value="PPAP">PPAP</option>
-                    <option value="XYZ">XYZ</option>
-                    <option value="ABC">ABC</option>
-                    {/* Add more options as needed */}
-                  </select>
+                  <label htmlFor="companyCode" className='block text-sm font-medium text-gray-700'>Company Code</label>
+                  <Select
+                    options={optionsCompany}
+                    onChange={handleCompanyChange}
+                    placeholder="Select Department"
+                    // value={optionsCompany.find(option => option.value === formData.companyCode)}
+                    isClearable        
+                    className="basic-single"
+                    classNamePrefix="select"
+                    styles={customStyles}
+                  />
 
                   {/* Display selected company code */}
-                  {formData.CompanyCode && (
-                    <p className="mt-2 text-sm text-gray-600">Selected Company Code: {formData.CompanyCode}</p>
+                  {formData.companyCode && (
+                    <p className="mt-2 text-sm text-gray-600">Selected Company Code: {formData.companyCode}</p>
                   )}
                 </div>
 
                 {/* Branch Code Input */}
                 <div className='mb-4'>
-                  <label htmlFor="BranchCode" className='block text-sm font-medium text-gray-700'>Branch Code</label>
+                  <label htmlFor="branchCode" className='block text-sm font-medium text-gray-700'>Branch Code</label>
                   <input 
                     type="text" 
-                    id='BranchCode'
-                    name="BranchCode" // Added name attribute for form data
-                    value={formData.BranchCode} 
+                    id='branchCode'
+                    name="branchCode" // Added name attribute for form data
+                    value={formData.branchCode} 
                     onChange={handleChange} 
                     className='block w-full p-2 mt-1 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1'
                     required
@@ -442,19 +597,146 @@ const Branch = () => {
 
                 {/* Branch Name Input */}
                 <div className='mb-4'>
-                  <label htmlFor="Branch" className='block text-sm font-medium text-gray-700'>Branch Name</label>
+                  <label htmlFor="engName" className='block text-sm font-medium text-gray-700'>English Name</label>
                   <input 
                     type="text" 
-                    id='Branch'
-                    name="Branch" // Added name attribute for form data
-                    value={formData.Branch} 
+                    id='engName'
+                    name="engName" // Added name attribute for form data
+                    value={formData.engName} 
+                    onChange={handleChange} 
+                    className='block w-full p-2 mt-1 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1'
+                    required
+                  />
+                </div>
+                <div className='mb-4'>
+                  <label htmlFor="khName" className='block text-sm font-medium text-gray-700'>Khmer Name</label>
+                  <input 
+                    type="text" 
+                    id='khName'
+                    name="khName" // Added name attribute for form data
+                    value={formData.khName} 
                     onChange={handleChange} 
                     className='block w-full p-2 mt-1 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1'
                     required
                   />
                 </div>
 
-                <div className="flex justify-center gap-5 p-6 mt-4">
+                <div className='mb-4'>
+                  <label htmlFor="phone" className='block text-sm font-medium text-gray-700'>Phone Number</label>
+                  <input 
+                    type="text" 
+                    id='phone'
+                    name="phone" // Added name attribute for form data
+                    value={formData.phone} 
+                    onChange={handleChange} 
+                    className='block w-full p-2 mt-1 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1'
+                    required
+                  />
+                </div>
+
+                <div className='mb-4'>
+                  <label htmlFor="address" className='block text-sm font-medium text-gray-700'>Address</label>
+                  <input 
+                    type="text" 
+                    id='address'
+                    name="address" // Added name attribute for form data
+                    value={formData.address} 
+                    onChange={handleChange} 
+                    className='block w-full p-2 mt-1 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1'
+                    required
+                  />
+                </div>
+
+                <div className='mb-4'>
+                  <label htmlFor="email" className='block text-sm font-medium text-gray-700'>Email</label>
+                  <input 
+                    type="text" 
+                    id='email'
+                    name="email" // Added name attribute for form data
+                    value={formData.email} 
+                    onChange={handleChange} 
+                    className='block w-full p-2 mt-1 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1'
+                    required
+                  />
+                </div>
+
+                <div className='mb-4'>
+                  <label htmlFor="vatNo" className='block text-sm font-medium text-gray-700'>VAT Number</label>
+                  <input 
+                    type="text" 
+                    id='vatNo'
+                    name="vatNo" // Added name attribute for form data
+                    value={formData.vatNo} 
+                    onChange={handleChange} 
+                    className='block w-full p-2 mt-1 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1'
+                    required
+                  />
+                </div>
+
+                
+                <div className='mb-4'>
+                  <label htmlFor="bankName" className='block text-sm font-medium text-gray-700'>Bank Name</label>
+                  <input 
+                    type="text" 
+                    id='bankName'
+                    name="bankName" // Added name attribute for form data
+                    value={formData.bankName} 
+                    onChange={handleChange} 
+                    className='block w-full p-2 mt-1 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1'
+                    required
+                  />
+                </div>
+                <div className='mb-4'>
+                  <label htmlFor="bankAccName" className='block text-sm font-medium text-gray-700'>Bank Account Name</label>
+                  <input 
+                    type="text" 
+                    id='bankAccName'
+                    name="bankAccName" // Added name attribute for form data 
+                    value={formData.bankAccName} 
+                    onChange={handleChange} 
+                    className='block w-full p-2 mt-1 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1'
+                    required
+                  />
+                </div>
+                <div className='mb-4'>
+                  <label htmlFor="bankAccNo" className='block text-sm font-medium text-gray-700'>Bank Account No</label>
+                  <input 
+                    type="text" 
+                    id='bankAccNo'
+                    name="bankAccNo" // Added name attribute for form data
+                    value={formData.bankAccNo} 
+                    onChange={handleChange} 
+                    className='block w-full p-2 mt-1 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1'
+                    required
+                  />
+                </div>
+                <div className='mb-4'>
+                  <label htmlFor="bankBranch" className='block text-sm font-medium text-gray-700'>Bank Branch</label>
+                  <input 
+                    type="text" 
+                    id='bankBranch'
+                    name="bankBranch" // Added name attribute for form data
+                    value={formData.bankBranch} 
+                    onChange={handleChange} 
+                    className='block w-full p-2 mt-1 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1'
+                    required
+                  />
+                </div>
+                <div className='mb-4'>
+                  <label htmlFor="companyLogo" className='block text-sm font-medium text-gray-700'>Company Logo</label>
+                  <input 
+                    type="file" 
+                    id='companyLogo'
+                    name="companyLogo" // Added name attribute for form data
+                    value={formData.companyLogo} 
+                    onChange={handleChange} 
+                    className='block w-full p-2 mt-1 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1'
+                    required
+                  />
+                </div>
+                
+              </form>
+              <div className="flex justify-center gap-5 p-6 mt-4">
                   <button
                     type="submit" // Submit button
                     onClick={handleSave}
@@ -470,7 +752,6 @@ const Branch = () => {
                     <p className='text-base font-normal'>ចាកចេញ</p>
                   </button>
                 </div>
-              </form>
             </div>
           </div>
         </div>
@@ -496,34 +777,35 @@ const Branch = () => {
             </div>
 
             <div className="px-8">
-              <form className="space-y-4" onSubmit={handleSave}> {/* Add onSubmit to form */}
+              <form className="grid grid-cols-1 gap-6 md:grid-cols-2" onSubmit={handleSave}> {/* Form submission handler */}
                 {/* Company Code Dropdown */}
                 <div className='mb-4'>
-                  <label htmlFor="CompanyCode" className='block text-sm font-medium text-gray-700'>Company Code</label>
-                  <select 
-                    id='CompanyCode'
-                    name='CompanyCode' // Added name attribute for handling form data
-                    value={formData.CompanyCode} 
-                    onChange={handleChange} 
-                    className='block w-full p-2 mt-1 text-sm border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1'
-                    required
-                  >
-                    <option value="" disabled hidden>Select a Company Code</option>
-                    <option value="PPAP">PPAP</option>
-                    <option value="XYZ">XYZ</option>
-                    <option value="ABC">ABC</option>
-                    {/* Add more options as needed */}
-                  </select>
+                  <label htmlFor="companyCode" className='block text-sm font-medium text-gray-700'>Company Code</label>
+                  <Select
+                    options={optionsCompany}
+                    onChange={handleCompanyChange}
+                    placeholder="Select Department"
+                    // value={optionsCompany.find(option => option.value === formData.companyCode)}
+                    isClearable        
+                    className="basic-single"
+                    classNamePrefix="select"
+                    styles={customStyles}
+                  />
+
+                  {/* Display selected company code */}
+                  {formData.companyCode && (
+                    <p className="mt-2 text-sm text-gray-600">Selected Company Code: {formData.companyCode}</p>
+                  )}
                 </div>
 
                 {/* Branch Code Input */}
                 <div className='mb-4'>
-                  <label htmlFor="BranchCode" className='block text-sm font-medium text-gray-700'>Branch Code</label>
+                  <label htmlFor="branchCode" className='block text-sm font-medium text-gray-700'>Branch Code</label>
                   <input 
                     type="text" 
-                    id='BranchCode'
-                    name='BranchCode' // Added name attribute for handling form data
-                    value={formData.BranchCode} 
+                    id='branchCode'
+                    name="branchCode" // Added name attribute for form data
+                    value={formData.branchCode} 
                     onChange={handleChange} 
                     className='block w-full p-2 mt-1 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1'
                     required
@@ -532,34 +814,161 @@ const Branch = () => {
 
                 {/* Branch Name Input */}
                 <div className='mb-4'>
-                  <label htmlFor="Branch" className='block text-sm font-medium text-gray-700'>Branch Name</label>
+                  <label htmlFor="engName" className='block text-sm font-medium text-gray-700'>English Name</label>
                   <input 
                     type="text" 
-                    id='Branch'
-                    name='Branch' // Added name attribute for handling form data
-                    value={formData.Branch} 
+                    id='engName'
+                    name="engName" // Added name attribute for form data
+                    value={formData.engName} 
+                    onChange={handleChange} 
+                    className='block w-full p-2 mt-1 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1'
+                    required
+                  />
+                </div>
+                <div className='mb-4'>
+                  <label htmlFor="khName" className='block text-sm font-medium text-gray-700'>Khmer Name</label>
+                  <input 
+                    type="text" 
+                    id='khName'
+                    name="khName" // Added name attribute for form data
+                    value={formData.khName} 
                     onChange={handleChange} 
                     className='block w-full p-2 mt-1 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1'
                     required
                   />
                 </div>
 
-                <div className="flex justify-center gap-5 p-6 mt-4">
+                <div className='mb-4'>
+                  <label htmlFor="phone" className='block text-sm font-medium text-gray-700'>Phone Number</label>
+                  <input 
+                    type="text" 
+                    id='phone'
+                    name="phone" // Added name attribute for form data
+                    value={formData.phone} 
+                    onChange={handleChange} 
+                    className='block w-full p-2 mt-1 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1'
+                    required
+                  />
+                </div>
+
+                <div className='mb-4'>
+                  <label htmlFor="address" className='block text-sm font-medium text-gray-700'>Address</label>
+                  <input 
+                    type="text" 
+                    id='address'
+                    name="address" // Added name attribute for form data
+                    value={formData.address} 
+                    onChange={handleChange} 
+                    className='block w-full p-2 mt-1 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1'
+                    required
+                  />
+                </div>
+
+                <div className='mb-4'>
+                  <label htmlFor="email" className='block text-sm font-medium text-gray-700'>Email</label>
+                  <input 
+                    type="text" 
+                    id='email'
+                    name="email" // Added name attribute for form data
+                    value={formData.email} 
+                    onChange={handleChange} 
+                    className='block w-full p-2 mt-1 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1'
+                    required
+                  />
+                </div>
+
+                <div className='mb-4'>
+                  <label htmlFor="vatNo" className='block text-sm font-medium text-gray-700'>VAT Number</label>
+                  <input 
+                    type="text" 
+                    id='vatNo'
+                    name="vatNo" // Added name attribute for form data
+                    value={formData.vatNo} 
+                    onChange={handleChange} 
+                    className='block w-full p-2 mt-1 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1'
+                    required
+                  />
+                </div>
+
+                
+                <div className='mb-4'>
+                  <label htmlFor="bankName" className='block text-sm font-medium text-gray-700'>Bank Name</label>
+                  <input 
+                    type="text" 
+                    id='bankName'
+                    name="bankName" // Added name attribute for form data
+                    value={formData.bankName} 
+                    onChange={handleChange} 
+                    className='block w-full p-2 mt-1 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1'
+                    required
+                  />
+                </div>
+                <div className='mb-4'>
+                  <label htmlFor="bankAccName" className='block text-sm font-medium text-gray-700'>Bank Account Name</label>
+                  <input 
+                    type="text" 
+                    id='bankAccName'
+                    name="bankAccName" // Added name attribute for form data 
+                    value={formData.bankAccName} 
+                    onChange={handleChange} 
+                    className='block w-full p-2 mt-1 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1'
+                    required
+                  />
+                </div>
+                <div className='mb-4'>
+                  <label htmlFor="bankAccNo" className='block text-sm font-medium text-gray-700'>Bank Account No</label>
+                  <input 
+                    type="text" 
+                    id='bankAccNo'
+                    name="bankAccNo" // Added name attribute for form data
+                    value={formData.bankAccNo} 
+                    onChange={handleChange} 
+                    className='block w-full p-2 mt-1 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1'
+                    required
+                  />
+                </div>
+                <div className='mb-4'>
+                  <label htmlFor="bankBranch" className='block text-sm font-medium text-gray-700'>Bank Branch</label>
+                  <input 
+                    type="text" 
+                    id='bankBranch'
+                    name="bankBranch" // Added name attribute for form data
+                    value={formData.bankBranch} 
+                    onChange={handleChange} 
+                    className='block w-full p-2 mt-1 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1'
+                    required
+                  />
+                </div>
+                <div className='mb-4'>
+                  <label htmlFor="companyLogo" className='block text-sm font-medium text-gray-700'>Company Logo</label>
+                  <input 
+                    type="file" 
+                    id='companyLogo'
+                    name="companyLogo" // Added name attribute for form data
+                    value={formData.companyLogo} 
+                    onChange={handleChange} 
+                    className='block w-full p-2 mt-1 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1'
+                    required
+                  />
+                </div>
+                
+              </form>
+              <div className="flex justify-center gap-5 p-6 mt-4">
                   <button
-                    type="submit" // Submit button to save data
+                    type="submit" // Submit button
+                    onClick={handleUpdate}
                     className="px-8 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 focus:ring-4 focus:ring-blue-300"
                   >
                     <p className='text-base font-normal'>រក្សាទុក</p>
                   </button>
                   <button
                     type="button"
-                    onClick={() => setIsEditModalOpen(false)} // Close modal function
+                    onClick={() => setIsAddModalOpen(false)} // Close modal function
                     className="px-6 py-4 text-sm font-medium text-gray-700 bg-white border border-gray-300 border-dashed rounded-lg shadow-sm hover:bg-gray-100"
                   >
                     <p className='text-base font-normal'>ចាកចេញ</p>
                   </button>
                 </div>
-              </form>
             </div>
           </div>
         </div>

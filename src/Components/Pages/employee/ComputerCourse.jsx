@@ -435,8 +435,8 @@ const handleDepartmentChange = (selectedOption) => {
               <thead className='text-xs text-gray-700 uppercase bg-gray-100'>
               <tr>
                 <th scope="col" className="sticky left-0 px-4 py-3 bg-gray-100 border-t border-r" style={{ minWidth: '30px' }}>Action</th> 
-                {/* <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Computer Code</th>
-                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Staff Code</th> */}
+                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Course Code</th>
+                {/* <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Staff Code</th> */}
                 <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '200px' }}>Course Name</th>
                 <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Organize</th>
                 {/* <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Gender Code</th> */}
@@ -471,8 +471,8 @@ const handleDepartmentChange = (selectedOption) => {
                         </button>
                       </div>
                     </td>
-                    {/* <td className='px-4 py-4 border-r'>{computerCourse.pcCode}</td>
-                    <td className='px-4 py-4 border-r'>{computerCourse.staffCode}</td> */}
+                    <td className='px-4 py-4 border-r'>{computerCourse.courseCode}</td>
+                    {/* <td className='px-4 py-4 border-r'>{computerCourse.staffCode}</td> */}
                     <td className='px-4 py-4 border-r'>{computerCourse.courseName}</td>
                     <td className='px-4 py-4 border-r'>{computerCourse.organize}</td>
                     <td className='px-4 py-4 border-r'>{computerCourse.fromDate}</td>
@@ -569,6 +569,20 @@ const handleDepartmentChange = (selectedOption) => {
                     onChange={handleChange}
                     />
                 </div>
+                
+                <div>
+                    <label htmlFor="courseCode" className="block mb-2 text-sm font-semibold text-gray-700">Course Code</label>
+                    <input
+                    id="courseCode"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.courseCode}
+                    onChange={handleChange}
+                    />
+                </div>
+                
+              </div>
+              <div className="grid ">
+                
                 
                 <div>
                     <label htmlFor="organize" className="block mb-2 text-sm font-semibold text-gray-700">Organize</label>

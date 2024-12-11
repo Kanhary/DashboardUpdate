@@ -1132,7 +1132,7 @@ const optionsRole = [
   <div className="relative flex items-center justify-center w-40 h-40 overflow-hidden bg-gray-100 rounded-lg shadow-lg">
     {users[0]?.avatar ? (  // Check if the first user has an avatar
       <img
-        src={`http://localhost:5174/public/img/${users[0].avatar}`} // Use the correct path
+        src={`http://localhost:5173/public/img/${users[0].avatar}`} // Use the correct path
         alt="Profile"
         className="object-cover w-full h-full"
       />

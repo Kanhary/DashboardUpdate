@@ -4,7 +4,8 @@ import Select from 'react-select';
 import { motion, useScroll } from "framer-motion";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { GetDep, GetPosition, GetOffice } from '../../../api/user';
+import { GetDep, GetPosition, GetOffice ,GetAllComputerCourse} from '../../../api/user';
+import { MultiSelect } from 'react-multi-select-component';
 
 
 const TabMenu = ({
@@ -20,7 +21,8 @@ const TabMenu = ({
   offices,
   // department,
   handleDepartmentChange,
-  handlePositionChange
+  handlePositionChange,
+  handleCourseChange
   
 }) => {
   const [activeTab, setActiveTab] = useState('tab1'); // Track the active tab
@@ -36,6 +38,7 @@ const TabMenu = ({
   const [department, setDepartment] = useState([]);
   const [position, setPosition] = useState([]);
   const [office, setOffice] =([]);
+  const [ComputerCourse, setComputerCourse] = useState([]);
 
   // const [formData, setFormData] = useState({
   //   department: '',
@@ -99,6 +102,27 @@ const TabMenu = ({
       }
     }
 
+    const fetchAllOffice = async () => {
+      try{
+        const response = await GetOffice();
+        console.log(response.data.data);
+        setOffice(response.data.data);
+      } catch (err) {
+        setErrors({ message: err.message || 'An error occurred' });
+      }
+    }
+
+    const fetchAllComputerCourse = async () => {
+      try {
+        const response = await GetAllComputerCourse();
+        console.log(response.data.data); 
+        setComputerCourse(response.data.data);
+        
+      } catch (err) {
+        setError({ message: err.message || 'An error occurred' });
+      }
+    };
+
     // const fetchAllOffice = async () => {
     //   try {
     //     const response = await GetOffice();
@@ -109,10 +133,10 @@ const TabMenu = ({
     //     setErrors({ message: err.message || 'An error occurred' });
     //   }
     // };
-    
+    fetchAllComputerCourse();
     fetchAllDep();
     fetchAllPostition();
-    // fetchAllOffice();
+    fetchAllOffice();
   }, []);
 
   // const handleDepartmentChange = (selectedOption) => {
@@ -132,16 +156,18 @@ const TabMenu = ({
     label: `${dep.departCode} - ${dep.departEngName}`
   }));
   
-  // const optionsOffice = office.map(off => ({
-  //   value: off.officeCode,
-  //   label: `${off.officeCode} - ${off.officeEngName}`
-  // }));
+  
   
 
   const optionsPosiotn = position.map(pos => ({
     value: pos.positionCode,
     label: `${pos.positionCode} - ${pos.positionName}`
   }));
+
+  const optionCourse = ComputerCourse.map(course => ({
+    value: course.courseCode,
+    label: `${course.courseCode} - ${course.courseName}`
+  }))
   
   
   const handleSubmit = (e) => {
@@ -489,19 +515,34 @@ const TabMenu = ({
         <label htmlFor="office" className="text-sm font-medium text-gray-700">
           ការិយាល័យ
         </label>
-        <select
-          id="office"
-          value={formData.office}
-          onChange={handleOfficeChange}
-          className="block w-full p-3 text-sm text-gray-700 border border-gray-300 rounded-lg"
-          disabled={!filteredOffices.length} // Disable if no offices available
-        >
-          <option value="" disable hidden>Select Office</option>
-          {filteredOffices.map((office, index) => (
-            <option key={index} value={office}>{office}</option>
-          ))}
-        </select>
+        <Select
+                      options={optionsOffice}
+                      onChange={handleOfficeChange}  // Ensure handleStaffCode is passed correctly here
+                      value={opto.find(option => option.value === formData.departCode)}
+                      placeholder="Select or type to search"
+                      className="basic-single"
+                      classNamePrefix="select"
+                      isDisabled={disabled}
+                      styles={customStyles}
+                    />
       </div> */}
+
+      <div className="flex flex-col gap-2">
+      <label
+        htmlFor="staffcode"
+        className="block mb-2 text-sm font-semibold text-gray-700"
+      >
+        Course Code
+      </label>
+      <MultiSelect
+        options={optionCourse} // Array of course options
+        value={formData.courseCode || []} // Fallback to an empty array if undefined
+        // 
+        onChange={handleCourseChange}
+        labelledBy="Select Courses"
+      />
+
+      </div>
 
                 {/* {[
                   { id: 'companyCode', label: 'ក្រុមហ៊ុន', type: 'text' },
@@ -747,6 +788,8 @@ const TabMenu = ({
                           </label>
                         </div>
                       </div>
+
+                      
                 </div>
 
                 {/* Last Modified By Input */}

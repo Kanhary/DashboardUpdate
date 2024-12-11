@@ -7,7 +7,7 @@ import 'aos/dist/aos.css';
 import { AiOutlineClose } from 'react-icons/ai';
 // import LongCourse from './LongCourse';
 import { DelStaff, GetAllStaff } from '../../../api/user';
-import { AddStaff , UpdateStaff, GetDep, GetUserLogin, GetPosition} from '../../../api/user';
+import { AddStaff , UpdateStaff, GetDep, GetUserLogin, GetPosition, GetAllComputerCourse} from '../../../api/user';
 import { motion, useScroll } from "framer-motion";
 
 const StaffInfo = () => {
@@ -26,7 +26,7 @@ const StaffInfo = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [photoName, setPhotoName] = useState('');
-
+  const [ComputerCourse, setComputerCourse] = useState([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [filteredEmployees, setFilteredEmployees] = useState([]);
@@ -81,7 +81,7 @@ const StaffInfo = () => {
     branchCode: '',
     positionCode: '',
     fileUpload: null,
-    Course_Code: ''
+    Course_Code: []
   });
   
   
@@ -145,11 +145,23 @@ const StaffInfo = () => {
         setErrors({ message: err.message || 'An error occurred' });
       }
     };
+
+    const fetchAllComputerCourse = async () => {
+      try {
+        const response = await GetAllComputerCourse();
+        console.log(response.data.data); 
+        setComputerCourse(response.data.data);
+        
+      } catch (err) {
+        setError({ message: err.message || 'An error occurred' });
+      }
+    };
   
     fetchAllStaff();
     fetchAllDep();
     fetchCurrentUser();
     fetchAllPostition();
+    fetchAllComputerCourse();
   }, []);
   
   const handleDepartmentChange = (selectedOption) => {
@@ -163,6 +175,23 @@ const StaffInfo = () => {
       console.log('Updated formData:', updatedData); // Check if the updated data is correct
       return updatedData;
     });
+  };
+
+  // const handleCourseChange = (selectedOption) => {
+  //   console.log('Selected department option:', selectedOption);
+  
+  //   setFormData((prevData) => {
+  //     const updatedData = {
+  //       ...prevData,
+  //       Course_Code: selectedOption ? selectedOption.value : '',
+  //     };
+  //     console.log('Updated formData:', updatedData); // Check if the updated data is correct
+  //     return updatedData;
+  //   });
+  // };
+
+  const handleCourseChange = (selected) => {
+    setFormData((prev) => ({ ...prev, Course_Code: selected }));
   };
 
   const handlePositionChange = (selectedOption) => {
@@ -915,6 +944,7 @@ const StaffInfo = () => {
           department={optionsDepartment}
           handleDepartmentChange={handleDepartmentChange}
           handlePositionChange={handlePositionChange}
+          handleCourseChange={handleCourseChange}
           // disabled={isDisabled} 
         />
       </div>
@@ -966,6 +996,11 @@ const StaffInfo = () => {
                 closeEditModal={closeAllModals}
                 closeViewModal={closeViewModal}
                 saveAllModal={saveAllModal}
+                offices={offices}
+                department={optionsDepartment}
+                handleDepartmentChange={handleDepartmentChange}
+                handlePositionChange={handlePositionChange}
+                handleCourseChange={handleCourseChange}
                 // disabled={isDisabled} 
               />
             </div>

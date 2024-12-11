@@ -292,7 +292,7 @@ const HeaderPage = ({ toggleSidebar }) => {
       className="w-full max-w-md p-6 transition-all transform bg-white rounded-lg shadow-xl"
       data-aos="fade-right"
     >
-      <h3 className="flex justify-center mb-4 text-2xl font-semibold text-gray-800">Edit Image</h3>
+      <h3 className="flex justify-center mb-4 text-2xl font-semibold text-gray-800">Change Profile Picture</h3>
 
       {/* Display Profile Image (Current or New) */}
       <div className="relative flex items-center justify-center mb-4">
@@ -307,7 +307,7 @@ const HeaderPage = ({ toggleSidebar }) => {
             ) : (
               <>
                 <FaCamera className="text-5xl text-gray-500" />  {/* Display icon if no image is uploaded */}
-                <p className='mt-4 text-sm text-gray-600'>Upload Image <br />
+                <p className='mt-4 text-sm text-gray-600'>Upload Picture <br />
                 (PNG or JPEG)</p> {/* Display text only if no image is uploaded */}
               </>
             )}
@@ -319,10 +319,10 @@ const HeaderPage = ({ toggleSidebar }) => {
         {/* Upload Button */}
         <label 
           htmlFor="file-input"
-          className="inline-flex items-center w-full px-4 py-2 text-sm bg-blue-600 text-white duration-300 border border-blue-600 rounded-full cursor-pointer hover:bg-blue-700"
+          className="inline-flex items-center w-full px-4 py-2 text-sm text-white duration-300 bg-blue-600 border border-blue-600 rounded-full cursor-pointer hover:bg-blue-700"
         >
           <div className='flex justify-center mx-auto'>
-          <p className=''>Upload Image</p>
+          <p className=''>Upload Picture</p>
           <FaUpload className="mt-1 ml-2" />
           </div>
         </label>
@@ -339,7 +339,7 @@ const HeaderPage = ({ toggleSidebar }) => {
           className="inline-flex items-center w-full px-4 py-2 text-sm text-gray-600 duration-300 border border-gray-500 rounded-full cursor-pointer hover:text-gray-700"
           onClick={handleRemoveProfileImage}
         >
-          <p className='mx-auto'>Remove Image</p>
+          <p className='mx-auto'>Remove Picture</p>
         </span>
       </div>
 
