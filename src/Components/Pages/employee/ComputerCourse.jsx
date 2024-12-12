@@ -265,116 +265,6 @@ const handleDeleteCourse = async (id) => {
 };
 
 
-const handleDepartmentChange = (selectedOption) => {
-  console.log('Selected department option:', selectedOption);
-
-  setFormData((prevData) => {
-    const updatedData = {
-      ...prevData,
-      departCode: selectedOption ? selectedOption.value : '',
-    };
-    console.log('Updated formData:', updatedData); // Check if the updated data is correct
-    return updatedData;
-  });
-};
-
-
-  
-  
-  const handleBranchChange = (selectedOption) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      BranchCode: selectedOption ? selectedOption.value : '',
-    }));
-  };
-  const handleCompanyChange = (selectedOption) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      CompanyCode: selectedOption ? selectedOption.value : '',
-    }));
-  };
-  
-  const customStyles = {
-    control: (provided, state) => ({
-      ...provided,
-      background: '#fff',
-      borderColor: '#9e9e9e',
-      minHeight: '30px',
-      height: '37px',
-      boxShadow: state.isFocused ? null : null,
-    }),
-
-    valueContainer: (provided, state) => ({
-      ...provided,
-      height: '30px',
-      padding: '0 6px'
-    }),
-
-    input: (provided, state) => ({
-      ...provided,
-      margin: '0px',
-    }),
-    indicatorSeparator: state => ({
-      display: 'none',
-    }),
-    indicatorsContainer: (provided, state) => ({
-      ...provided,
-      height: '30px',
-    }),
-  };
-  const optionsBranch = [
-    {value: 'TS3', label: 'TS3'},
-    {value: 'LM17', label: 'LM17'},
-    
-  ]
-
-  // const optionsBranch = branch.map(branch => ({
-  //   value: branch.BranchCode,
-  //   label: `${branch.BranchCode} - ${branch.BranchName}`
-  // }));
-  
-  const optionCompany = [
-    {value: 'PPAP', label: 'PPAP'}
-  ]
-
-  // const optionCompany = company.map(com => ({
-  //   value: com.CompanyCode,
-  //   label: `${com.CompanyCode} - ${com.CompanyName}`
-  // }));
-    
-  // const optionsDepartment = [
-  //   {value: 'នាយកដ្ឋាន រដ្ឋបាល', label: 'នាយកដ្ឋាន រដ្ឋបាល'},
-  //   {value: 'នាយកដ្ឋាន បុគ្គលិក/ធនធានមនុស្ស', label: 'នាយកដ្ឋាន បុគ្គលិក/ធនធានមនុស្ស'},
-    
-  // ]
-
- 
-  
-  const handleStaffCode = (option) => {
-    console.log('Selected option:', option); // Check if selectedOption has the correct value
-    setSelectedOption(option);
-    setFormData((prevData) => ({
-      ...prevData,
-      staffCode: option ? option.value : '',
-    }));
-  };
-
-  
-  // console.log(Staffs);
-  const optionsStaffCode = (Staffs || []).map(staff => ({
-    value: staff.staffCode,
-    label: `${staff.staffCode}-${staff.khName}`
-  }));
-
-  const optionsComputerCode = (ComputerCode || []).map(computerCode => ({
-    value: computerCode.staffCode,
-    label: `${computerCode.staffCode}-${computerCode.khName}`
-  }));
-
-  
-  // console.log(optionsStaffCode);
-
-  
 
   const handleRefresh = () => {
     window.location.reload();
@@ -383,7 +273,7 @@ const handleDepartmentChange = (selectedOption) => {
 
   return (
     <section className='mt-10 font-khmer'>
-      <h1 className='text-xl font-medium text-blue-800'>Spouse Info</h1>
+      <h1 className='text-xl font-medium text-blue-800'>Course</h1>
       <div className='mt-3 border'></div>
       <div className='w-full mt-4' data-aos='fade-up'>
         <div className='relative w-full overflow-hidden bg-white shadow-md sm:rounded-lg'>
@@ -442,7 +332,7 @@ const handleDepartmentChange = (selectedOption) => {
                 {/* <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Gender Code</th> */}
                 <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>From Date</th>
                 <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '100px' }}>To Date</th>
-                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '100px' }}>In Country</th>
+                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>In Country</th>
                 <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Out Country</th>
                 <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Last By</th>
                 {/* <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Company Code</th> */}
@@ -551,7 +441,7 @@ const handleDepartmentChange = (selectedOption) => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
             <div className="relative w-full max-w-2xl mx-auto transition-all transform bg-white shadow-2xl rounded-xl" data-aos='zoom-in'>
             <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
-                <h2 className="text-xl font-bold text-white md:text-2xl">Computer Course</h2>
+                <h2 className="text-xl font-bold text-white md:text-2xl">Course</h2>
                 <button onClick={closeAddModal} className="text-2xl text-white transition duration-200 hover:text-gray-300 md:text-3xl">
                 &times;
                 </button>
@@ -667,7 +557,7 @@ const handleDepartmentChange = (selectedOption) => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
           <div className="relative w-1/2 mx-auto transition-all transform bg-white shadow-2xl rounded-xl" data-aos='zoom-in'>
             <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
-              <h2 className="text-xl font-bold text-white md:text-2xl">កែប្រែព័ត៌មានការិយាល័យ</h2>
+              <h2 className="text-xl font-bold text-white md:text-2xl">Course</h2>
               <button onClick={closeEditModal} className="text-2xl text-white transition duration-200 hover:text-gray-300 md:text-3xl">
                 &times;
               </button>

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaPen, FaTrashAlt } from "react-icons/fa"
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { IoMdRefresh } from "react-icons/io";
+import { GetMenu } from '../../api/user';
 
 
 const ItemPermission = () => {
@@ -12,28 +13,49 @@ const ItemPermission = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [formData, setFormData] = useState(INITAIL_FORM_DATA);
   const [editingItemPermission,setEditingItemPermission] = useState(null);
+  const [items, setItems] = useState([]);
   
-  const items = [
-    {code: '001', functionCode: 'តារាងបង្ហាញទិន្នន័យ', functionName: 'Dashboard'},
-    {code: '002', functionCode: 'តារាងទិន្នន័យកំុព្យូទ័រ', functionName: 'Computer'},
-    {code: '003', functionCode: 'តារាងបញ្ញីបុគ្គលិក', functionName: 'Employee Position List'},
-    {code: '004', functionCode: 'តារាងបញ្ញីភេទបុគ្គលិក',functionName: 'Gender List'},
-    {code: '005', functionCode: 'តារាងបញ្ចូលព័ត៌មានបុគ្គលិក', functionName: 'Employee Information'},
-    {code: '006', functionCode: 'អ្នកប្រើប្រាស់', functionName: 'Users'},
-    {code: '007', functionCode: 'GroupMaster', functionName: 'Group Master'},
-    {code: '008', functionCode: 'ItemPermission', functionName: 'Item Permission'},
-    {code: '009', functionCode: 'GroupDetail', functionName: 'Group Details'},
-    {code: '0010', functionCode: 'Maintenance', functionName: 'Maintenance'},
-    {code: '0011', functionCode: 'Report', functionName: 'Report'},
-    {code: '0012', functionCode: 'Help', functionName: 'Help'},
+  // const items = [
+  //   {code: '001', functionCode: 'តារាងបង្ហាញទិន្នន័យ', functionName: 'Dashboard'},
+  //   {code: '002', functionCode: 'តារាងទិន្នន័យកំុព្យូទ័រ', functionName: 'Computer'},
+  //   {code: '003', functionCode: 'តារាងបញ្ញីបុគ្គលិក', functionName: 'Employee Position List'},
+  //   {code: '004', functionCode: 'តារាងបញ្ញីភេទបុគ្គលិក',functionName: 'Gender List'},
+  //   {code: '005', functionCode: 'តារាងបញ្ចូលព័ត៌មានបុគ្គលិក', functionName: 'Employee Information'},
+  //   {code: '006', functionCode: 'អ្នកប្រើប្រាស់', functionName: 'Users'},
+  //   {code: '007', functionCode: 'GroupMaster', functionName: 'Group Master'},
+  //   {code: '008', functionCode: 'ItemPermission', functionName: 'Item Permission'},
+  //   {code: '009', functionCode: 'GroupDetail', functionName: 'Group Details'},
+  //   {code: '0010', functionCode: 'Maintenance', functionName: 'Maintenance'},
+  //   {code: '0011', functionCode: 'Report', functionName: 'Report'},
+  //   {code: '0012', functionCode: 'Help', functionName: 'Help'},
     
-  ];
+  // ];
 
+  useEffect(() => {
+    AOS.init({ duration: 1000 });
+
+    const fetchMenuItems = async () => {
+      try {
+        const response = await GetMenu();
+        if (response.data.code === 200) {
+          setItems(response.data.data);
+        } else {
+          setItems([]);
+        }
+      } catch (error) {
+        console.error("Error fetching menu items:", error);
+        setItems([]);
+      }
+    };
+
+    fetchMenuItems();
+  }, []);
+  
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 8;
   const filterItemPermission = items.filter(item =>
-    item.functionCode.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()) ||
-    item.code.includes(searchTerm)
+    item.menuName.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()) ||
+    item.id.includes(searchTerm)
   );
   const totalPages = Math.ceil(filterItemPermission.length / recordsPerPage);
   const handlePageChange = (pageNumber) => {
@@ -117,6 +139,10 @@ const ItemPermission = () => {
       }
     });
   }
+  const formatDateTime = (isoString) => {
+    const date = new Date(isoString);
+    return date.toLocaleString();
+  };
   
   const handleRefresh = () => {
     window.location.reload();
@@ -177,9 +203,11 @@ const ItemPermission = () => {
                 <tr>
                   <th scope="col" className="sticky left-0 px-4 py-3 bg-gray-100 border-t border-r">Action</th>
                   <th scope="col" className="px-4 py-3 border-t border-r">Code</th>
-                  <th scope='col' className='px-4 py-3 border-t border-r' style={{ minWidth: '300px' }}>Function Code</th>
-                  <th scope='col' className='px-4 py-3 border-t border-r' style={{ minWidth: '300px' }}>Function Name</th>
+                  {/* <th scope='col' className='px-4 py-3 border-t border-r' style={{ minWidth: '300px' }}>Function Code</th>
+                  <th scope='col' className='px-4 py-3 border-t border-r' style={{ minWidth: '300px' }}>Function Name</th> */}
+                  <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Create By</th>
                   <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Last By</th>
+                  
                   <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Last Date</th>
                 </tr>
               </thead>
@@ -195,11 +223,12 @@ const ItemPermission = () => {
                         onClick={() => deleteGender(item.code)} 
                         />
                     </td>
-                    <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>{item.code}</td>
-                    <td className='px-4 py-3 border-r' >{item.functionCode}</td>
-                    <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>{item.functionName}</td>
-                    <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>Last Edited By</td>
-                    <td className='px-4 py-3 border-r' style={{ minWidth: '160px' }}>Last Edited Date</td>
+                    {/* <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>{item.code}</td>
+                    <td className='px-4 py-3 border-r' >{item.functionCode}</td> */}
+                    <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>{item.menuName}</td>
+                    <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>{item.creator}</td>
+                    <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>{item.updater}</td>
+                    <td className='px-4 py-3 border-r' style={{ minWidth: '160px' }}>{formatDateTime(item.updateTime)}</td>
                     </tr>
                 ))}
             </tbody>

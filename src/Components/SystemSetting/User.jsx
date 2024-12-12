@@ -443,12 +443,13 @@ const handleSaveEdit = async () => {
     // Prepare updated form data
     const updatedFormData = {
       ...formData,
-      staffcode: selectedOption,
-      creator: currentUser, // Ensure currentUser is set correctly
+      staffcode: selectedOption ? selectedOption.value : '',
+      creator: formData.creator !== undefined ? formData.creator : currentUser, // Explicit check for undefined
       updater: currentUser,
-      createTime: new Date().toISOString(),
+      // createTime: formData.createTime || new Date().toISOString(),
       updateTime: new Date().toISOString(),
     };
+    
 
     console.log("Updated Form Data:", updatedFormData);
 
@@ -658,7 +659,7 @@ const optionsRole = [
                       </div>
                     </td>
 
-                    <td className='px-4 py-3 border-r'>{user.id}</td>
+                    <td className='px-4 py-3 border-r'>{user.usercode}</td>
                     <td className='px-4 py-3 border-r'>{user.username}</td>
                     <td className='px-4 py-3 border-r'>{user.nickname}</td>
                     <td className='px-4 py-3 border-r'>{user.mobile}</td>

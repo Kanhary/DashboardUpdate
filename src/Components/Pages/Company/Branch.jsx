@@ -23,7 +23,7 @@ const Branch = () => {
     companyLogo: ''
   };
 
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  // const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -129,14 +129,14 @@ const Branch = () => {
   };
 
   const handleSave = async (event) => {
-    event.preventDefault(); // Prevent default form submission behavior
-    console.log('Submitting form data:', formData); // Log the form data for debugging
+    event.preventDefault();
+    console.log('Submitting form data:', formData); 
   
     try {
-      // Replace `AddBranch` with the actual API call function to save the branch data
+      
       const response = await AddNewBranch(formData); 
   
-      console.log(response); // Log the response for debugging
+      console.log(response); 
   
       if (response.status === 200) {
         // Show success alert
@@ -258,11 +258,11 @@ const Branch = () => {
         });
   
         if (result.isConfirmed) {
-            // Call DeleteOffice function to send the API request
-            const response = await DeleteBranch(id); // Pass the office id here
-            console.log('Response:', response);  // Log the response to confirm deletion
+            
+            const response = await DeleteBranch(id); 
+            console.log('Response:', response); 
   
-            if (response.status === 200) {  // Check for successful response
+            if (response.status === 200) {  
                 Swal.fire({
                     title: "Deleted!",
                     text: "Office has been deleted.",
@@ -270,9 +270,9 @@ const Branch = () => {
                     confirmButtonText: "Okay",
                 });
   
-                // Remove the deleted office from the list
+                
                 const updatedOffices = branchList.filter(branch => branch.id !== id);
-                setBranchList(updatedOffices);  // Update the state with the remaining offices
+                setBranchList(updatedOffices);  
             } else {
                 Swal.fire({
                     title: "Error!",
@@ -316,8 +316,6 @@ const Branch = () => {
     setEditingBranch(null);
     setFormData(INITIAL_FORM_DATA);
   };
-
-
 
   const handleRefresh = () => {
     window.location.reload();

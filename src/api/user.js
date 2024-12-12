@@ -461,7 +461,7 @@ export function AddNewBranch(data){
 export function UpdateBranch(id, data) {
     return request({
       method: 'POST', 
-      url: `/UpdateBranchById/${id}`, 
+      url: `/Branch/UpdateBranchById/${id}`, 
       data: data
     });
 }

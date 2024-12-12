@@ -17,7 +17,7 @@ const GroupMaster = () => {
   const groupMaster = [
     {role_id: '001', role_label: 'Admin', role_name: 'super-admin'},
     {role_id: '002', role_label: 'User', role_name: 'user'},
-    {role_id: '003', role_label: 'Editor', role_name: 'Editor'}
+    {role_id: '003', role_label: 'Accounting', role_name: 'Accounting'}
   ];
 
   const [currentPage, setCurrentPage] = useState(1);

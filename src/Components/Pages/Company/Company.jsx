@@ -144,7 +144,7 @@ const Company = () => {
       // Show success alert
       Swal.fire({
         title: "Saved!",
-        text: "Office has been saved successfully.",
+        text: "Company has been saved successfully.",
         icon: "success",
         confirmButtonText: "Okay",
       });
@@ -157,7 +157,7 @@ const Company = () => {
       // Show error alert if something goes wrong
       Swal.fire({
         title: "Error!",
-        text: "Failed to save office.",
+        text: "Failed to save company.",
         icon: "error",
         confirmButtonText: "Okay",
       });
@@ -168,12 +168,12 @@ const Company = () => {
 
   const handleUpdate = async () => {
     try {
-      console.log('Saving office data:', formData);
+      console.log('Saving company data:', formData);
       const id = formData.id;  // Ensure this is valid
       if (!id) {
         Swal.fire({
           title: "Error",
-          text: "Office ID is missing",
+          text: "Company ID is missing",
           icon: "warning"
         });
         return;
@@ -182,10 +182,10 @@ const Company = () => {
       const response = await UpdateCompany(id, formData);
   
       if (response.status === 200) {
-        console.log('Office updated successfully:', response.data);
+        console.log('Company updated successfully:', response.data);
         Swal.fire({
           title: "Successful",
-          text: "Office updated successfully",
+          text: "Company updated successfully",
           icon: "success"
         });
         setIsEditModalOpen(false);  // Close the edit modal
@@ -244,7 +244,7 @@ const deleteOffice = async (id) => {
           if (response.status === 200) {  // Check for successful response
               Swal.fire({
                   title: "Deleted!",
-                  text: "Office has been deleted.",
+                  text: "Company has been deleted.",
                   icon: "success",
                   confirmButtonText: "Okay",
               });
@@ -255,7 +255,7 @@ const deleteOffice = async (id) => {
           } else {
               Swal.fire({
                   title: "Error!",
-                  text: "Failed to delete office.",
+                  text: "Failed to delete company.",
                   icon: "error",
                   confirmButtonText: "Okay",
               });
@@ -272,78 +272,15 @@ const deleteOffice = async (id) => {
   }
 };
 
-
-const handleDepartmentChange = (selectedOption) => {
-  console.log('Selected department option:', selectedOption);
-
-  setFormData((prevData) => {
-    const updatedData = {
-      ...prevData,
-      departCode: selectedOption ? selectedOption.value : '',
-    };
-    console.log('Updated formData:', updatedData); // Check if the updated data is correct
-    return updatedData;
-  });
-};
-
-
   
   
-  const handleBranchChange = (selectedOption) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      BranchCode: selectedOption ? selectedOption.value : '',
-    }));
-  };
-  const handleCompanyChange = (selectedOption) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      CompanyCode: selectedOption ? selectedOption.value : '',
-    }));
-  };
-  
-  const customStyles = {
-    control: (provided, state) => ({
-      ...provided,
-      background: '#fff',
-      borderColor: '#9e9e9e',
-      minHeight: '30px',
-      height: '37px',
-      boxShadow: state.isFocused ? null : null,
-    }),
-
-    valueContainer: (provided, state) => ({
-      ...provided,
-      height: '30px',
-      padding: '0 6px'
-    }),
-
-    input: (provided, state) => ({
-      ...provided,
-      margin: '0px',
-    }),
-    indicatorSeparator: state => ({
-      display: 'none',
-    }),
-    indicatorsContainer: (provided, state) => ({
-      ...provided,
-      height: '30px',
-    }),
-  };
-  const optionsBranch = [
-    {value: 'TS3', label: 'TS3'},
-    {value: 'LM17', label: 'LM17'},
-    
-  ]
 
   // const optionsBranch = branch.map(branch => ({
   //   value: branch.BranchCode,
   //   label: `${branch.BranchCode} - ${branch.BranchName}`
   // }));
   
-  const optionCompany = [
-    {value: 'PPAP', label: 'PPAP'}
-  ]
+ 
 
   // const optionCompany = company.map(com => ({
   //   value: com.CompanyCode,
@@ -365,7 +302,7 @@ const handleDepartmentChange = (selectedOption) => {
 
   return (
     <section className='mt-10 font-khmer'>
-      <h1 className='text-xl font-medium text-blue-800'>តារាងបញ្ជីការិយាល័យ</h1>
+      <h1 className='text-xl font-medium text-blue-800'>តារាងក្រុមហ៊ុន</h1>
       <div className='mt-3 border'></div>
       <div className='w-full mt-4' data-aos='fade-up'>
         <div className='relative w-full overflow-hidden bg-white shadow-md sm:rounded-lg'>
@@ -417,7 +354,7 @@ const handleDepartmentChange = (selectedOption) => {
               <thead className='text-xs text-gray-700 uppercase bg-gray-100'>
               <tr>
                 <th scope="col" className="sticky left-0 px-4 py-3 bg-gray-100 border-t border-r" style={{ minWidth: '30px' }}>Action</th> 
-                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '100px' }}>Company Code</th>
+                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Company Code</th>
                 <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '200px' }}>Khmer Name</th>
                 <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>English Name</th>
                 <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Phone Number</th>
@@ -425,8 +362,8 @@ const handleDepartmentChange = (selectedOption) => {
                 <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Address</th>
                 <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>VAT No</th>
                 <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Bank Name</th>
-                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Bank Account Name</th>
-                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Bank Account No</th>
+                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '200px' }}>Bank Account Name</th>
+                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '200px' }}>Bank Account No</th>
                 <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Bank Branch</th>
                 <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Company Logo</th>
               </tr>
@@ -536,7 +473,7 @@ const handleDepartmentChange = (selectedOption) => {
   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
     <div className="relative w-full max-w-2xl mx-auto transition-all transform bg-white shadow-2xl rounded-xl" data-aos='zoom-in'>
       <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
-        <h2 className="text-xl font-bold text-white md:text-2xl">បន្ថែមការិយាល័យថ្មី</h2>
+        <h2 className="text-xl font-bold text-white md:text-2xl">បន្ថែមក្រុមហ៊ុនថ្មី</h2>
         <button onClick={closeAddModal} className="text-2xl text-white transition duration-200 hover:text-gray-300 md:text-3xl">
           &times;
         </button>
@@ -662,34 +599,7 @@ const handleDepartmentChange = (selectedOption) => {
             />
           </div>
          
-          {/* <div>
-            <label htmlFor="BranchCode" className="block mb-2 text-sm font-semibold text-gray-700">Branch Code</label>
-            <Select
-              options={optionsBranch}
-              onChange={handleBranchChange}
-              placeholder="Select Branch"
-              value={optionsBranch.find(option => option.value === formData.BranchCode)}
-              isClearable
-              className="basic-single"
-              classNamePrefix="select"
-              styles={customStyles}
-            />
-          </div>
-
           
-          <div>
-            <label htmlFor="CompanyCode" className="block mb-2 text-sm font-semibold text-gray-700">Company Code</label>
-            <Select
-              options={optionCompany}
-              onChange={handleCompanyChange}
-              placeholder="Select Company"
-              value={optionCompany.find(option => option.value === formData.CompanyCode)}
-              isClearable
-              className="basic-single"
-              classNamePrefix="select"
-              styles={customStyles}
-            />
-          </div> */}
         </div>
       </div>
       <footer className="flex flex-col-reverse items-center justify-end px-6 py-4 space-y-3 space-y-reverse bg-gray-100 rounded-b-xl md:flex-row md:space-x-3 md:space-y-0">
@@ -713,7 +623,7 @@ const handleDepartmentChange = (selectedOption) => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
           <div className="relative w-1/2 mx-auto transition-all transform bg-white shadow-2xl rounded-xl" data-aos='zoom-in'>
             <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
-              <h2 className="text-xl font-bold text-white md:text-2xl">កែប្រែព័ត៌មានការិយាល័យ</h2>
+              <h2 className="text-xl font-bold text-white md:text-2xl">កែប្រែព័ត៌មានក្រុមហ៊ុន</h2>
               <button onClick={closeEditModal} className="text-2xl text-white transition duration-200 hover:text-gray-300 md:text-3xl">
                 &times;
               </button>
@@ -838,34 +748,7 @@ const handleDepartmentChange = (selectedOption) => {
                   />
                 </div>
               
-                {/* <div>
-                  <label htmlFor="BranchCode" className="block mb-2 text-sm font-semibold text-gray-700">Branch Code</label>
-                  <Select
-                    options={optionsBranch}
-                    onChange={handleBranchChange}
-                    placeholder="Select Branch"
-                    value={optionsBranch.find(option => option.value === formData.BranchCode)}
-                    isClearable
-                    className="basic-single"
-                    classNamePrefix="select"
-                    styles={customStyles}
-                  />
-                </div>
-
                 
-                <div>
-                  <label htmlFor="CompanyCode" className="block mb-2 text-sm font-semibold text-gray-700">Company Code</label>
-                  <Select
-                    options={optionCompany}
-                    onChange={handleCompanyChange}
-                    placeholder="Select Company"
-                    value={optionCompany.find(option => option.value === formData.CompanyCode)}
-                    isClearable
-                    className="basic-single"
-                    classNamePrefix="select"
-                    styles={customStyles}
-                  />
-                </div> */}
               </div>
             </div>
             <footer className="flex flex-col-reverse items-center justify-end px-6 py-4 space-y-3 space-y-reverse bg-gray-100 rounded-b-xl md:flex-row md:space-x-3 md:space-y-0">

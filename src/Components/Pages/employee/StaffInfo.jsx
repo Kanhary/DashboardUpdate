@@ -77,11 +77,11 @@ const StaffInfo = () => {
     currentAddress: '',
     genderCode: '',
     departCode: '',
-    office: '',
+ 
     branchCode: '',
     positionCode: '',
     fileUpload: null,
-    Course_Code: []
+    // courseCode: ''
   });
   
   
@@ -191,7 +191,7 @@ const StaffInfo = () => {
   // };
 
   const handleCourseChange = (selected) => {
-    setFormData((prev) => ({ ...prev, Course_Code: selected }));
+    setFormData((prev) => ({ ...prev, courseCode: selected }));
   };
 
   const handlePositionChange = (selectedOption) => {
@@ -383,6 +383,7 @@ const StaffInfo = () => {
       weight: formData.weight || null, // Set weight if provided
       bod: formData.bod || null, // Set bod (birthday) if provided
       currentAddress: formData.currentAddress || '', // Ensure address is set
+      // courseCode: formData.courseCode?.map(course => course.value) || [],
       isRetire: formData.isRetire || false, // Set isretire if provided
       resign: formData.resign || false, // Set resign if provided
       isHoldWork: formData.isHoldWork || false, // Set isholdwork if provided
