@@ -505,3 +505,45 @@ export function DeleteCompany(id) {
         
     });
 }
+
+export function GetRole(){
+    return request({
+        method: "GET",
+        url: '/Role/findAllRole'
+    })
+}
+
+export function AddNewRole(data){
+    return request({
+        method: "POST",
+        url: '/Role/addNewRole',
+        data: data
+    })
+}
+
+export function UpdateRole(id, data) {
+    return request({
+      method: 'POST', 
+      url: `/Role/updateRoleByRoleId/${id}`, 
+      data: data
+    });
+}
+
+export function DeleteRole(id) {
+    return request({
+        method: "DELETE",
+        url: `/Role/deleteRoleByRoleId/${id}`,
+        
+    });
+}
+
+export function AddUserRole(id, roleData){
+    console.log('Sending request to add role for user:', id, roleData);
+    return request({
+        method: "POST",
+        url: `/user/${id}/assign-roles`,
+        data: roleData
+        
+    })
+    
+}

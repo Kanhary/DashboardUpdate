@@ -1,30 +1,61 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaPen, FaTrashAlt } from "react-icons/fa";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { IoMdRefresh } from "react-icons/io";
-
+import { GetRole, AddNewRole, UpdateRole, DeleteRole , GetUserLogin} from '../../api/user';
+import Swal from 'sweetalert2'; 
 
 
 const GroupMaster = () => {
-  const INITAIL_FORM_DATA = {code: '', groupCode: '',groupName: ''};
+  const INITAIL_FORM_DATA = {roleLabel: '',roleName: ''};
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [formData, setFormData] = useState(INITAIL_FORM_DATA);
   const [editingGroupMaster,setEditingGroupMaster] = useState(null);
+  const [groupMaster, setGroupMaster] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
+
+
+  useEffect(() => {
+    const fetchRole = async () => {
+      try {
+        const response = await GetRole();
+        console.log(response.data.data); 
+        setGroupMaster(response.data.data);
+        
+      } catch (err) {
+        setError({ message: err.message || 'An error occurred' });
+      }
+    };
+
+
+    const fetchCurrentUser = async () => {
+      try {
+        const response = await GetUserLogin(); // Call the API to get the current user
+        setCurrentUser(response.data.data.username); // Assuming the response contains a username field
+        console.log('Fetched user:', response.data.data.username);
+      } catch (error) {
+        console.error('Error fetching current user:', error);
+      }
+    };
+    
+    fetchCurrentUser();
+    fetchRole();
+  }, []);
   
-  const groupMaster = [
-    {role_id: '001', role_label: 'Admin', role_name: 'super-admin'},
-    {role_id: '002', role_label: 'User', role_name: 'user'},
-    {role_id: '003', role_label: 'Accounting', role_name: 'Accounting'}
-  ];
+  // const groupMaster = [
+  //   {role_id: '001', role_label: 'Admin', role_name: 'super-admin'},
+  //   {role_id: '002', role_label: 'User', role_name: 'user'},
+  //   {role_id: '003', role_label: 'Accounting', role_name: 'Accounting'}
+  // ];
 
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 8;
   const filterGroupMaster = groupMaster.filter(groupmaster =>
-    groupmaster.role_label.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()) ||
-    groupmaster.role_id.includes(searchTerm)
+    groupmaster.roleLabel.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()) ||
+    groupmaster.roleId.includes(searchTerm)
   );
   const totalPages = Math.ceil(filterGroupMaster.length / recordsPerPage);
   const handlePageChange = (pageNumber) => {
@@ -56,9 +87,9 @@ const GroupMaster = () => {
   const openAddModal = () => setIsAddModalOpen(true);
   const closeAddModal = () => setIsAddModalOpen(false);
 
-  const openEditModal = (Code, GroupCode, GroupName) => {
-    setEditingGroupMaster({ Code, GroupCode, GroupName });
-    setFormData({ Code, GroupCode, GroupName });
+  const openEditModal = (groupmaster) => {
+    setEditingGroupMaster( groupmaster);
+    setFormData(groupmaster);
     setIsEditModalOpen(true);
   };
 
@@ -78,16 +109,149 @@ const GroupMaster = () => {
     setFormData(INITAIL_FORM_DATA);
   };
 
-  const handleSave = () => {
-    console.log('Save clicked', formData);
-    closeAddModal();
-    closeEditModal();
+  const handleSave = async () => {
+    // Prepare the data for submission
+    const updatedFormData = {
+      ...formData, // Spread the current formData state
+      creator: currentUser,
+      updater: currentUser,
+      createTime: new Date().toISOString(),
+      updateTime: new Date().toISOString(),
+    };
+  
+    try {
+      // Call your API to save the data
+      const response = await AddNewRole(updatedFormData);
+  
+      // Show success alert
+      Swal.fire({
+        title: "Saved!",
+        text: "Category has been saved successfully.",
+        icon: "success",
+        confirmButtonText: "Okay",
+      });
+  
+      console.log('API Response:', response);
+      closeAddModal(); // Close the modal on successful save
+    } catch (error) {
+      console.error('Error saving data', error);
+  
+      // Show error alert if something goes wrong
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to save category.",
+        icon: "error",
+        confirmButtonText: "Okay",
+      });
+    }
   };
 
-  const handleUpdate = () => {
-    console.log('Update clicked', formData);
-    closeEditModal();
+  const handleUpdate = async () => {
+    try {
+      console.log('Saving category data:', formData);
+      const roleId = formData.id;  // Ensure this is valid
+      if (!roleId) {
+        Swal.fire({
+          title: "Error",
+          text: "Category ID is missing",
+          icon: "warning"
+        });
+        return;
+      }
+  
+      const response = await UpdateRole(roleId, formData);
+  
+      if (response.status === 200) {
+        console.log('Category updated successfully:', response.data);
+        Swal.fire({
+          title: "Successful",
+          text: "Category updated successfully",
+          icon: "success"
+        });
+        setIsEditModalOpen(false);  // Close the edit modal
+      } else {
+        const errorMessage = response.data.message || 'An unexpected error occurred.';
+        Swal.fire({
+          title: "Error",
+          text: "Error: " + errorMessage,
+          icon: "warning"
+        });
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error('Error response data:', error.response.data);
+        Swal.fire({
+          title: "Error",
+          text: error.response.data.message || 'An unexpected error occurred.',
+          icon: "error"
+        });
+      } else if (error.request) {
+        console.error('Error request:', error.request);
+        Swal.fire({
+          title: "Error",
+          text: "No response received from the server.",
+          icon: "error"
+        });
+      } else {
+        console.error('Error message:', error.message);
+        Swal.fire({
+          title: "Error",
+          text: "An error occurred while setting up the request.",
+          icon: "error"
+        });
+      }
+    }
   };
+
+  const handleDelete = async (roleId) => {
+    try {
+        // Show a confirmation prompt before deleting
+        const result = await Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#22c55e",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
+        });
+  
+        if (result.isConfirmed) {
+            // Call DeleteOffice function to send the API request
+            const response = await DeleteRole(roleId); // Pass the office id here
+            console.log('Response:', response);  // Log the response to confirm deletion
+  
+            if (response.status === 200) {  // Check for successful response
+                Swal.fire({
+                    title: "Deleted!",
+                    text: "Category has been deleted.",
+                    icon: "success",
+                    confirmButtonText: "Okay",
+                });
+  
+                // Remove the deleted office from the list
+                const updatedCategory = groupMaster.filter(groupmaster => groupmaster.roleId !== roleId);
+                setGroupMaster(updatedCategory);  // Update the state with the remaining offices
+            } else {
+                Swal.fire({
+                    title: "Error!",
+                    text: "Failed to delete category.",
+                    icon: "error",
+                    confirmButtonText: "Okay",
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Error:', error.response ? error.response.data : error.message);
+        Swal.fire({
+            title: 'Error!',
+            text: error.response?.data?.message || 'Failed to connect to the server.',
+            icon: 'error',
+            confirmButtonText: 'Okay',
+        });
+    }
+  };
+  
 
   const handleClick = ()=>{
     Swal.fire({
@@ -180,17 +344,17 @@ const GroupMaster = () => {
                       <td className='sticky left-0 flex px-6 py-4 bg-white border-r'>
                         <input type="checkbox" className="mr-1 action-checkbox" />
                         <FaPen className="ml-2 text-blue-500 cursor-pointer hover:text-blue-700" 
-                        onClick={() => openEditModal(groupmaster.role_id, groupmaster.role_label, groupmaster.role_name)}
+                        onClick={() => openEditModal(groupmaster)}
                         />
                         <FaTrashAlt className="ml-3 text-red-500 cursor-pointer hover:text-red-700" 
-                        onClick={() => deleteGender(groupmaster.role_id)} 
+                        onClick={() => handleDelete(groupmaster.roleId)} 
                         />
                     </td>
-                    <td className='px-4 py-3 border-r'>{groupmaster.role_id}</td>
-                    <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>{groupmaster.role_label}</td>
-                    <td className='px-4 py-3 border-r' style={{ minWidth: '500px' }}>{groupmaster.role_name}</td>
-                    <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>Last Edited By</td>
-                    <td className='px-4 py-3 border-r' style={{ minWidth: '160px' }}>Last Edited Date</td>
+                    <td className='px-4 py-3 border-r'>{groupmaster.roleId}</td>
+                    <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>{groupmaster.roleLabel}</td>
+                    <td className='px-4 py-3 border-r' style={{ minWidth: '500px' }}>{groupmaster.roleName}</td>
+                    <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>{groupmaster.creator}</td>
+                    <td className='px-4 py-3 border-r' style={{ minWidth: '160px' }}>{groupmaster.updater}</td>
                     </tr>
                 ))}
             </tbody>
@@ -269,33 +433,34 @@ const GroupMaster = () => {
             <div className="px-6 py-6 space-y-6">
               <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
                 {/* Input for Code */}
-                <div className="w-full md:w-1/2">
-                  <label htmlFor="Code" className="block mb-2 text-sm font-semibold text-gray-700">Code</label>
+                {/* <div className="w-full md:w-1/2">
+                  <label htmlFor="roleId" className="block mb-2 text-sm font-semibold text-gray-700">Role ID</label>
                   <input
                     type="text"
-                    id="Code"
-                    value={formData.Code}
+                    id="roleId"
+                    value={formData.roleId}
+                    disabled
                     onChange={handleChange}
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                   />
-                </div>
+                </div> */}
                 {/* Input for Position */}
                 <div className="w-full md:w-1/2">
-                  <label htmlFor="GroupCode" className="block mb-2 text-sm font-semibold text-gray-700">Group Code</label>
+                  <label htmlFor="roleLabel" className="block mb-2 text-sm font-semibold text-gray-700">Role Label</label>
                   <input
                     type="text"
-                    id="GroupCode"
-                    value={formData.GroupCode}
+                    id="roleLabel"
+                    value={formData.roleLabel}
                     onChange={handleChange}
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                   />
                 </div>
               </div>
               <div>
-                <label htmlFor="groupName" className="block mb-2 text-sm font-semibold text-gray-700 dark:text-gray-300">Group Name</label>
+                <label htmlFor="roleName" className="block mb-2 text-sm font-semibold text-gray-700 dark:text-gray-300">Role Name</label>
                 <textarea
-                  id="groupName"
-                  value={formData.groupName}
+                  id="roleName"
+                  value={formData.roleName}
                   onChange={handleChange}
                   className="block w-full h-10 px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm resize-none bg-gray-50 focus:outline-none focus:ring-4 focus:ring-blue-200 focus:border-blue-500"
                 />
@@ -343,21 +508,21 @@ const GroupMaster = () => {
                 </div>
                 {/* Input for Position */}
                 <div className="w-full md:w-1/2">
-                  <label htmlFor="GroupCode" className="block mb-2 text-sm font-semibold text-gray-700">Group Code</label>
+                  <label htmlFor="roleLabel" className="block mb-2 text-sm font-semibold text-gray-700">Role Label</label>
                   <input
                     type="text"
-                    id="GroupCode"
-                    value={formData.GroupCode}
+                    id="roleLabel"
+                    value={formData.roleLabel}
                     onChange={handleChange}
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                   />
                 </div>
               </div>
               <div>
-                <label htmlFor="GroupName" className="block mb-2 text-sm font-semibold text-gray-700 dark:text-gray-300">Group Name</label>
+                <label htmlFor="roleName" className="block mb-2 text-sm font-semibold text-gray-700 dark:text-gray-300">Role Name</label>
                 <textarea
-                  id="GroupName"
-                  value={formData.GroupName}
+                  id="roleName"
+                  value={formData.roleName}
                   onChange={handleChange}
                   className="block w-full h-10 px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm resize-none bg-gray-50 focus:outline-none focus:ring-4 focus:ring-blue-200 focus:border-blue-500"
                 />

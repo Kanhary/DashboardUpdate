@@ -7,7 +7,7 @@ import { IoMdRefresh } from "react-icons/io";
 import ReactPaginate from 'react-paginate';
 import Select from 'react-select';
 import { GiShipBow } from "react-icons/gi";
-import { GetAllUser, AddUser, GetUserLogin, UpdateUser, DeleteUser, GetAllStaff } from '../../api/user';
+import { GetAllUser, AddUser, GetUserLogin, UpdateUser, DeleteUser, GetAllStaff, GetRole, AddUserRole } from '../../api/user';
 import axios from 'axios';
 import { getToken } from '../../utils/token/Token';
 
@@ -28,6 +28,7 @@ const User = () => {
     updater: '',
     updateTime: '',
     createTime: '',
+    roleid: ''
   };
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -44,8 +45,9 @@ const User = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedOption, setSelectedOption] = useState('');
   const [pictureUrl, setPictureUrl] = useState(null);
-  const [role, setRole] = useState('');
+  const [role, setRole] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
+  
   const [Avatar, setAvatar] = useState(null)
   const recordsPerPage = 8;
 
@@ -145,6 +147,18 @@ const User = () => {
         console.error('Error fetching current user:', error);
       }
     };
+
+    const fetchRole = async () => {
+      try {
+        const response = await GetRole();
+        console.log(response.data.data); 
+        setRole(response.data.data);
+        
+      } catch (err) {
+        setError({ message: err.message || 'An error occurred' });
+      }
+    };
+
     // const fetchRole = async () => {
     //   try{
     //     const response = await 
@@ -154,6 +168,7 @@ const User = () => {
     fetchUsers();
     fetchEmployees();
     fetchCurrentUser(); 
+    fetchRole();
     // setCurrentPage(0);
   }, []);
 
@@ -252,6 +267,7 @@ const handleSave = async () => {
   // Prepare the updated form data
   const updatedFormData = {
     ...formData,
+    roleId: selectedOption ? selectedOption.value : '',
     staffcode: selectedOption ? selectedOption.value : '',
     creator: currentUser, // Use the fetched username as creator
     updater: currentUser, // Use the fetched username as updater
@@ -443,19 +459,44 @@ const handleSaveEdit = async () => {
     // Prepare updated form data
     const updatedFormData = {
       ...formData,
+      roleId: selectedOption ? selectedOption.value : '',
       staffcode: selectedOption ? selectedOption.value : '',
       creator: formData.creator !== undefined ? formData.creator : currentUser, // Explicit check for undefined
       updater: currentUser,
-      // createTime: formData.createTime || new Date().toISOString(),
       updateTime: new Date().toISOString(),
     };
-    
 
     console.log("Updated Form Data:", updatedFormData);
 
-    // Make the API call to update the user
-    const response = await UpdateUser(editingUser.id, updatedFormData);
+    // If role is new or not selected, add it first
+    // if (selectedOption && selectedOption.isNew) {
+      
+      const roleData = {
+        userId: editingUser.id, // Use the current user's ID
+        roleId: selectedOption.value, // Use the selected option's value as roleId
+    };
     
+
+    try {
+      const roleResponse = await AddUserRole(editingUser.id, roleData);
+      console.log("Role added response (raw):", roleResponse);
+    
+      if (roleResponse.status !== 200) {
+        console.error("Role addition failed with status:", roleResponse.status);
+        throw new Error("Failed to add role");
+      }
+    } catch (error) {
+      console.error("Error in AddUserRole:", error);
+      if (error.response) {
+        console.error("Backend returned error:", error.response.data);
+      }
+      throw error; // Re-throw the error to handle it upstream
+    }
+    
+    // }
+
+    // After adding the role, proceed to update the user
+    const response = await UpdateUser(editingUser.id, updatedFormData);
     console.log('Update response:', response);
 
     if (response.status === 200) {
@@ -473,16 +514,25 @@ const handleSaveEdit = async () => {
       });
     }
   } catch (error) {
-    console.error('Error updating user:', error);
+    console.error('Error:', error);
+
+    // If the error is related to the API call, log more details
+    if (error.response) {
+      console.error('API Response Error:', error.response);
+    }
+
     Swal.fire({
       title: "Error!",
-      text: error.response?.data?.message || 'An error occurred.',
+      text: error.message || 'An error occurred.',
       icon: "error",
     });
   } finally {
     setIsLoading(false); // Hide loading state
   }
 };
+
+
+
 
 
 
@@ -535,6 +585,15 @@ const handleStaffCode = (option) => {
   }));
 };
 
+const handleRole = (option) => {
+  console.log('Selected option:', option); // Check if selectedOption has the correct value
+  setSelectedOption(option);
+  setFormData((prevData) => ({
+    ...prevData,
+    roleId: option ? option.value : '',
+  }));
+};
+
 
 
 // const optionsStaffCode = [
@@ -547,12 +606,12 @@ const optionsStaffCode = employees.map(employee => ({
   label: `${employee.staffCode}-${employee.khName}`
 }));
 
-const optionsRole = [
-  {value: 'Admin', label: 'Admin'},
-  {value: 'Editor', label: 'Editor'},
-  {value: 'User', label: 'User'},
-  {value: 'Guest', label: 'Guest'}
-]
+const optionRoleCode = role.map(r => ({
+  value: r.roleId,
+  label: `${r.roleId}-${r.roleLabel}`
+}))
+
+
 
   // const optionsRole = role.map(role => ({
   //   value: role.role,
@@ -630,6 +689,7 @@ const optionsRole = [
                   {/* <th scope='col' className='px-4 border-r border-tpy-3' style={{ minWidth: '150px' }}>Password</th> */}
                   <th scope='col' className='px-4 py-3 border-t border-r' style={{ minWidth: '150px' }}>Gender</th>
                   <th scope='col' className='px-4 py-3 border-t border-r' style={{ minWidth: '150px' }}>Staff Code</th>
+                  <th scope='col' className='px-4 py-3 border-t border-r' style={{ minWidth: '150px' }}>Role</th>
                   <th scope='col' className='px-4 py-3 border-t border-r' style={{ minWidth: '150px '}}>Avatar</th>
                   <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Status</th>
                   <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Creater</th>
@@ -667,6 +727,7 @@ const optionsRole = [
                     {/* <td className='px-4 border-rpy-3'>{user.password}</td> */}
                     <td className='px-4 py-3 border-r'>{user.sex}</td>
                     <td className='px-4 py-3 border-r'>{user.staffcode}</td>
+                    <td className='px-4 py-3 border-r'>{user.roleId}</td>
                     <td className="px-4 py-3 border-r">
                     <img src={`http://localhost:5173/public/Img/${user.avatar}`} alt="User Avatar" className="object-cover w-10 h-10 rounded-full"/>
 
@@ -879,30 +940,21 @@ const optionsRole = [
                   </div>
                 </div>
                 <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                  {/* Input for Phone Number */}
-                  {/* <div className="w-full md:w-1/2">
-                    <label htmlFor="cardId" className="block mb-2 text-sm font-semibold text-gray-700">Card ID</label>
-                    <input
-                      type="text"
-                      id="cardId"
-                      value={formData.cardId}
-                      onChange={handleChange}
-                      className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                <div className="w-full md:w-1/2">
+                    <label htmlFor="staffcode" className="block mb-2 text-sm font-semibold text-gray-700">Staff Code</label>
+                    <Select
+                      options={optionRoleCode}
+                      onChange={handleRole}  // Ensure handleStaffCode is passed correctly here
+                      value={optionRoleCode.find(option => option.value === formData.roleId)}
+                      placeholder="Select or type to search"
+                      className="basic-single"
+                      classNamePrefix="select"
+                      styles={customStyles}
                     />
+                    {errors.staffcode && <p className="mt-1 text-xs text-red-500">{errors.staffcode}</p>}
                   </div>
-                   */}
-                  {/* <div className="w-full md:w-1/2">
-                    <label htmlFor="branch" className="block mb-2 text-sm font-semibold text-gray-700">Branch</label>
-                    <input
-                      type="text"
-                      id="branch"
-                      value={formData.branch}
-                      onChange={handleChange}
-                      className={`block w-full px-4 py-2 text-sm text-gray-800 border ${errors.branch ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
-                    />
-                    {errors.branch && <p className="mt-1 text-xs text-red-500">{errors.branch}</p>}
-                  </div> */}
                 </div>
+                
               </div>
 
               {/* Right Side: Picture Upload */}
@@ -1102,29 +1154,19 @@ const optionsRole = [
                   </div>
                 </div>
                 <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                  {/* Input for Phone Number */}
-                  {/* <div className="w-full md:w-1/2">
-                    <label htmlFor="cardId" className="block mb-2 text-sm font-semibold text-gray-700">Card ID</label>
-                    <input
-                      type="text"
-                      id="cardId"
-                      value={formData.cardId}
-                      onChange={handleChange}
-                      className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                <div className="w-full md:w-1/2">
+                    <label htmlFor="staffcode" className="block mb-2 text-sm font-semibold text-gray-700">Staff Code</label>
+                    <Select
+                      options={optionRoleCode}
+                      onChange={handleRole}  // Ensure handleStaffCode is passed correctly here
+                      value={optionRoleCode.find(option => option.value === formData.roleId)}
+                      placeholder="Select or type to search"
+                      className="basic-single"
+                      classNamePrefix="select"
+                      styles={customStyles}
                     />
+                    {errors.staffcode && <p className="mt-1 text-xs text-red-500">{errors.staffcode}</p>}
                   </div>
-                   */}
-                  {/* <div className="w-full md:w-1/2">
-                    <label htmlFor="branch" className="block mb-2 text-sm font-semibold text-gray-700">Branch</label>
-                    <input
-                      type="text"
-                      id="branch"
-                      value={formData.branch}
-                      onChange={handleChange}
-                      className={`block w-full px-4 py-2 text-sm text-gray-800 border ${errors.branch ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
-                    />
-                    {errors.branch && <p className="mt-1 text-xs text-red-500">{errors.branch}</p>}
-                  </div> */}
                 </div>
               </div>
 
