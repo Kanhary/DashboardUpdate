@@ -13,6 +13,7 @@ import { getToken } from '../../utils/token/Token';
 
 const User = () => {
   const INITIAL_FORM_DATA = { 
+    id: '',
     username: '', 
     nickname: '',
     usercode: '', 
@@ -47,6 +48,10 @@ const User = () => {
   const [pictureUrl, setPictureUrl] = useState(null);
   const [role, setRole] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
+  const [activeTab, setActiveTab] = useState('Create User');
+  const [isUserCreated, setIsUserCreated] = useState(false);
+  const [userId, setUserId] = useState(null);
+
   
   const [Avatar, setAvatar] = useState(null)
   const recordsPerPage = 8;
@@ -251,77 +256,111 @@ const User = () => {
 const handleSave = async () => {
   const validationErrors = {};
 
-  // Validate required fields
   if (!formData.staffcode) validationErrors.staffcode = 'Staff Code is required';
   if (!formData.username) validationErrors.username = 'Username is required';
   if (!formData.email) validationErrors.email = 'Email is required';
   if (!formData.password) validationErrors.password = 'Password is required';
 
-  // Check for validation errors
   if (Object.keys(validationErrors).length > 0) {
-    console.log('Validation errors:', validationErrors);
     setErrors(validationErrors);
-    return; // Stop if there are validation errors
+    return;
   }
 
-  // Prepare the updated form data
   const updatedFormData = {
     ...formData,
-    roleId: selectedOption ? selectedOption.value : '',
-    staffcode: selectedOption ? selectedOption.value : '',
-    creator: currentUser, // Use the fetched username as creator
-    updater: currentUser, // Use the fetched username as updater
+    roleId: selectedOption?.value || '',
+    creator: currentUser,
+    updater: currentUser,
     createTime: new Date().toISOString(),
     updateTime: new Date().toISOString(),
   };
 
-  console.log('FormData before API call:', updatedFormData); // Debug: check if staffcode is correct
+  setIsLoading(true);
+
+  try {
+    // Step 1: Create the user
+    const addUserResponse = await AddUser(updatedFormData);
+    console.log("AddUser response:", addUserResponse);
+
+    // Step 2: If the ID is not directly returned, use email or username to retrieve the user ID
+    if (addUserResponse && addUserResponse.data) {
+      const message = addUserResponse.data.msg;
+      
+      if (message === "New User has been created") {
+        const id = formData.id; // Assuming email is unique
+        const getUserResponse = await axios.get(`http://192.168.168.4:8888/user/getUserById/${id}`);
+        
+        if (getUserResponse && getUserResponse.data) {
+          const newUserId = getUserResponse.data.id;
+          console.log("New User ID retrieved:", newUserId);
+          
+          Swal.fire({
+            title: "Success!",
+            text: "User created successfully.",
+            icon: "success",
+          });
+        } else {
+          throw new Error("Unable to retrieve user ID after creation.");
+        }
+      } else {
+        throw new Error("User creation failed.");
+      }
+    } else {
+      throw new Error("User ID not found in the response.");
+    }
+  } catch (error) {
+    console.error("Error during user creation:", error);
+    Swal.fire({
+      title: "Error!",
+      text: error.message || "Error creating user.",
+      icon: "error",
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+
+
+const handleSaveRole = async () => {
+  // if (!userId || !selectedOption) {
+  //   Swal.fire({
+  //     title: "Error!",
+  //     text: "Please select a user and a role before saving.",
+  //     icon: "error",
+  //   });
+  //   console.log("userId or selectedOption is missing");
+  //   return;
+  // }
+
+  const roleData = {
+    userId: userId,  // Use the userId that was captured after user creation
+    roleId: selectedOption.value,  // Use the selected role ID
+  };
 
   setIsLoading(true);
 
   try {
-    // Call the API to add the user
-    const addUserResponse = await AddUser(updatedFormData);
+    const roleResponse = await AddUserRole(userId, roleData);
 
-    // Log the response for debugging
-    console.log('User created successfully:', addUserResponse);
-
-    // Display success message
-    Swal.fire({
-      title: "Success!",
-      text: "User created successfully.",
-      icon: "success",
-    });
-
-    closeAddModal(); // Close the modal on success
-
-  } catch (error) {
-    console.error('Error during user creation:', error);
-
-    // Enhanced error handling
-    if (error.response) {
-      const errorMessage = error.response.data.message || 'Error during user creation';
-      console.error('Response data:', error.response.data); // Log the detailed error response
-
-      // Handle specific error for user already exists
-      if (errorMessage.includes('User already exists')) {
-        setErrors({ general: 'This user already exists. Please use a different username or email.' });
-      } else {
-        setErrors({ general: errorMessage });
-      }
+    if (roleResponse.status === 200) {
+      Swal.fire({
+        title: "Success!",
+        text: "Role assigned successfully.",
+        icon: "success",
+      });
     } else {
-      setErrors({ general: 'Network error' });
+      throw new Error(`Failed to assign role: ${roleResponse.statusText}`);
     }
-
-    // Display error message
+  } catch (error) {
+    console.error("Error in assigning role:", error);
     Swal.fire({
       title: "Error!",
-      text: errors.general || "There was an error creating the user. Please try again.",
+      text: error.response?.data?.message || "Error assigning role.",
       icon: "error",
     });
-
   } finally {
-    setIsLoading(false); // Ensure loading state is reset
+    setIsLoading(false);
   }
 };
 
@@ -349,7 +388,7 @@ const handleSave = async () => {
   // };
   
 
-  const [uploadSuccess, setUploadSuccess] = useState(false);
+  // const [uploadSuccess, setUploadSuccess] = useState(false);
   
   
 
@@ -531,14 +570,6 @@ const handleSaveEdit = async () => {
   }
 };
 
-
-
-
-
-
-
-
-  
   const handleChangeSelection = (selectedOption) => {
     // Ensure selectedOption is the correct value
     const selectedValue = selectedOption ? selectedOption.value : null;
@@ -681,6 +712,7 @@ const optionRoleCode = role.map(r => ({
               <thead className='text-xs text-gray-700 uppercase bg-gray-100 '>
                 <tr>
                   <th scope="col" className="sticky left-0 px-4 py-3 bg-gray-100 border-t border-r">Action</th>
+                  <th scope='col' className='px-4 py-3 border-t border-r' style={{ minWidth: '150px' }}>Role</th>
                   <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>User Code</th>
                   <th scope='col' className='px-4 py-3 border-t border-r' style={{ minWidth: '150px' }}>Username</th>
                   <th scope='col' className='px-4 py-3 border-t border-r' style={{ minWidth: '150px' }}>Nickname</th>
@@ -689,7 +721,6 @@ const optionRoleCode = role.map(r => ({
                   {/* <th scope='col' className='px-4 border-r border-tpy-3' style={{ minWidth: '150px' }}>Password</th> */}
                   <th scope='col' className='px-4 py-3 border-t border-r' style={{ minWidth: '150px' }}>Gender</th>
                   <th scope='col' className='px-4 py-3 border-t border-r' style={{ minWidth: '150px' }}>Staff Code</th>
-                  <th scope='col' className='px-4 py-3 border-t border-r' style={{ minWidth: '150px' }}>Role</th>
                   <th scope='col' className='px-4 py-3 border-t border-r' style={{ minWidth: '150px '}}>Avatar</th>
                   <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Status</th>
                   <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Creater</th>
@@ -718,7 +749,7 @@ const optionRoleCode = role.map(r => ({
                         </button>
                       </div>
                     </td>
-
+                    <td className='px-4 py-3 border-r'>{user.roleId}</td>
                     <td className='px-4 py-3 border-r'>{user.usercode}</td>
                     <td className='px-4 py-3 border-r'>{user.username}</td>
                     <td className='px-4 py-3 border-r'>{user.nickname}</td>
@@ -727,7 +758,6 @@ const optionRoleCode = role.map(r => ({
                     {/* <td className='px-4 border-rpy-3'>{user.password}</td> */}
                     <td className='px-4 py-3 border-r'>{user.sex}</td>
                     <td className='px-4 py-3 border-r'>{user.staffcode}</td>
-                    <td className='px-4 py-3 border-r'>{user.roleId}</td>
                     <td className="px-4 py-3 border-r">
                     <img src={`http://localhost:5173/public/Img/${user.avatar}`} alt="User Avatar" className="object-cover w-10 h-10 rounded-full"/>
 
@@ -803,8 +833,9 @@ const optionRoleCode = role.map(r => ({
         </div>
       </div>
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm ">
-          <div className="relative flex flex-col w-full mx-auto overflow-auto transition-all transform bg-white shadow-2xl lg:w-2/3 rounded-xl h-5/6" data-aos='zoom-in'>
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-60 backdrop-blur">
+          {/* user form */}
+          <div className="relative flex flex-col w-full mx-auto overflow-auto transition-all transform bg-white shadow-2xl lg:w-2/3 h-5/6" data-aos='zoom-in'>
             <header className="sticky top-0 z-50 flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
           
             <h2 className="flex items-center space-x-2 text-xl font-bold text-white md:text-2xl">
@@ -815,137 +846,209 @@ const optionRoleCode = role.map(r => ({
                 &times;
               </button>
             </header>
-            <form className="z-10 flex flex-col flex-grow px-6 py-6 space-y-6 md:flex-row md:space-x-6" data-aos='zoom-in'>
-              {/* Left Side: Form Inputs */}
-              <div className="w-full space-y-6 md:w-3/4">
-                <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                  {/* Input for Username */}
-                  <div className="w-full md:w-1/2">
-                    <label htmlFor="usercode" className="block mb-2 text-sm font-semibold text-gray-700">User Code</label>
-                    <input
-                      type="text"
-                      id="usercode"
-                      value={formData.usercode}
-                      onChange={handleChange}
-                      className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                      autoComplete="usercode"
-                    />
-                    {errors.usercode && <p className="mt-1 text-xs text-red-500">{errors.usercode}</p>}
-                  </div>
-
-                  {/* Input for Password */}
-                  <div className="w-full md:w-1/2">
-                    <label htmlFor="username" className="block mb-2 text-sm font-semibold text-gray-700">Username</label>
-                    <input
-                      type="text"
-                      id="username"
-                      value={formData.username}
-                      onChange={handleChange}
-                      className={`block w-full px-4 py-2 text-sm text-gray-800 border ${errors.username ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
-                      autoComplete="username"
-                    />
-                    {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password}</p>}
-                  </div>
-                </div>
-                <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                  {/* Input for First Name */}
-                  <div className="w-full md:w-1/2">
-                    <label htmlFor="nickname" className="block mb-2 text-sm font-semibold text-gray-700">Nickname</label>
-                    <input
-                      type="text"
-                      id="nickname"
-                      value={formData.nickname}
-                      onChange={handleChange}
-                      className={`block w-full px-4 py-2 text-sm text-gray-800 border ${errors.nickname ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
-                    />
-                    {errors.nickname && <p className="mt-1 text-xs text-red-500">{errors.nickname}</p>}
-                  </div>
-                  {/* Input for Last Name */}
-                  <div className="w-full md:w-1/2">
-                    <label htmlFor="sex" className="block mb-2 text-sm font-semibold text-gray-700">Gender</label>
-                    <input
-                      type="text"
-                      id="sex"
-                      value={formData.sex}
-                      onChange={handleChange}
-                      className={`block w-full px-4 py-2 text-sm text-gray-800 border ${errors.sex ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
-                    />
-                    {errors.sex && <p className="mt-1 text-xs text-red-500">{errors.sex}</p>}
-                  </div>
-                </div>
-                <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                  {/* <div className="w-full md:w-1/2">
-                    <label htmlFor="role" className="block mb-2 text-sm font-semibold text-gray-700">Role</label>
-                    <Select
-                      value={optionsRole.find(option => option.value === selectedOption)}
-                      onChange={handleChangeSelection}
-                      options={optionsRole}
-                      placeholder="Select or type to search"
-                      className="basic-single"
-                      classNamePrefix="select"
-                      styles={customStyles}
-                    />
-                    {errors.staffCode && <p className="mt-1 text-xs text-red-500">{errors.staffCode}</p>}
-                  </div> */}
-
-                  <div className="w-full md:w-1/2">
-                    <label htmlFor="password" className="block mb-2 text-sm font-semibold text-gray-700">Password</label>
-                    <input
-                      type="text"
-                      id="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    />
-                  </div>
+            
+            <div className='w-full p-4'>
+              <div className="flex space-x-4 border-b">
+                <button
+                  className={`p-2 ${activeTab === 'Create User' ? 'border-b-2 border-blue-500' : ''}`}
+                  onClick={() => setActiveTab('Create User')}
+                >
+                  Create User
+                </button>
+                <button
+                  className={`p-2 ${activeTab === 'assignRole' ? 'border-b-2 border-blue-500' : ''}`}
+                  onClick={() =>  setActiveTab('assignRole')}
                   
-                  {/* Select for Staff Code */}
-                  <div className="w-full md:w-1/2">
-                    <label htmlFor="staffcode" className="block mb-2 text-sm font-semibold text-gray-700">Staff Code</label>
-                    <Select
-                      options={optionsStaffCode}
-                      onChange={handleStaffCode}  // Ensure handleStaffCode is passed correctly here
-                      value={optionsStaffCode.find(option => option.value === formData.staffcode)}
-                      placeholder="Select or type to search"
-                      className="basic-single"
-                      classNamePrefix="select"
-                      styles={customStyles}
-                    />
-                    {errors.staffcode && <p className="mt-1 text-xs text-red-500">{errors.staffcode}</p>}
-                  </div>
+                >
+                  Assign Role
+                </button>
+              </div>
+            </div>
+
+            {/* Tab Content */}
+            <div className="mt-4">
+              {activeTab === 'Create User' && (
+                <div>
+                  <h2 className="mb-4 text-xl font-semibold">Create User</h2>
+                  <form className="z-10 flex flex-col flex-grow px-6 py-6 space-y-6 md:flex-row md:space-x-6" data-aos='zoom-in'>
+                    {/* Left Side: Form Inputs */}
+                    <div className="w-full space-y-6 md:w-3/4">
+                      <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                        {/* Input for Username */}
+                        <div className="w-full md:w-1/2">
+                          <label htmlFor="usercode" className="block mb-2 text-sm font-semibold text-gray-700">User Code</label>
+                          <input
+                            type="text"
+                            id="usercode"
+                            value={formData.usercode}
+                            onChange={handleChange}
+                            className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                            autoComplete="usercode"
+                          />
+                          {errors.usercode && <p className="mt-1 text-xs text-red-500">{errors.usercode}</p>}
+                        </div>
+
+                        {/* Input for Password */}
+                        <div className="w-full md:w-1/2">
+                          <label htmlFor="username" className="block mb-2 text-sm font-semibold text-gray-700">Username</label>
+                          <input
+                            type="text"
+                            id="username"
+                            value={formData.username}
+                            onChange={handleChange}
+                            className={`block w-full px-4 py-2 text-sm text-gray-800 border ${errors.username ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
+                            autoComplete="username"
+                          />
+                          {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password}</p>}
+                        </div>
+                      </div>
+                      <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                        {/* Input for First Name */}
+                        <div className="w-full md:w-1/2">
+                          <label htmlFor="nickname" className="block mb-2 text-sm font-semibold text-gray-700">Nickname</label>
+                          <input
+                            type="text"
+                            id="nickname"
+                            value={formData.nickname}
+                            onChange={handleChange}
+                            className={`block w-full px-4 py-2 text-sm text-gray-800 border ${errors.nickname ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
+                          />
+                          {errors.nickname && <p className="mt-1 text-xs text-red-500">{errors.nickname}</p>}
+                        </div>
+                        {/* Input for Last Name */}
+                        <div className="w-full md:w-1/2">
+                          <label htmlFor="sex" className="block mb-2 text-sm font-semibold text-gray-700">Gender</label>
+                          <input
+                            type="text"
+                            id="sex"
+                            value={formData.sex}
+                            onChange={handleChange}
+                            className={`block w-full px-4 py-2 text-sm text-gray-800 border ${errors.sex ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
+                          />
+                          {errors.sex && <p className="mt-1 text-xs text-red-500">{errors.sex}</p>}
+                        </div>
+                      </div>
+                      <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                        
+                        <div className="w-full md:w-1/2">
+                          <label htmlFor="password" className="block mb-2 text-sm font-semibold text-gray-700">Password</label>
+                          <input
+                            type="text"
+                            id="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                          />
+                        </div>
+                        
+                        {/* Select for Staff Code */}
+                        <div className="w-full md:w-1/2">
+                          <label htmlFor="staffcode" className="block mb-2 text-sm font-semibold text-gray-700">Staff Code</label>
+                          <Select
+                            options={optionsStaffCode}
+                            onChange={handleStaffCode}  // Ensure handleStaffCode is passed correctly here
+                            value={optionsStaffCode.find(option => option.value === formData.staffcode)}
+                            placeholder="Select or type to search"
+                            className="basic-single"
+                            classNamePrefix="select"
+                            styles={customStyles}
+                          />
+                          {errors.staffcode && <p className="mt-1 text-xs text-red-500">{errors.staffcode}</p>}
+                        </div>
+                      </div>
+                      <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                        {/* Input for Phone Number */}
+                        <div className="w-full md:w-1/2">
+                          <label htmlFor="mobile" className="block mb-2 text-sm font-semibold text-gray-700">Phone Number</label>
+                          <input
+                            type="text"
+                            id="mobile"
+                            value={formData.mobile}
+                            onChange={handleChange}
+                            className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                          />
+                        </div>
+                        {/* Input for Email */}
+                        <div className="w-full md:w-1/2">
+                          <label htmlFor="email" className="block mb-2 text-sm font-semibold text-gray-700">Email</label>
+                          <input
+                            type="text"
+                            id="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            className={`block w-full px-4 py-2 text-sm text-gray-800 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
+                          />
+                          {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
+                        </div>
+                      </div>
+                      
+                      
+                    </div>
+
+                    {/* Right Side: Picture Upload */}
+                    <div className="flex items-center w-full space-y-4 justify-evenly lg:justify-center lg:flex-col md:w-1/4">
+                      <div className="relative flex items-center justify-center w-40 h-40 overflow-hidden bg-gray-100 rounded-lg shadow-lg">
+                        {formData.avatar ? (
+                          <img
+                            src={formData.path} // Use the stored path
+                            alt="Profile"
+                            className="object-cover w-full h-full"
+                          />
+                        ) : (
+                          <svg
+                            className="w-12 h-12 text-gray-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M12 4v16m8-8H4"
+                            />
+                          </svg>
+                        )}
+                      </div>
+                      <input
+                        type="file"
+                        id="avatar"
+                        accept="image/*"
+                        onChange={handlePictureChange}
+                        className="hidden"
+                      />
+                      <label
+                        htmlFor="avatar"
+                        className="flex items-center px-4 py-2 text-sm font-semibold text-center text-white transition-colors duration-200 bg-blue-500 rounded-lg cursor-pointer hover:bg-blue-600"
+                      >
+                        {formData.avatar ? "Change Picture" : "Upload Picture"}
+                      </label>
+                    </div>
+                  </form>
+                  
+                  <footer className="flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">
+                    <button onClick={handleSave} className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto">
+                        Save
+                      </button>
+                      
+                      <button onClick={closeEditModal} className="w-full px-5 py-2 text-sm font-medium text-gray-700 transition duration-200 transform bg-gray-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105 md:w-auto">
+                        Cancel
+                      </button>
+                    </footer>
                 </div>
-                <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                  {/* Input for Phone Number */}
+              )}
+
+              {activeTab === 'assignRole' && (
+                <div>
+                  <h2 className="mb-4 text-xl font-semibold">Assign Role</h2>
+                  <form>
                   <div className="w-full md:w-1/2">
-                    <label htmlFor="mobile" className="block mb-2 text-sm font-semibold text-gray-700">Phone Number</label>
-                    <input
-                      type="text"
-                      id="mobile"
-                      value={formData.mobile}
-                      onChange={handleChange}
-                      className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    />
-                  </div>
-                  {/* Input for Email */}
-                  <div className="w-full md:w-1/2">
-                    <label htmlFor="email" className="block mb-2 text-sm font-semibold text-gray-700">Email</label>
-                    <input
-                      type="text"
-                      id="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className={`block w-full px-4 py-2 text-sm text-gray-800 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
-                    />
-                    {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
-                  </div>
-                </div>
-                <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                <div className="w-full md:w-1/2">
                     <label htmlFor="staffcode" className="block mb-2 text-sm font-semibold text-gray-700">Staff Code</label>
                     <Select
                       options={optionRoleCode}
                       onChange={handleRole}  // Ensure handleStaffCode is passed correctly here
-                      value={optionRoleCode.find(option => option.value === formData.roleId)}
+                      value={optionRoleCode.find(option => option.value === formData.roleid)}
                       placeholder="Select or type to search"
                       className="basic-single"
                       classNamePrefix="select"
@@ -953,54 +1056,23 @@ const optionRoleCode = role.map(r => ({
                     />
                     {errors.staffcode && <p className="mt-1 text-xs text-red-500">{errors.staffcode}</p>}
                   </div>
-                </div>
-                
-              </div>
+                  </form>
 
-              {/* Right Side: Picture Upload */}
-              <div className="flex items-center w-full space-y-4 justify-evenly lg:justify-center lg:flex-col md:w-1/4">
-                <div className="relative flex items-center justify-center w-40 h-40 overflow-hidden bg-gray-100 rounded-lg shadow-lg">
-                  {formData.avatar ? (
-                    <img
-                      src={formData.path} // Use the stored path
-                      alt="Profile"
-                      className="object-cover w-full h-full"
-                    />
-                  ) : (
-                    <svg
-                      className="w-12 h-12 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M12 4v16m8-8H4"
-                      />
-                    </svg>
-                  )}
+                  <footer className="flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">
+                    <button onClick={handleSaveRole} className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto">
+                        Save
+                      </button>
+                      
+                      <button onClick={closeEditModal} className="w-full px-5 py-2 text-sm font-medium text-gray-700 transition duration-200 transform bg-gray-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105 md:w-auto">
+                        Cancel
+                      </button>
+                    </footer>
                 </div>
-                <input
-                  type="file"
-                  id="avatar"
-                  accept="image/*"
-                  onChange={handlePictureChange}
-                  className="hidden"
-                />
-                <label
-                  htmlFor="avatar"
-                  className="flex items-center px-4 py-2 text-sm font-semibold text-center text-white transition-colors duration-200 bg-blue-500 rounded-lg cursor-pointer hover:bg-blue-600"
-                >
-                  {formData.avatar ? "Change Picture" : "Upload Picture"}
-                </label>
-              </div>
-            </form>
+              )}
+            </div>
 
             {/* Footer */}
-            <footer className="flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">
+            {/* <footer className="flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">
             <button onClick={handleSave} className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto">
                 Save
               </button>
@@ -1010,8 +1082,10 @@ const optionRoleCode = role.map(r => ({
               <button onClick={closeAddModal} className="w-full px-5 py-2 text-sm font-medium text-gray-700 transition duration-200 transform bg-gray-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105 md:w-auto">
                 Cancel
               </button>
-            </footer>
+            </footer> */}
           </div>
+          
+          
         </div>
       )}
 
@@ -1172,44 +1246,44 @@ const optionRoleCode = role.map(r => ({
 
               {/* Right Side: Picture Upload */}
               <div className="flex items-center w-full space-y-4 justify-evenly lg:justify-center lg:flex-col md:w-1/4">
-  <div className="relative flex items-center justify-center w-40 h-40 overflow-hidden bg-gray-100 rounded-lg shadow-lg">
-    {users[0]?.avatar ? (  // Check if the first user has an avatar
-      <img
-        src={`http://localhost:5173/public/img/${users[0].avatar}`} // Use the correct path
-        alt="Profile"
-        className="object-cover w-full h-full"
-      />
-    ) : (
-      <svg
-        className="w-12 h-12 text-gray-400"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          d="M12 4v16m8-8H4"
-        />
-      </svg>
-    )}
-  </div>
-  <input
-    type="file"
-    id="avatar"
-    accept="image/*"
-    onChange={handlePictureChange} // Call the function to update the image
-    className="hidden"
-  />
-  <label
-    htmlFor="avatar"
-    className="flex items-center px-4 py-2 text-sm font-semibold text-center text-white transition-colors duration-200 bg-blue-500 rounded-lg cursor-pointer hover:bg-blue-600"
-  >
-    {formData.avatar ? "Change Picture" : "Upload Picture"} {/* Dynamic text */}
-  </label>
-</div>
+                <div className="relative flex items-center justify-center w-40 h-40 overflow-hidden bg-gray-100 rounded-lg shadow-lg">
+                  {users[0]?.avatar ? (  // Check if the first user has an avatar
+                    <img
+                      src={`http://localhost:5173/public/img/${users[0].avatar}`} // Use the correct path
+                      alt="Profile"
+                      className="object-cover w-full h-full"
+                    />
+                  ) : (
+                    <svg
+                      className="w-12 h-12 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M12 4v16m8-8H4"
+                      />
+                    </svg>
+                  )}
+                </div>
+                <input
+                  type="file"
+                  id="avatar"
+                  accept="image/*"
+                  onChange={handlePictureChange} // Call the function to update the image
+                  className="hidden"
+                />
+                <label
+                  htmlFor="avatar"
+                  className="flex items-center px-4 py-2 text-sm font-semibold text-center text-white transition-colors duration-200 bg-blue-500 rounded-lg cursor-pointer hover:bg-blue-600"
+                >
+                  {formData.avatar ? "Change Picture" : "Upload Picture"} {/* Dynamic text */}
+                </label>
+              </div>
 
             </form>
           {/* Footer */}
@@ -1226,8 +1300,7 @@ const optionRoleCode = role.map(r => ({
       </div>
 
       )}
-
-      
+  
     </section>
   );
 };

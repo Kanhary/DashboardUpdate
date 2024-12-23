@@ -1,36 +1,37 @@
 import React, { useState, useEffect } from "react";
 import { GetMenu, GetRole } from "../../api/user"; // Assuming you have these API methods.
-import Select from 'react-select';
+import Select from "react-select";
 
 const GroupDetails = () => {
-  const [roles, setRoles] = useState([]); // Stores list of roles.
-  const [selectedRole, setSelectedRole] = useState(null); // Stores the currently selected role.
-  const [menus, setMenus] = useState([]); // Stores menu data.
-  const [roleMenuPermissions, setRoleMenuPermissions] = useState([]); // Stores permissions for the selected role.
-  const [isEditing, setIsEditing] = useState(false); // Toggle for editing mode.
+  const [roles, setRoles] = useState([]);
+  const [selectedRole, setSelectedRole] = useState(null);
+  const [menus, setMenus] = useState([]);
+  const [flattenedMenus, setFlattenedMenus] = useState([]);
+  const [roleMenuPermissions, setRoleMenuPermissions] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
-
+  const itemsPerPage = 8;
 
   useEffect(() => {
     const fetchRolesAndMenus = async () => {
       try {
-        // Fetch roles
         const roleResponse = await GetRole();
         if (roleResponse.data.code === 200) {
           setRoles(roleResponse.data.data);
-          setSelectedRole(roleResponse.data.data[0]?.id); // Set default role
+          setSelectedRole(roleResponse.data.data[0]?.id);
         }
 
-        // Fetch menus
         const menuResponse = await GetMenu();
         if (menuResponse.data.code === 200) {
-          setMenus(menuResponse.data.data);
+          const menusData = menuResponse.data.data;
+          setMenus(menusData);
+          setFlattenedMenus(flattenMenus(menusData)); // Flatten menus for pagination
         }
       } catch (error) {
         console.error("Error fetching data:", error);
         setRoles([]);
         setMenus([]);
+        setFlattenedMenus([]);
       }
     };
 
@@ -39,14 +40,11 @@ const GroupDetails = () => {
 
   useEffect(() => {
     if (selectedRole) {
-      // Fetch permissions for the selected role when it changes
       const fetchRolePermissions = async () => {
         try {
-          // Simulate API call to get role permissions
           const rolePermissions = [
             { menuId: 1, enabled: true },
-            { menuId: 2, enabled: false },
-            // Add more permissions based on role
+            { menuId: 2, enabled: true },
           ];
           setRoleMenuPermissions(rolePermissions);
         } catch (error) {
@@ -58,6 +56,17 @@ const GroupDetails = () => {
       fetchRolePermissions();
     }
   }, [selectedRole]);
+
+  const flattenMenus = (menus) => {
+    const flattened = [];
+    menus.forEach((menu) => {
+      flattened.push(menu);
+      if (menu.children && menu.children.length > 0) {
+        menu.children.forEach((child) => flattened.push({ ...child, isChild: true }));
+      }
+    });
+    return flattened;
+  };
 
   const handleCheckboxChange = (menuId) => {
     const updatedPermissions = roleMenuPermissions.map((permission) =>
@@ -95,14 +104,13 @@ const GroupDetails = () => {
       'rolemenu': "Role Menu",
       'menu': "Menu",
       'role': "Role"
-      // Add more translations as needed
     };
     return translations[text.toLowerCase()] || text;
   };
 
   const handleRoleChange = (selectedOption) => {
     setSelectedRole(selectedOption);
-    setIsEditing(false); // Exit edit mode when role changes
+    setIsEditing(false);
   };
 
   const customStyles = {
@@ -113,42 +121,30 @@ const GroupDetails = () => {
       minHeight: "37px",
       height: "37px",
     }),
-    valueContainer: (provided) => ({
-      ...provided,
-      height: "37px",
-      padding: "0 6px",
-    }),
-    input: (provided) => ({
-      ...provided,
-      margin: "0px",
-    }),
-    indicatorSeparator: () => ({
-      display: "none",
-    }),
-    indicatorsContainer: (provided) => ({
-      ...provided,
-      height: "37px",
-    }),
   };
 
-
-  const optionRoleCode = roles.map(r => ({
+  const optionRoleCode = roles.map((r) => ({
     value: r.roleId,
-    label: `${r.roleId}-${r.roleLabel}`
-  }))
-  
+    label: `${r.roleId}-${r.roleLabel}`,
+  }));
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentMenus = menus.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(menus.length / itemsPerPage);
+  const currentMenus = flattenedMenus.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(flattenedMenus.length / itemsPerPage);
 
+  const goToNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
 
+  const goToPreviousPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
 
   return (
     <div className="mt-10">
       <h2 className="mb-4 text-lg font-bold">Group Details</h2>
 
-      {/* Role Dropdown */}
       <div className="mb-4">
         <label htmlFor="role-select" className="block text-sm font-medium text-gray-700">
           Select Role:
@@ -158,13 +154,9 @@ const GroupDetails = () => {
           onChange={handleRoleChange}
           value={selectedRole}
           placeholder="Select a role"
-          className="basic-single"
-          classNamePrefix="select"
           styles={customStyles}
         />
       </div>
-
-
 
       <div className="flex items-center justify-between mb-4">
         <button
@@ -173,8 +165,6 @@ const GroupDetails = () => {
         >
           Add New Menu
         </button>
-
-        {/* Editable Mode Toggle */}
         <button
           onClick={() => setIsEditing(!isEditing)}
           className={`px-4 py-2 text-white rounded ${
@@ -185,7 +175,6 @@ const GroupDetails = () => {
         </button>
       </div>
 
-      {/* Menu Table */}
       <div className="pt-5 mt-5 border-t">
         <table className="w-full text-left border-collapse table-auto">
           <thead>
@@ -195,60 +184,59 @@ const GroupDetails = () => {
             </tr>
           </thead>
           <tbody>
-          {menus && menus.length > 0 ? (
-            menus.map((menu) => (
-              <React.Fragment key={menu.id}>
-                {/* Parent Menu Row */}
-                <tr className="text-sm text-gray-700 hover:bg-gray-50">
-                  <td className="px-4 py-2 font-semibold border">{translateText(menu.menuName)}</td>
-                  <td className="px-4 py-2 text-center border">
-                    <input
-                      type="checkbox"
-                      className="w-4 h-4 text-blue-600"
-                      checked={roleMenuPermissions.some(
-                        (permission) => permission.menuId === menu.id && permission.enabled
-                      )}
-                      onChange={() => (isEditing ? handleCheckboxChange(menu.id) : null)}
-                      disabled={!isEditing} // Disable checkbox if not in edit mode
-                    />
-                  </td>
-                </tr>
-
-                {/* Children Menus */}
-                {menu.children && menu.children.length > 0 && (
-                  menu.children.map((child) => (
-                    <tr key={child.id} className="text-sm text-gray-600 hover:bg-gray-50">
-                      <td className="px-4 py-2 pl-8 border"> {/* Indent child menu */}
-                        {translateText(child.menuName)}
-                      </td>
-                      <td className="px-4 py-2 text-center border">
-                        <input
-                          type="checkbox"
-                          className="w-4 h-4 text-blue-600"
-                          checked={roleMenuPermissions.some(
-                            (permission) => permission.menuId === child.id && permission.enabled
-                          )}
-                          onChange={() => (isEditing ? handleCheckboxChange(child.id) : null)}
-                          disabled={!isEditing} // Disable checkbox if not in edit mode
-                        />
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </React.Fragment>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={2} className="py-4 text-center text-gray-500">
-                No menus available.
-              </td>
-            </tr>
-          )}
-
+            {currentMenus.map((menu) => (
+              <tr
+                key={menu.id}
+                className={`text-sm text-gray-700 hover:bg-gray-50 ${
+                  menu.isChild ? "pl-8" : ""
+                }`}
+              >
+                <td className={`px-4 py-2 border ${menu.isChild ? "pl-8" : ""}`}>
+                  {translateText(menu.menuName)}
+                </td>
+                <td className="px-4 py-2 text-center border">
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 text-blue-600"
+                    checked={roleMenuPermissions.some(
+                      (permission) => permission.menuId === menu.id && permission.enabled
+                    )}
+                    onChange={() => (isEditing ? handleCheckboxChange(menu.id) : null)}
+                    disabled={!isEditing}
+                  />
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
-        
-        
+
+        <div className="flex justify-between mt-4">
+          <button
+            onClick={goToPreviousPage}
+            className={`px-4 py-2 text-white bg-blue-500 rounded ${
+              currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            disabled={currentPage === 1}
+          >
+            <svg className="w-4 h-4 md:w-5 md:h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path fillRule="evenodd" d="M12.293 14.707a1 1 0 01-1.414 0L6.586 10.414a1 1 0 010-1.414l4.293-4.293a1 1 0 011.414 1.414L8.414 10l3.879 3.879a1 1 0 010 1.414z" clipRule="evenodd" />
+                    </svg>
+          </button>
+          <span>
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={goToNextPage}
+            className={`px-4 py-2 text-white bg-blue-500 rounded ${
+              currentPage === totalPages ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            disabled={currentPage === totalPages}
+          >
+            <svg className="w-4 h-4 md:w-5 md:h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path fillRule="evenodd" d="M7.707 14.707a1 1 0 010-1.414L11.586 10 7.707 6.121a1 1 0 111.414-1.414l4.293 4.293a1 1 010 1.414l-4.293 4.293a1 1 01-1.414 0z" clipRule="evenodd" />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   );
