@@ -541,7 +541,7 @@ export function AddUserRole(id, roleData){
     console.log('Sending request to add role for user:', id, roleData);
     return request({
         method: "POST",
-        url: `/user/${id}/assign-roles`,
+        url: `/userRole/${id}/assign-roles`,
         data: roleData
         
     })

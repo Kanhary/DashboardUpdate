@@ -29,7 +29,8 @@ const User = () => {
     updater: '',
     updateTime: '',
     createTime: '',
-    roleid: ''
+    roleid: '',
+    userid: ''
   };
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -256,101 +257,116 @@ const User = () => {
 const handleSave = async () => {
   const validationErrors = {};
 
+  // Validate required fields
   if (!formData.staffcode) validationErrors.staffcode = 'Staff Code is required';
   if (!formData.username) validationErrors.username = 'Username is required';
   if (!formData.email) validationErrors.email = 'Email is required';
   if (!formData.password) validationErrors.password = 'Password is required';
 
+  // Check for validation errors
   if (Object.keys(validationErrors).length > 0) {
+    console.log('Validation errors:', validationErrors);
     setErrors(validationErrors);
-    return;
+    return; // Stop if there are validation errors
   }
 
+  // Prepare the updated form data
   const updatedFormData = {
     ...formData,
-    roleId: selectedOption?.value || '',
-    creator: currentUser,
-    updater: currentUser,
+    roleId: selectedOption ? selectedOption.value : '',
+    staffcode: selectedOption ? selectedOption.value : '',
+    creator: currentUser, // Use the fetched username as creator
+    updater: currentUser, // Use the fetched username as updater
     createTime: new Date().toISOString(),
     updateTime: new Date().toISOString(),
   };
 
+  console.log('FormData before API call:', updatedFormData); // Debug: check if staffcode is correct
+
   setIsLoading(true);
 
   try {
-    // Step 1: Create the user
+    // Call the API to add the user
     const addUserResponse = await AddUser(updatedFormData);
-    console.log("AddUser response:", addUserResponse);
 
-    // Step 2: If the ID is not directly returned, use email or username to retrieve the user ID
-    if (addUserResponse && addUserResponse.data) {
-      const message = addUserResponse.data.msg;
-      
-      if (message === "New User has been created") {
-        const id = formData.id; // Assuming email is unique
-        const getUserResponse = await axios.get(`http://192.168.168.4:8888/user/getUserById/${id}`);
-        
-        if (getUserResponse && getUserResponse.data) {
-          const newUserId = getUserResponse.data.id;
-          console.log("New User ID retrieved:", newUserId);
-          
-          Swal.fire({
-            title: "Success!",
-            text: "User created successfully.",
-            icon: "success",
-          });
-        } else {
-          throw new Error("Unable to retrieve user ID after creation.");
-        }
+    // Log the response for debugging
+    console.log('User created successfully:', addUserResponse);
+
+    // Display success message
+    Swal.fire({
+      title: "Success!",
+      text: "User created successfully.",
+      icon: "success",
+    });
+
+    // closeAddModal(); // Close the modal on success
+
+  } catch (error) {
+    console.error('Error during user creation:', error);
+
+    // Enhanced error handling
+    if (error.response) {
+      const errorMessage = error.response.data.message || 'Error during user creation';
+      console.error('Response data:', error.response.data); // Log the detailed error response
+
+      // Handle specific error for user already exists
+      if (errorMessage.includes('User already exists')) {
+        setErrors({ general: 'This user already exists. Please use a different username or email.' });
       } else {
-        throw new Error("User creation failed.");
+        setErrors({ general: errorMessage });
       }
     } else {
-      throw new Error("User ID not found in the response.");
+      setErrors({ general: 'Network error' });
     }
-  } catch (error) {
-    console.error("Error during user creation:", error);
+
+    // Display error message
     Swal.fire({
       title: "Error!",
-      text: error.message || "Error creating user.",
+      text: errors.general || "There was an error creating the user. Please try again.",
       icon: "error",
     });
+
   } finally {
-    setIsLoading(false);
+    setIsLoading(false); // Ensure loading state is reset
   }
 };
 
 
-
 const handleSaveRole = async () => {
-  // if (!userId || !selectedOption) {
-  //   Swal.fire({
-  //     title: "Error!",
-  //     text: "Please select a user and a role before saving.",
-  //     icon: "error",
-  //   });
-  //   console.log("userId or selectedOption is missing");
-  //   return;
-  // }
+  const { id, roleId } = formData; // Extract user ID and role ID(s) from formData
 
-  const roleData = {
-    userId: userId,  // Use the userId that was captured after user creation
-    roleId: selectedOption.value,  // Use the selected role ID
-  };
+  // Validate inputs
+  if (!id || !roleId) {
+    Swal.fire({
+      title: "Error!",
+      text: "Please select both a user and a role before saving.",
+      icon: "error",
+    });
+    return;
+  }
+
+  // Normalize roleData to be an array of IDs (even if only one role is selected)
+  const roleData = Array.isArray(roleId)
+    ? roleId.map((role) => role.value || role) // Extract 'value' if it's an object
+    : [roleId.value || roleId]; // Wrap single roleId in an array if necessary
+
+  console.log("Prepared roleData:", roleData); // Debug log to check roleData
 
   setIsLoading(true);
 
   try {
-    const roleResponse = await AddUserRole(userId, roleData);
+    // Call the API with user ID and role IDs
+    const response = await AddUserRole(id, roleData);
 
-    if (roleResponse.status === 200) {
+    if (response.status === 200) {
       Swal.fire({
         title: "Success!",
         text: "Role assigned successfully.",
         icon: "success",
       });
+      closeAddModal();
     } else {
-      throw new Error(`Failed to assign role: ${roleResponse.statusText}`);
+      throw new Error(`Failed to assign role: ${response.statusText}`);
     }
   } catch (error) {
     console.error("Error in assigning role:", error);
@@ -363,6 +379,9 @@ const handleSaveRole = async () => {
     setIsLoading(false);
   }
 };
+
+  
+
 
 
 
@@ -625,14 +644,21 @@ const handleRole = (option) => {
   }));
 };
 
-
+const handleUser = (option) => {
+  console.log('Selected option:', option); // Check if selectedOption has the correct value
+  setSelectedOption(option);
+  setFormData((prevData) => ({
+    ...prevData,
+    id: option ? option.value : '',
+  }));
+};
 
 // const optionsStaffCode = [
 //   {value: 'staff-005', label: 'staff-005'}
 // ]
 
 // Format options for react-select
-const optionsStaffCode = employees.map(employee => ({
+const optionsStaffCode = employees.map(employee => ({ 
   value: employee.staffCode,
   label: `${employee.staffCode}-${employee.khName}`
 }));
@@ -640,6 +666,11 @@ const optionsStaffCode = employees.map(employee => ({
 const optionRoleCode = role.map(r => ({
   value: r.roleId,
   label: `${r.roleId}-${r.roleLabel}`
+}))
+
+const optionUserCode = users.map(user => ({
+  value: user.id,
+  label: `${user.id}-${user.username}`
 }))
 
 
@@ -1043,8 +1074,22 @@ const optionRoleCode = role.map(r => ({
                 <div>
                   <h2 className="mb-4 text-xl font-semibold">Assign Role</h2>
                   <form>
+                  
                   <div className="w-full md:w-1/2">
-                    <label htmlFor="staffcode" className="block mb-2 text-sm font-semibold text-gray-700">Staff Code</label>
+                    <label htmlFor="staffcode" className="block mb-2 text-sm font-semibold text-gray-700">User</label>
+                    <Select
+                      options={optionUserCode}
+                      onChange={handleUser}  // Ensure handleStaffCode is passed correctly here
+                      value={optionUserCode.find(option => option.value === formData.id)}
+                      placeholder="Select or type to search"
+                      className="basic-single"
+                      classNamePrefix="select"
+                      styles={customStyles}
+                    />
+                    
+                  </div>
+                  <div className="w-full md:w-1/2">
+                    <label htmlFor="staffcode" className="block mb-2 text-sm font-semibold text-gray-700">Role</label>
                     <Select
                       options={optionRoleCode}
                       onChange={handleRole}  // Ensure handleStaffCode is passed correctly here
