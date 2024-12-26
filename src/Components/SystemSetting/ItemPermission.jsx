@@ -32,6 +32,17 @@ const ItemPermission = () => {
     
   // ];
 
+  const flattenMenus = (menus) => {
+    const flattened = [];
+    menus.forEach((menu) => {
+      flattened.push(menu);
+      if (menu.children && menu.children.length > 0) {
+        menu.children.forEach((child) => flattened.push({ ...child, isChild: true }));
+      }
+    });
+    return flattened;
+  };
+
   useEffect(() => {
     AOS.init({ duration: 1000 });
 
@@ -40,6 +51,7 @@ const ItemPermission = () => {
         const response = await GetMenu();
         if (response.data.code === 200) {
           setItems(response.data.data);
+          setFlattenedMenus(flattenMenus(items));
         } else {
           setItems([]);
         }
@@ -55,19 +67,24 @@ const ItemPermission = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 8;
   const filterItemPermission = items.filter(item =>
-    item.menuName.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()) ||
-    item.id.includes(searchTerm)
+    item.menuName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.id.toString().includes(searchTerm) // Ensure id is treated as string
   );
-  const totalPages = Math.ceil(filterItemPermission.length / recordsPerPage);
+  
+  const totalPages = Math.ceil(flattenedMenus.length / recordsPerPage);
+  
+  // Handle page change
   const handlePageChange = (pageNumber) => {
     if (pageNumber > 0 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber);
     }
   };
-
+  
+  // Get the current records to be displayed on the page
   const indexOfLastRecord = currentPage * recordsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
   const currentMenus = flattenedMenus.slice(indexOfFirstRecord, indexOfLastRecord);
+  
 
   console.log(currentMenus);  // Log the currentMenus array
 
@@ -150,6 +167,31 @@ const ItemPermission = () => {
   const handleRefresh = () => {
     window.location.reload();
   };
+
+  const translations = {
+    'dashboard': "ផ្ទាំងគ្រប់គ្រង",
+    'computer': "តារាងទិន្នន័យកុំព្យូទ័រ",
+    'employee': "តារាងបុគ្គលិក",
+    'positionlist': "តារាងបញ្ជីមុខតំណែង",
+    'genderlist': "តារាងបញ្ជីភេទបុគ្គលិក",
+    'employee_info': "តារាងបញ្ចូលព័ត៌មានបុគ្គលិក",
+    'system_setting': "ការកំណត់ប្រព័ន្ធ",
+    'setting': "ការកំណត់",
+    'report': "របាយការណ៍",
+    'help': "ជំនួយ",
+    'user': "អ្នកប្រើប្រាស់",
+    'company': "តារាងក្រុមហ៊ុន",
+    'office' : "ការិយាល័យ",
+    'branch' : "សាខា",
+    'department' : "នាយកដ្ឋាន",
+    'company_list' : "ក្រុមហ៊ុន",
+    'maintenance' : "ការថែទាំ",
+    'rolemenu': "Role Menu",
+    'menu': "Menu",
+    'role': "Role"
+  };
+
+  const translateText = (text) => translations[text.toLowerCase()] || text;
   
   return (
     <section className='mt-14 font-khmer'>
@@ -215,33 +257,48 @@ const ItemPermission = () => {
                 </tr>
               </thead>
               <tbody>
-              {currentMenus.map((menu) => (
-                <tr
-                  key={menu.id}
-                  className={`text-sm text-gray-700 hover:bg-gray-50 ${
-                    menu.isChild ? "pl-8" : "" // Indent child menus
-                  }`}
-                >
-                  {/* Parent/Child Menu Name */}
-                  <td className={`px-4 py-2 border ${menu.isChild ? "pl-8" : ""}`}>
-                    {translateText(menu.menuName)}
-                  </td>
+  {currentMenus.map((item, index) => (
+    <React.Fragment key={index}>
+      {/* Parent Row */}
+      <tr className='transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50'>
+        <td className='sticky left-0 flex px-6 py-4 bg-white border-r'>
+          <input type="checkbox" className="mr-1 action-checkbox" />
+          <FaPen className="ml-2 text-blue-500 cursor-pointer hover:text-blue-700" 
+            onClick={() => openEditModal(item.code, item.functionCode, item.functionName)} 
+          />
+          <FaTrashAlt className="ml-3 text-red-500 cursor-pointer hover:text-red-700" 
+            onClick={() => deleteGender(item.code)} 
+          />
+        </td>
+        <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>{item.menuName}</td>
+        <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>{item.creator}</td>
+        <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>{item.updater}</td>
+        <td className='px-4 py-3 border-r' style={{ minWidth: '160px' }}>{formatDateTime(item.updateTime)}</td>
+      </tr>
 
-                  {/* Permission Checkbox */}
-                  <td className="px-4 py-2 text-center border">
-                    <input
-                      type="checkbox"
-                      className="w-4 h-4 text-blue-600"
-                      checked={roleMenuPermissions.some(
-                        (permission) => permission.menuId === menu.id && permission.enabled
-                      )}
-                      onChange={() => (isEditing ? handleCheckboxChange(menu.id) : null)}
-                      disabled={!isEditing}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+      {/* Child Rows (Submenu) */}
+      {item.submenu && item.submenu.length > 0 && item.submenu.map((submenu, subIndex) => (
+        <tr key={`${index}-submenu-${subIndex}`} className='transition-colors duration-200 border-b-gray-200 hover:bg-indigo-100'>
+          <td className='sticky left-0 flex px-6 py-4 pl-12 bg-white border-r'>
+            {/* Indentation to differentiate child menu */}
+            <input type="checkbox" className="mr-1 action-checkbox" />
+            <FaPen className="ml-2 text-blue-500 cursor-pointer hover:text-blue-700" 
+              onClick={() => openEditModal(submenu.code, submenu.functionCode, submenu.functionName)} 
+            />
+            <FaTrashAlt className="ml-3 text-red-500 cursor-pointer hover:text-red-700" 
+              onClick={() => deleteGender(submenu.code)} 
+            />
+          </td>
+          <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>{submenu.menuName}</td>
+          <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>{submenu.creator}</td>
+          <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>{submenu.updater}</td>
+          <td className='px-4 py-3 border-r' style={{ minWidth: '160px' }}>{formatDateTime(submenu.updateTime)}</td>
+        </tr>
+      ))}
+    </React.Fragment>
+  ))}
+</tbody>
+
 
 
             </table>
