@@ -23,18 +23,17 @@ const Department = () => {
   //   { CompanyCode: 'PPAP', DepartmentCode: 'Dep-HR', Department: 'នាយកដ្ឋាន បុគ្គលិក/ធនធានមនុស្ស',  BranchCode: 'TS3' },
     
   // ];
-  
+  const fetchAllDep = async () => {
+    try {
+      const response = await GetDep();
+      console.log(response.data.data); 
+      setDepList(response.data.data);
+      
+    } catch (err) {
+      setError({ message: err.message || 'An error occurred' });
+    }
+  };
   useEffect(() => {
-    const fetchAllDep = async () => {
-      try {
-        const response = await GetDep();
-        console.log(response.data.data); 
-        setDepList(response.data.data);
-        
-      } catch (err) {
-        setError({ message: err.message || 'An error occurred' });
-      }
-    };
     
     fetchAllDep();
   }, []);
@@ -132,6 +131,7 @@ const Department = () => {
   
       console.log('API Response:', response);
       closeAddModal(); // Close the modal on successful save
+      fetchAllDep();
     } catch (error) {
       console.error('Error saving data', error);
   
@@ -168,6 +168,7 @@ const Department = () => {
           icon: "success"
         });
         setIsEditModalOpen(false);  // Close the edit modal
+        fetchAllDep();
       } else {
         const errorMessage = response.data.message || 'An unexpected error occurred.';
         Swal.fire({

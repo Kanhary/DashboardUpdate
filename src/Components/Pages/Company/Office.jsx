@@ -34,17 +34,18 @@ const OfficeList = () => {
   
   // ];
 
+  const fetchAllOffice = async () => {
+    try {
+      const response = await GetOffice();
+      console.log(response.data.data); 
+      setOffice(response.data.data);
+      
+    } catch (err) {
+      setError({ message: err.message || 'An error occurred' });
+    }
+  };
   useEffect(() => {
-    const fetchAllOffice = async () => {
-      try {
-        const response = await GetOffice();
-        console.log(response.data.data); 
-        setOffice(response.data.data);
-        
-      } catch (err) {
-        setError({ message: err.message || 'An error occurred' });
-      }
-    };
+    
 
     const fetchAllDep = async () => {
       try {
@@ -158,6 +159,7 @@ const OfficeList = () => {
   
       console.log('API Response:', response);
       closeAddModal(); // Close the modal on successful save
+      fetchAllOffice();
     } catch (error) {
       console.error('Error saving data', error);
   
@@ -196,6 +198,7 @@ const OfficeList = () => {
           icon: "success"
         });
         setIsEditModalOpen(false);  // Close the edit modal
+        fetchAllOffice();
       } else {
         const errorMessage = response.data.message || 'An unexpected error occurred.';
         Swal.fire({

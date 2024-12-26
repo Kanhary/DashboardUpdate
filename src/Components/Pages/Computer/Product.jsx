@@ -27,18 +27,18 @@ const Product = () => {
   //   { CompanyCode: 'PPAP', DepartmentCode: 'Dep-HR', Department: 'នាយកដ្ឋាន បុគ្គលិក/ធនធានមនុស្ស',  BranchCode: 'TS3' },
     
   // ];
-  
+  const fetchComputer = async () => {
+    try {
+      const response = await GetProduct();
+      console.log(response.data.data); 
+      setComputer(response.data.data);
+      
+    } catch (err) {
+      setError({ message: err.message || 'An error occurred' });
+    }
+  };
   useEffect(() => {
-    const fetchComputer = async () => {
-      try {
-        const response = await GetProduct();
-        console.log(response.data.data); 
-        setComputer(response.data.data);
-        
-      } catch (err) {
-        setError({ message: err.message || 'An error occurred' });
-      }
-    };
+    
     const fetchCategory = async () => {
         try {
           const response = await GetCategory();
@@ -179,6 +179,7 @@ const Product = () => {
   
       console.log('API Response:', response);
       closeAddModal(); // Close the modal on successful save
+      fetchComputer();
     } catch (error) {
       console.error('Error saving data', error);
   
@@ -216,6 +217,7 @@ const Product = () => {
           icon: "success"
         });
         setIsEditModalOpen(false);  // Close the edit modal
+        fetchComputer();
       } else {
         const errorMessage = response.data.message || 'An unexpected error occurred.';
         Swal.fire({

@@ -44,18 +44,19 @@ const Branch = () => {
   //     LastDate: '2024-10-10',
   //   },
   // ];
+  const fetchAllbranch = async () => {
+    try {
+      const response = await GetAllBranch();
+      console.log(response.data.data); 
+      setBranchList(response.data.data);
+      
+    } catch (err) {
+      setError({ message: err.message || 'An error occurred' });
+    }
+  };
 
   useEffect(() => {
-    const fetchAllbranch = async () => {
-      try {
-        const response = await GetAllBranch();
-        console.log(response.data.data); 
-        setBranchList(response.data.data);
-        
-      } catch (err) {
-        setError({ message: err.message || 'An error occurred' });
-      }
-    };
+    
 
     const fetchCompany = async () => {
       try {
@@ -154,6 +155,7 @@ const Branch = () => {
   
         // Close the modal after successful save
         setIsAddModalOpen(false);
+        fetchAllbranch();
       } else {
         // Handle error responses
         const errorMessage = response.data.message || 'An unexpected error occurred.';
@@ -210,6 +212,7 @@ const Branch = () => {
           icon: "success"
         });
         setIsEditModalOpen(false);  // Close the edit modal
+        fetchAllbranch();
       } else {
         const errorMessage = response.data.message || 'An unexpected error occurred.';
         Swal.fire({

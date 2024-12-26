@@ -22,18 +22,18 @@ const Category = () => {
   const [error, setError] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   
-
+  const fetchCategory = async () => {
+    try {
+      const response = await GetCategory();
+      console.log(response.data.data); 
+      setCategory(response.data.data);
+      
+    } catch (err) {
+      setError({ message: err.message || 'An error occurred' });
+    }
+  };
   useEffect(() => {
-    const fetchCategory = async () => {
-      try {
-        const response = await GetCategory();
-        console.log(response.data.data); 
-        setCategory(response.data.data);
-        
-      } catch (err) {
-        setError({ message: err.message || 'An error occurred' });
-      }
-    };
+    
 
 
     const fetchCurrentUser = async () => {
@@ -136,6 +136,7 @@ const Category = () => {
   
       console.log('API Response:', response);
       closeAddModal(); // Close the modal on successful save
+      fetchCategory();
     } catch (error) {
       console.error('Error saving data', error);
   
@@ -174,6 +175,7 @@ const Category = () => {
           icon: "success"
         });
         setIsEditModalOpen(false);  // Close the edit modal
+        fetchCategory();
       } else {
         const errorMessage = response.data.message || 'An unexpected error occurred.';
         Swal.fire({

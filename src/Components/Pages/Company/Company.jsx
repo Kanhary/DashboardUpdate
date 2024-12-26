@@ -38,17 +38,19 @@ const Company = () => {
   
   // ];
 
+
+  const fetchAllCompany = async () => {
+    try {
+      const response = await GetCompany();
+      console.log(response.data.data); 
+      setCompany(response.data.data);
+      
+    } catch (err) {
+      setError({ message: err.message || 'An error occurred' });
+    }
+  };
   useEffect(() => {
-    const fetchAllCompany = async () => {
-      try {
-        const response = await GetCompany();
-        console.log(response.data.data); 
-        setCompany(response.data.data);
-        
-      } catch (err) {
-        setError({ message: err.message || 'An error occurred' });
-      }
-    };
+    
 
 
     const fetchCurrentUser = async () => {
@@ -151,6 +153,7 @@ const Company = () => {
   
       console.log('API Response:', response);
       closeAddModal(); // Close the modal on successful save
+      fetchAllCompany();
     } catch (error) {
       console.error('Error saving data', error);
   
@@ -189,6 +192,7 @@ const Company = () => {
           icon: "success"
         });
         setIsEditModalOpen(false);  // Close the edit modal
+        fetchAllCompany();
       } else {
         const errorMessage = response.data.message || 'An unexpected error occurred.';
         Swal.fire({

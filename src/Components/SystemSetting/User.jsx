@@ -367,6 +367,7 @@ const handleSaveRole = async () => {
         icon: "success",
       });
       closeAddModal();
+      closeEditModal();
     } else {
       throw new Error(`Failed to assign role: ${response.statusText}`);
     }
@@ -1150,137 +1151,221 @@ const optionUserCode = users.map(user => ({
               &times;
             </button>
           </header>
-          <form className="z-10 flex flex-col flex-grow px-6 py-6 space-y-6 md:flex-row md:space-x-6" data-aos='zoom-in'>
-              {/* Left Side: Form Inputs */}
-              <div className="w-full space-y-6 md:w-3/4">
-                <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                  {/* Input for Username */}
-                  <div className="w-full md:w-1/2">
-                    <label htmlFor="usercode" className="block mb-2 text-sm font-semibold text-gray-700">User Code</label>
-                    <input
-                      type="text"
-                      id="usercode"
-                      value={formData.usercode}
-                      onChange={handleChange}
-                      className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                      autoComplete="usercode"
-                    />
-                    {errors.usercode && <p className="mt-1 text-xs text-red-500">{errors.usercode}</p>}
-                  </div>
-
-                  {/* Input for Password */}
-                  <div className="w-full md:w-1/2">
-                    <label htmlFor="username" className="block mb-2 text-sm font-semibold text-gray-700">Username</label>
-                    <input
-                      type="text"
-                      id="username"
-                      value={formData.username}
-                      onChange={handleChange}
-                      className={`block w-full px-4 py-2 text-sm text-gray-800 border ${errors.username ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
-                      autoComplete="username"
-                    />
-                    {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password}</p>}
-                  </div>
-                </div>
-                <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                  {/* Input for First Name */}
-                  <div className="w-full md:w-1/2">
-                    <label htmlFor="nickname" className="block mb-2 text-sm font-semibold text-gray-700">Nickname</label>
-                    <input
-                      type="text"
-                      id="nickname"
-                      value={formData.nickname}
-                      onChange={handleChange}
-                      className={`block w-full px-4 py-2 text-sm text-gray-800 border ${errors.nickname ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
-                    />
-                    {errors.nickname && <p className="mt-1 text-xs text-red-500">{errors.nickname}</p>}
-                  </div>
-                  {/* Input for Last Name */}
-                  <div className="w-full md:w-1/2">
-                    <label htmlFor="sex" className="block mb-2 text-sm font-semibold text-gray-700">Gender</label>
-                    <input
-                      type="text"
-                      id="sex"
-                      value={formData.sex}
-                      onChange={handleChange}
-                      className={`block w-full px-4 py-2 text-sm text-gray-800 border ${errors.sex ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
-                    />
-                    {errors.sex && <p className="mt-1 text-xs text-red-500">{errors.sex}</p>}
-                  </div>
-                </div>
-                <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                  {/* <div className="w-full md:w-1/2">
-                    <label htmlFor="role" className="block mb-2 text-sm font-semibold text-gray-700">Role</label>
-                    <Select
-                      value={optionsRole.find(option => option.value === selectedOption)}
-                      onChange={handleChangeSelection}
-                      options={optionsRole}
-                      placeholder="Select or type to search"
-                      className="basic-single"
-                      classNamePrefix="select"
-                      styles={customStyles}
-                    />
-                    {errors.staffCode && <p className="mt-1 text-xs text-red-500">{errors.staffCode}</p>}
-                  </div> */}
-
-                  <div className="w-full md:w-1/2">
-                    <label htmlFor="password" className="block mb-2 text-sm font-semibold text-gray-700">Password</label>
-                    <input
-                      type="text"
-                      id="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    />
-                  </div>
+          <div className='w-full p-4'>
+              <div className="flex space-x-4 border-b">
+                <button
+                  className={`p-2 ${activeTab === 'Create User' ? 'border-b-2 border-blue-500' : ''}`}
+                  onClick={() => setActiveTab('Create User')}
+                >
+                  Create User
+                </button>
+                <button
+                  className={`p-2 ${activeTab === 'assignRole' ? 'border-b-2 border-blue-500' : ''}`}
+                  onClick={() =>  setActiveTab('assignRole')}
                   
-                  {/* Select for Staff Code */}
+                >
+                  Assign Role
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-4">
+              {activeTab === 'Create User' && (
+                <div>
+                  <h2 className="mb-4 text-xl font-semibold">Create User</h2>
+                  <form className="z-10 flex flex-col flex-grow px-6 py-6 space-y-6 md:flex-row md:space-x-6" data-aos='zoom-in'>
+                    {/* Left Side: Form Inputs */}
+                    <div className="w-full space-y-6 md:w-3/4">
+                      <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                        {/* Input for Username */}
+                        <div className="w-full md:w-1/2">
+                          <label htmlFor="usercode" className="block mb-2 text-sm font-semibold text-gray-700">User Code</label>
+                          <input
+                            type="text"
+                            id="usercode"
+                            value={formData.usercode}
+                            onChange={handleChange}
+                            className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                            autoComplete="usercode"
+                          />
+                          {errors.usercode && <p className="mt-1 text-xs text-red-500">{errors.usercode}</p>}
+                        </div>
+
+                        {/* Input for Password */}
+                        <div className="w-full md:w-1/2">
+                          <label htmlFor="username" className="block mb-2 text-sm font-semibold text-gray-700">Username</label>
+                          <input
+                            type="text"
+                            id="username"
+                            value={formData.username}
+                            onChange={handleChange}
+                            className={`block w-full px-4 py-2 text-sm text-gray-800 border ${errors.username ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
+                            autoComplete="username"
+                          />
+                          {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password}</p>}
+                        </div>
+                      </div>
+                      <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                        {/* Input for First Name */}
+                        <div className="w-full md:w-1/2">
+                          <label htmlFor="nickname" className="block mb-2 text-sm font-semibold text-gray-700">Nickname</label>
+                          <input
+                            type="text"
+                            id="nickname"
+                            value={formData.nickname}
+                            onChange={handleChange}
+                            className={`block w-full px-4 py-2 text-sm text-gray-800 border ${errors.nickname ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
+                          />
+                          {errors.nickname && <p className="mt-1 text-xs text-red-500">{errors.nickname}</p>}
+                        </div>
+                        {/* Input for Last Name */}
+                        <div className="w-full md:w-1/2">
+                          <label htmlFor="sex" className="block mb-2 text-sm font-semibold text-gray-700">Gender</label>
+                          <input
+                            type="text"
+                            id="sex"
+                            value={formData.sex}
+                            onChange={handleChange}
+                            className={`block w-full px-4 py-2 text-sm text-gray-800 border ${errors.sex ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
+                          />
+                          {errors.sex && <p className="mt-1 text-xs text-red-500">{errors.sex}</p>}
+                        </div>
+                      </div>
+                      <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                        
+                        <div className="w-full md:w-1/2">
+                          <label htmlFor="password" className="block mb-2 text-sm font-semibold text-gray-700">Password</label>
+                          <input
+                            type="text"
+                            id="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                          />
+                        </div>
+                        
+                        {/* Select for Staff Code */}
+                        <div className="w-full md:w-1/2">
+                          <label htmlFor="staffcode" className="block mb-2 text-sm font-semibold text-gray-700">Staff Code</label>
+                          <Select
+                            options={optionsStaffCode}
+                            onChange={handleStaffCode}  // Ensure handleStaffCode is passed correctly here
+                            value={optionsStaffCode.find(option => option.value === formData.staffcode)}
+                            placeholder="Select or type to search"
+                            className="basic-single"
+                            classNamePrefix="select"
+                            styles={customStyles}
+                          />
+                          {errors.staffcode && <p className="mt-1 text-xs text-red-500">{errors.staffcode}</p>}
+                        </div>
+                      </div>
+                      <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                        {/* Input for Phone Number */}
+                        <div className="w-full md:w-1/2">
+                          <label htmlFor="mobile" className="block mb-2 text-sm font-semibold text-gray-700">Phone Number</label>
+                          <input
+                            type="text"
+                            id="mobile"
+                            value={formData.mobile}
+                            onChange={handleChange}
+                            className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                          />
+                        </div>
+                        {/* Input for Email */}
+                        <div className="w-full md:w-1/2">
+                          <label htmlFor="email" className="block mb-2 text-sm font-semibold text-gray-700">Email</label>
+                          <input
+                            type="text"
+                            id="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            className={`block w-full px-4 py-2 text-sm text-gray-800 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
+                          />
+                          {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
+                        </div>
+                      </div>
+                      
+                      
+                    </div>
+
+                    {/* Right Side: Picture Upload */}
+                    <div className="flex items-center w-full space-y-4 justify-evenly lg:justify-center lg:flex-col md:w-1/4">
+                      <div className="relative flex items-center justify-center w-40 h-40 overflow-hidden bg-gray-100 rounded-lg shadow-lg">
+                        {formData.avatar ? (
+                          <img
+                            src={formData.path} // Use the stored path
+                            alt="Profile"
+                            className="object-cover w-full h-full"
+                          />
+                        ) : (
+                          <svg
+                            className="w-12 h-12 text-gray-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M12 4v16m8-8H4"
+                            />
+                          </svg>
+                        )}
+                      </div>
+                      <input
+                        type="file"
+                        id="avatar"
+                        accept="image/*"
+                        onChange={handlePictureChange}
+                        className="hidden"
+                      />
+                      <label
+                        htmlFor="avatar"
+                        className="flex items-center px-4 py-2 text-sm font-semibold text-center text-white transition-colors duration-200 bg-blue-500 rounded-lg cursor-pointer hover:bg-blue-600"
+                      >
+                        {formData.avatar ? "Change Picture" : "Upload Picture"}
+                      </label>
+                    </div>
+                  </form>
+                  
+                  <footer className="flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">
+                    <button onClick={handleSave} className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto">
+                        Save
+                      </button>
+                      
+                      <button onClick={closeEditModal} className="w-full px-5 py-2 text-sm font-medium text-gray-700 transition duration-200 transform bg-gray-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105 md:w-auto">
+                        Cancel
+                      </button>
+                    </footer>
+                </div>
+              )}
+
+              {activeTab === 'assignRole' && (
+                <div>
+                  <h2 className="mb-4 text-xl font-semibold">Assign Role</h2>
+                  <form>
+                  
                   <div className="w-full md:w-1/2">
-                    <label htmlFor="staffcode" className="block mb-2 text-sm font-semibold text-gray-700">Staff Code</label>
+                    <label htmlFor="staffcode" className="block mb-2 text-sm font-semibold text-gray-700">User</label>
                     <Select
-                      options={optionsStaffCode}
-                      onChange={handleStaffCode}  // Ensure handleStaffCode is passed correctly here
-                      value={optionsStaffCode.find(option => option.value === formData.staffcode)}
+                      options={optionUserCode}
+                      onChange={handleUser}  // Ensure handleStaffCode is passed correctly here
+                      value={optionUserCode.find(option => option.value === formData.id)}
                       placeholder="Select or type to search"
                       className="basic-single"
                       classNamePrefix="select"
                       styles={customStyles}
                     />
-                    {errors.staffcode && <p className="mt-1 text-xs text-red-500">{errors.staffcode}</p>}
+                    
                   </div>
-                </div>
-                <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                  {/* Input for Phone Number */}
                   <div className="w-full md:w-1/2">
-                    <label htmlFor="mobile" className="block mb-2 text-sm font-semibold text-gray-700">Phone Number</label>
-                    <input
-                      type="text"
-                      id="mobile"
-                      value={formData.mobile}
-                      onChange={handleChange}
-                      className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    />
-                  </div>
-                  {/* Input for Email */}
-                  <div className="w-full md:w-1/2">
-                    <label htmlFor="email" className="block mb-2 text-sm font-semibold text-gray-700">Email</label>
-                    <input
-                      type="text"
-                      id="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className={`block w-full px-4 py-2 text-sm text-gray-800 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
-                    />
-                    {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
-                  </div>
-                </div>
-                <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                <div className="w-full md:w-1/2">
-                    <label htmlFor="staffcode" className="block mb-2 text-sm font-semibold text-gray-700">Staff Code</label>
+                    <label htmlFor="staffcode" className="block mb-2 text-sm font-semibold text-gray-700">Role</label>
                     <Select
                       options={optionRoleCode}
                       onChange={handleRole}  // Ensure handleStaffCode is passed correctly here
-                      value={optionRoleCode.find(option => option.value === formData.roleId)}
+                      value={optionRoleCode.find(option => option.value === formData.roleid)}
                       placeholder="Select or type to search"
                       className="basic-single"
                       classNamePrefix="select"
@@ -1288,53 +1373,21 @@ const optionUserCode = users.map(user => ({
                     />
                     {errors.staffcode && <p className="mt-1 text-xs text-red-500">{errors.staffcode}</p>}
                   </div>
-                </div>
-              </div>
+                  </form>
 
-              {/* Right Side: Picture Upload */}
-              <div className="flex items-center w-full space-y-4 justify-evenly lg:justify-center lg:flex-col md:w-1/4">
-                <div className="relative flex items-center justify-center w-40 h-40 overflow-hidden bg-gray-100 rounded-lg shadow-lg">
-                  {users[0]?.avatar ? (  // Check if the first user has an avatar
-                    <img
-                      src={`http://localhost:5173/public/img/${users[0].avatar}`} // Use the correct path
-                      alt="Profile"
-                      className="object-cover w-full h-full"
-                    />
-                  ) : (
-                    <svg
-                      className="w-12 h-12 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M12 4v16m8-8H4"
-                      />
-                    </svg>
-                  )}
+                  <footer className="flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">
+                    <button onClick={handleSaveRole} className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto">
+                        Save
+                      </button>
+                      
+                      <button onClick={closeEditModal} className="w-full px-5 py-2 text-sm font-medium text-gray-700 transition duration-200 transform bg-gray-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105 md:w-auto">
+                        Cancel
+                      </button>
+                    </footer>
                 </div>
-                <input
-                  type="file"
-                  id="avatar"
-                  accept="image/*"
-                  onChange={handlePictureChange} // Call the function to update the image
-                  className="hidden"
-                />
-                <label
-                  htmlFor="avatar"
-                  className="flex items-center px-4 py-2 text-sm font-semibold text-center text-white transition-colors duration-200 bg-blue-500 rounded-lg cursor-pointer hover:bg-blue-600"
-                >
-                  {formData.avatar ? "Change Picture" : "Upload Picture"} {/* Dynamic text */}
-                </label>
-              </div>
-
-            </form>
-          {/* Footer */}
-          <footer className="flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">
+              )}
+            </div>
+          {/* <footer className="flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">
           <button onClick={handleSaveEdit} className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto">
               Save
             </button>
@@ -1342,7 +1395,7 @@ const optionUserCode = users.map(user => ({
             <button onClick={closeEditModal} className="w-full px-5 py-2 text-sm font-medium text-gray-700 transition duration-200 transform bg-gray-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105 md:w-auto">
               Cancel
             </button>
-          </footer>
+          </footer> */}
         </div>
       </div>
 
