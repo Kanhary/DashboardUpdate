@@ -270,7 +270,9 @@ const ItemPermission = () => {
             onClick={() => deleteGender(item.code)} 
           />
         </td>
-        <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>{item.menuName}</td>
+        <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>
+          {translateText(item.menuName)} {/* Translated menu name */}
+        </td>
         <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>{item.creator}</td>
         <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>{item.updater}</td>
         <td className='px-4 py-3 border-r' style={{ minWidth: '160px' }}>{formatDateTime(item.updateTime)}</td>
@@ -289,7 +291,9 @@ const ItemPermission = () => {
               onClick={() => deleteGender(submenu.code)} 
             />
           </td>
-          <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>{submenu.menuName}</td>
+          <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>
+            {translateText(submenu.menuName)} {/* Translated submenu name */}
+          </td>
           <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>{submenu.creator}</td>
           <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>{submenu.updater}</td>
           <td className='px-4 py-3 border-r' style={{ minWidth: '160px' }}>{formatDateTime(submenu.updateTime)}</td>
@@ -298,8 +302,6 @@ const ItemPermission = () => {
     </React.Fragment>
   ))}
 </tbody>
-
-
 
             </table>
           </div>
