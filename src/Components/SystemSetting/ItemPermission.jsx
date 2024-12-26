@@ -13,6 +13,7 @@ const ItemPermission = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [formData, setFormData] = useState(INITAIL_FORM_DATA);
   const [editingItemPermission,setEditingItemPermission] = useState(null);
+  const [flattenedMenus, setFlattenedMenus] = useState([]);
   const [items, setItems] = useState([]);
   
   // const items = [
@@ -66,7 +67,9 @@ const ItemPermission = () => {
 
   const indexOfLastRecord = currentPage * recordsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-  const currentItemPermission = filterItemPermission.slice(indexOfFirstRecord, indexOfLastRecord);
+  const currentMenus = flattenedMenus.slice(indexOfFirstRecord, indexOfLastRecord);
+
+  console.log(currentMenus);  // Log the currentMenus array
 
   const getPaginationItems = () => {
     let pages = [];
@@ -212,26 +215,34 @@ const ItemPermission = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentItemPermission.map((item, index) => (
-                    <tr key={index} className='transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50'>
-                      <td className='sticky left-0 flex px-6 py-4 bg-white border-r'>
-                        <input type="checkbox" className="mr-1 action-checkbox" />
-                        <FaPen className="ml-2 text-blue-500 cursor-pointer hover:text-blue-700" 
-                        onClick={() => openEditModal(item.code, item.functionCode, item.functionName)} 
-                        />
-                        <FaTrashAlt className="ml-3 text-red-500 cursor-pointer hover:text-red-700" 
-                        onClick={() => deleteGender(item.code)} 
-                        />
-                    </td>
-                    {/* <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>{item.code}</td>
-                    <td className='px-4 py-3 border-r' >{item.functionCode}</td> */}
-                    <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>{item.menuName}</td>
-                    <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>{item.creator}</td>
-                    <td className='px-4 py-3 border-r' style={{ minWidth: '150px' }}>{item.updater}</td>
-                    <td className='px-4 py-3 border-r' style={{ minWidth: '160px' }}>{formatDateTime(item.updateTime)}</td>
-                    </tr>
-                ))}
+              {currentMenus.map((menu) => (
+                <tr
+                  key={menu.id}
+                  className={`text-sm text-gray-700 hover:bg-gray-50 ${
+                    menu.isChild ? "pl-8" : "" // Indent child menus
+                  }`}
+                >
+                  {/* Parent/Child Menu Name */}
+                  <td className={`px-4 py-2 border ${menu.isChild ? "pl-8" : ""}`}>
+                    {translateText(menu.menuName)}
+                  </td>
+
+                  {/* Permission Checkbox */}
+                  <td className="px-4 py-2 text-center border">
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4 text-blue-600"
+                      checked={roleMenuPermissions.some(
+                        (permission) => permission.menuId === menu.id && permission.enabled
+                      )}
+                      onChange={() => (isEditing ? handleCheckboxChange(menu.id) : null)}
+                      disabled={!isEditing}
+                    />
+                  </td>
+                </tr>
+              ))}
             </tbody>
+
 
             </table>
           </div>

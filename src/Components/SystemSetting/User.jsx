@@ -117,21 +117,21 @@ const User = () => {
     }
   }, [formData.picture]);
   
-  
+  const fetchUsers = async () => {
+    try {
+      const response = await GetAllUser();
+      setUsers(response.data.data);
+      // Assuming 'avatar' is a field inside each user object in the response:
+      setAvatar(`http://localhost:5173/public/Img/${response.data.data.avatar}`);
+
+    } catch (err) {
+      setError(err.message || 'An error occurred');
+    }
+  };
   
   // Fetch users and employees
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await GetAllUser();
-        setUsers(response.data.data);
-        // Assuming 'avatar' is a field inside each user object in the response:
-        setAvatar(`http://localhost:5173/public/Img/${response.data.data.avatar}`);
-
-      } catch (err) {
-        setError(err.message || 'An error occurred');
-      }
-    };
+    
     
   
 
@@ -298,7 +298,9 @@ const handleSave = async () => {
       text: "User created successfully.",
       icon: "success",
     });
+    // window.location.reload();
 
+    fetchUsers();
     // closeAddModal(); // Close the modal on success
 
   } catch (error) {
