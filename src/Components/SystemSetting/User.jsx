@@ -421,7 +421,7 @@ const handleSaveRole = async () => {
   const filteredUser = users.filter(user =>
     (user.nickname && user.nickname.toLowerCase().includes(searchTerm.toLowerCase())) ||
     (user.username && user.username.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (user.id && user.id.includes(searchTerm))
+    (user.id && user.id.toString().includes(searchTerm))
   );
   const handlePageChange = (pageNumber) => {
     if (pageNumber > 0 && pageNumber <= totalPages) {

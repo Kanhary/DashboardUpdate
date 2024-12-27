@@ -42,27 +42,31 @@ const ItemPermission = () => {
     });
     return flattened;
   };
-
+  
   useEffect(() => {
     AOS.init({ duration: 1000 });
-
+  
     const fetchMenuItems = async () => {
       try {
         const response = await GetMenu();
         if (response.data.code === 200) {
-          setItems(response.data.data);
-          setFlattenedMenus(flattenMenus(items));
+          const fetchedItems = response.data.data;
+          setItems(fetchedItems); // Update the `items` state
+          setFlattenedMenus(flattenMenus(fetchedItems)); // Use `fetchedItems` directly
         } else {
           setItems([]);
+          setFlattenedMenus([]);
         }
       } catch (error) {
         console.error("Error fetching menu items:", error);
         setItems([]);
+        setFlattenedMenus([]);
       }
     };
-
+  
     fetchMenuItems();
   }, []);
+  
   
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 8;
@@ -261,7 +265,7 @@ const ItemPermission = () => {
     <React.Fragment key={index}>
       {/* Parent Row */}
       <tr className='transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50'>
-        <td className='sticky left-0 flex px-6 py-4 bg-white border-r'>
+        <td className="sticky left-0 w-full h-full px-4 py-3 bg-white border-r">
           <input type="checkbox" className="mr-1 action-checkbox" />
           <FaPen className="ml-2 text-blue-500 cursor-pointer hover:text-blue-700" 
             onClick={() => openEditModal(item.code, item.functionCode, item.functionName)} 
