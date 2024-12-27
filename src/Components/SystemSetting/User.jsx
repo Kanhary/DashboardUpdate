@@ -415,7 +415,7 @@ const handleSaveRole = async () => {
   
 
   useEffect(() => {
-    setCurrentPage(0); // Reset to first page when users data changes
+    setCurrentPage(1); // Reset to first page when users data changes
   }, [users]);
 
   const filteredUser = users.filter(user =>
@@ -429,7 +429,7 @@ const handleSaveRole = async () => {
     }
   };
   const totalPages = Math.ceil(filteredUser.length / recordsPerPage);
-  const indexOfLastRecord = (currentPage + 1) * recordsPerPage;
+  const indexOfLastRecord = currentPage  * recordsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
   const currentPageUsers = filteredUser.slice(indexOfFirstRecord, indexOfLastRecord);
   
@@ -903,7 +903,7 @@ const optionUserCode = users.map(user => ({
             <div className="mt-4">
               {activeTab === 'Create User' && (
                 <div>
-                  <h2 className="mb-4 text-xl font-semibold">Create User</h2>
+                  {/* <h2 className="px-6 mb-4 text-xl font-semibold">Create User</h2> */}
                   <form className="z-10 flex flex-col flex-grow px-6 py-6 space-y-6 md:flex-row md:space-x-6" data-aos='zoom-in'>
                     {/* Left Side: Form Inputs */}
                     <div className="w-full space-y-6 md:w-3/4">
@@ -1074,11 +1074,10 @@ const optionUserCode = users.map(user => ({
               )}
 
               {activeTab === 'assignRole' && (
-                <div>
-                  <h2 className="mb-4 text-xl font-semibold">Assign Role</h2>
-                  <form>
+                <div className='flex flex-col min-h-[450px]'>
+                  <form className='flex-grow px-6 space-y-6'>
                   
-                  <div className="w-full md:w-1/2">
+                  <div className="w-full md:w-1/2 ">
                     <label htmlFor="staffcode" className="block mb-2 text-sm font-semibold text-gray-700">User</label>
                     <Select
                       options={optionUserCode}
@@ -1106,7 +1105,7 @@ const optionUserCode = users.map(user => ({
                   </div>
                   </form>
 
-                  <footer className="flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">
+                  <footer className="bottom-0 flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">
                     <button onClick={handleSaveRole} className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto">
                         Save
                       </button>
@@ -1172,7 +1171,7 @@ const optionUserCode = users.map(user => ({
             <div className="mt-4">
               {activeTab === 'Create User' && (
                 <div>
-                  <h2 className="mb-4 text-xl font-semibold">Create User</h2>
+                  <h2 className="px-6 mb-4 text-xl font-semibold">Create User</h2>
                   <form className="z-10 flex flex-col flex-grow px-6 py-6 space-y-6 md:flex-row md:space-x-6" data-aos='zoom-in'>
                     {/* Left Side: Form Inputs */}
                     <div className="w-full space-y-6 md:w-3/4">
@@ -1343,7 +1342,7 @@ const optionUserCode = users.map(user => ({
               )}
 
               {activeTab === 'assignRole' && (
-                <div>
+                <div className='px-6'>
                   <h2 className="mb-4 text-xl font-semibold">Assign Role</h2>
                   <form>
                   
