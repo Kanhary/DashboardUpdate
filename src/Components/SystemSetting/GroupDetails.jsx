@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { GetMenu, GetRole } from "../../api/user"; // Assuming you have these API methods.
+import { GetMenu, GetRole, AddMenuRole } from "../../api/user"; // Include relevant API methods
 import Select from "react-select";
+import axios from "axios"; // Ensure axios is imported
 
 const GroupDetails = () => {
   const [roles, setRoles] = useState([]);
@@ -18,14 +19,14 @@ const GroupDetails = () => {
         const roleResponse = await GetRole();
         if (roleResponse.data.code === 200) {
           setRoles(roleResponse.data.data);
-          setSelectedRole(roleResponse.data.data[0]?.id);
+          setSelectedRole(roleResponse.data.data[0]?.roleId);
         }
 
         const menuResponse = await GetMenu();
         if (menuResponse.data.code === 200) {
           const menusData = menuResponse.data.data;
           setMenus(menusData);
-          setFlattenedMenus(flattenMenus(menusData)); // Flatten menus for pagination
+          setFlattenedMenus(flattenMenus(menusData));
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -42,11 +43,10 @@ const GroupDetails = () => {
     if (selectedRole) {
       const fetchRolePermissions = async () => {
         try {
-          const rolePermissions = [
-            { menuId: 1, enabled: true },
-            { menuId: 2, enabled: true },
-          ];
-          setRoleMenuPermissions(rolePermissions);
+          const rolePermissionsResponse = await GetMenu(selectedRole);
+          if (rolePermissionsResponse.data.code === 200) {
+            setRoleMenuPermissions(rolePermissionsResponse.data.data);
+          }
         } catch (error) {
           console.error("Error fetching role permissions:", error);
           setRoleMenuPermissions([]);
@@ -82,34 +82,53 @@ const GroupDetails = () => {
     setRoleMenuPermissions(updatedPermissions);
   };
 
-  const translateText = (text) => {
-    const translations = {
-      'dashboard': "ផ្ទាំងគ្រប់គ្រង",
-      'computer': "តារាងទិន្នន័យកុំព្យូទ័រ",
-      'employee': "តារាងបុគ្គលិក",
-      'positionlist': "តារាងបញ្ជីមុខតំណែង",
-      'genderlist': "តារាងបញ្ជីភេទបុគ្គលិក",
-      'employee_info': "តារាងបញ្ចូលព័ត៌មានបុគ្គលិក",
-      'system_setting': "ការកំណត់ប្រព័ន្ធ",
-      'setting': "ការកំណត់",
-      'report': "របាយការណ៍",
-      'help': "ជំនួយ",
-      'user': "អ្នកប្រើប្រាស់",
-      'company': "តារាងក្រុមហ៊ុន",
-      'office' : "ការិយាល័យ",
-      'branch' : "សាខា",
-      'department' : "នាយកដ្ឋាន",
-      'company_list' : "ក្រុមហ៊ុន",
-      'maintenance' : "ការថែទាំ",
-      'rolemenu': "Role Menu",
-      'menu': "Menu",
-      'role': "Role"
-    };
-    return translations[text.toLowerCase()] || text;
+  const handleSavePermissions = async () => {
+    try {
+      // Ensure roleId is correctly set
+      const roleId = selectedRole;
+
+      if (!roleId) {
+        console.error("Role ID is missing!");
+        return;
+      }
+
+      const enabledMenuIds = roleMenuPermissions
+      .filter((permission) => permission.enabled)
+      .map((permission) => permission.menuId);
+    
+    // Here, just send the enabledMenuIds array directly as the payload
+    const payload = enabledMenuIds;  // Just the array of menuIds
+    
+    // Constructing the correct URL with roleId (assuming the API expects roleId as part of the URL)
+    const apiUrl = `http://192.168.168.4:8888/RoleMenu/${roleId}/menus`;
+    
+    // Posting the data
+    await axios.post(apiUrl, payload, {
+      headers: {
+        "Content-Type": "application/json",  // Ensure Content-Type is set to application/json
+      },
+    });
+    
+    alert("Permissions updated successfully!");
+  } catch (error) {
+    console.error("Error updating permissions:", error);
+    alert("Failed to update permissions. Please try again.");
+  }
+};
+
+  const handleAddMenu = async () => {
+    try {
+      const newMenu = { menuName: "New Menu", menuDescription: "Description" }; // Example data
+      await AddMenuRole(selectedRole, newMenu);
+      alert("Menu added successfully!");
+      setMenus([...menus, newMenu]);
+    } catch (error) {
+      console.error("Error adding menu:", error);
+    }
   };
 
   const handleRoleChange = (selectedOption) => {
-    setSelectedRole(selectedOption);
+    setSelectedRole(selectedOption.value);
     setIsEditing(false);
   };
 
@@ -152,7 +171,7 @@ const GroupDetails = () => {
         <Select
           options={optionRoleCode}
           onChange={handleRoleChange}
-          value={selectedRole}
+          value={optionRoleCode.find((option) => option.value === selectedRole)}
           placeholder="Select a role"
           styles={customStyles}
         />
@@ -160,7 +179,7 @@ const GroupDetails = () => {
 
       <div className="flex items-center justify-between mb-4">
         <button
-          onClick={() => console.log("Add new menu")}
+          onClick={handleAddMenu}
           className="px-4 py-2 text-white bg-green-500 rounded shadow-sm hover:bg-green-600"
         >
           Add New Menu
@@ -172,6 +191,12 @@ const GroupDetails = () => {
           }`}
         >
           {isEditing ? "Stop Editing" : "Edit Permissions"}
+        </button>
+        <button
+          onClick={handleSavePermissions}
+          className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+        >
+          Save Changes
         </button>
       </div>
 
@@ -187,12 +212,10 @@ const GroupDetails = () => {
             {currentMenus.map((menu) => (
               <tr
                 key={menu.id}
-                className={`text-sm text-gray-700 hover:bg-gray-50 ${
-                  menu.isChild ? "pl-8" : ""
-                }`}
+                className={`text-sm text-gray-700 hover:bg-gray-50 ${menu.isChild ? "pl-8" : ""}`}
               >
                 <td className={`px-4 py-2 border ${menu.isChild ? "pl-8" : ""}`}>
-                  {translateText(menu.menuName)}
+                  {menu.menuName}
                 </td>
                 <td className="px-4 py-2 text-center border">
                   <input
@@ -218,9 +241,7 @@ const GroupDetails = () => {
             }`}
             disabled={currentPage === 1}
           >
-            <svg className="w-4 h-4 md:w-5 md:h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <path fillRule="evenodd" d="M12.293 14.707a1 1 0 01-1.414 0L6.586 10.414a1 1 0 010-1.414l4.293-4.293a1 1 0 011.414 1.414L8.414 10l3.879 3.879a1 1 0 010 1.414z" clipRule="evenodd" />
-                    </svg>
+            Previous
           </button>
           <span>
             Page {currentPage} of {totalPages}
@@ -232,9 +253,7 @@ const GroupDetails = () => {
             }`}
             disabled={currentPage === totalPages}
           >
-            <svg className="w-4 h-4 md:w-5 md:h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <path fillRule="evenodd" d="M7.707 14.707a1 1 0 010-1.414L11.586 10 7.707 6.121a1 1 0 111.414-1.414l4.293 4.293a1 1 010 1.414l-4.293 4.293a1 1 01-1.414 0z" clipRule="evenodd" />
-            </svg>
+            Next
           </button>
         </div>
       </div>

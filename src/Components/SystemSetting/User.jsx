@@ -7,7 +7,7 @@ import { IoMdRefresh } from "react-icons/io";
 import ReactPaginate from 'react-paginate';
 import Select from 'react-select';
 import { GiShipBow } from "react-icons/gi";
-import { GetAllUser, AddUser, GetUserLogin, UpdateUser, DeleteUser, GetAllStaff, GetRole, AddUserRole } from '../../api/user';
+import { GetAllUser, AddUser, GetUserLogin, UpdateUser, DeleteUser, GetAllStaff, GetRole, AddUserRole , UpdateRole} from '../../api/user';
 import axios from 'axios';
 import { getToken } from '../../utils/token/Token';
 
@@ -384,7 +384,54 @@ const handleSaveRole = async () => {
 };
 
   
+const handleSaveEditRole = async () => {
+  const { id, roleId } = formData; // Extract user ID and role ID(s) from formData
 
+  // Validate inputs
+  if (!id || !roleId) {
+    Swal.fire({
+      title: "Error!",
+      text: "Please select both a user and a role before saving.",
+      icon: "error",
+    });
+    return;
+  }
+
+  // Normalize roleData to be an array of IDs (even if only one role is selected)
+  const roleData = Array.isArray(roleId)
+    ? roleId.map((role) => role.value || role) // Extract 'value' if it's an object
+    : [roleId.value || roleId]; // Wrap single roleId in an array if necessary
+
+  console.log("Prepared roleData:", roleData); // Debug log to check roleData
+
+  setIsLoading(true);
+
+  try {
+    // Call the API with user ID and role IDs
+    const response = await UpdateRole(id, roleData);
+
+    if (response.status === 200) {
+      Swal.fire({
+        title: "Success!",
+        text: "Role assigned successfully.",
+        icon: "success",
+      });
+      closeAddModal();
+      closeEditModal();
+    } else {
+      throw new Error(`Failed to assign role: ${response.statusText}`);
+    }
+  } catch (error) {
+    console.error("Error in assigning role:", error);
+    Swal.fire({
+      title: "Error!",
+      text: error.response?.data?.message || "Error assigning role.",
+      icon: "error",
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
 
 
 
@@ -456,7 +503,7 @@ const handleSaveRole = async () => {
   // const handleChangeSelection = (e) => {
   //   setSelectedOption(e.target.value);
   // };
-  const handleDelete = async (username) => {
+  const handleDelete = async (id) => {
     try {
         const result = await Swal.fire({
             title: "Are you sure?",
@@ -469,7 +516,7 @@ const handleSaveRole = async () => {
         });
 
         if (result.isConfirmed) {
-            const response = await DeleteUser(username); // Pass the username here
+            const response = await DeleteUser(id); // Pass the username here
             console.log('Response:', response);  // Log the response to confirm the deletion
 
             if (response.status === 200) {  // Check for a successful response
@@ -481,7 +528,7 @@ const handleSaveRole = async () => {
                 });
                 
                 // Remove the deleted user from the list
-                const updatedUsers = users.filter(user => user.username !== username);
+                const updatedUsers = users.filter(user => user.id !== id);
                 setUsers(updatedUsers);
             } else {
                 Swal.fire({
@@ -775,9 +822,9 @@ const optionUserCode = users.map(user => ({
                           <FaPen />
                         </button>
                         <button
-                          key={user.username}
+                          key={user.id}
                           className="text-red-600 hover:text-red-800"
-                          onClick={() => handleDelete(user.username)}
+                          onClick={() => handleDelete(user.id)}
                         >
                           <FaTrashAlt />
                         </button>
@@ -1375,7 +1422,7 @@ const optionUserCode = users.map(user => ({
                   </form>
 
                   <footer className="flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">
-                    <button onClick={handleSaveRole} className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto">
+                    <button onClick={handleSaveEditRole} className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto">
                         Save
                       </button>
                       

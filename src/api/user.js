@@ -40,10 +40,11 @@ export function GetEmp(params) {
 // }
 
 // Modify DeleteUser to accept username as a parameter
-export function DeleteUser(username) {
+export function DeleteUser(id) {
     return request({
         method: 'DELETE', // Assuming the backend uses the DELETE HTTP method
-        url: `/user/deleteUser?username=${username}`, // Add the username to the query parameter
+        // url: `/user/deleteUser?username=${username}`, // Add the username to the query parameter
+        url: `/user/deleteUser/${id}`
     });
 }
 
@@ -547,3 +548,26 @@ export function AddUserRole(id, roleData){
     })
     
 }
+
+export function AddMenuRole(id, roleData){
+    console.log('Sending request to add role for user:', id, roleData);
+    return request({
+        method: "POST",
+        url: `/RoleMenu/${id}/menus`,
+        data: roleData
+        
+    })
+    
+}
+
+export function NewUpdateRole(id, roleData){
+    console.log('Sending request to add role for user:', id, roleData);
+    return request({
+        method: "POST",
+        url: `/RoleMenu/${id}/menus`,
+        data: roleData
+        
+    })
+    
+}
+
