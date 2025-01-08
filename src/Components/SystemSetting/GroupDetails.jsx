@@ -84,7 +84,6 @@ const GroupDetails = () => {
 
   const handleSavePermissions = async () => {
     try {
-      // Ensure roleId is correctly set
       const roleId = selectedRole;
 
       if (!roleId) {
@@ -93,39 +92,40 @@ const GroupDetails = () => {
       }
 
       const enabledMenuIds = roleMenuPermissions
-      .filter((permission) => permission.enabled)
-      .map((permission) => permission.menuId);
-    
-    // Here, just send the enabledMenuIds array directly as the payload
-    const payload = enabledMenuIds;  // Just the array of menuIds
-    
-    // Constructing the correct URL with roleId (assuming the API expects roleId as part of the URL)
-    const apiUrl = `http://192.168.168.4:8888/RoleMenu/${roleId}/menus`;
-    
-    // Posting the data
-    await axios.post(apiUrl, payload, {
-      headers: {
-        "Content-Type": "application/json",  // Ensure Content-Type is set to application/json
-      },
-    });
-    
-    alert("Permissions updated successfully!");
-  } catch (error) {
-    console.error("Error updating permissions:", error);
-    alert("Failed to update permissions. Please try again.");
-  }
+        .filter((permission) => permission.enabled)
+        .map((permission) => permission.menuId);
+
+      const payload = enabledMenuIds;
+      const apiUrl = `http://192.168.168.4:8888/RoleMenu/${roleId}/menus`;
+
+      await axios.post(apiUrl, payload, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      alert("Permissions updated successfully!");
+      
+      // Close editing mode after successful save
+      setIsEditing(false);
+      
+    } catch (error) {
+      console.error("Error updating permissions:", error);
+      alert("Failed to update permissions. Please try again.");
+    }
 };
 
-  const handleAddMenu = async () => {
-    try {
-      const newMenu = { menuName: "New Menu", menuDescription: "Description" }; // Example data
-      await AddMenuRole(selectedRole, newMenu);
-      alert("Menu added successfully!");
-      setMenus([...menus, newMenu]);
-    } catch (error) {
-      console.error("Error adding menu:", error);
-    }
-  };
+
+  // const handleAddMenu = async () => {
+  //   try {
+  //     const newMenu = { menuName: "New Menu", menuDescription: "Description" }; // Example data
+  //     await AddMenuRole(selectedRole, newMenu);
+  //     alert("Menu added successfully!");
+  //     setMenus([...menus, newMenu]);
+  //   } catch (error) {
+  //     console.error("Error adding menu:", error);
+  //   }
+  // };
 
   const handleRoleChange = (selectedOption) => {
     setSelectedRole(selectedOption.value);
@@ -178,12 +178,12 @@ const GroupDetails = () => {
       </div>
 
       <div className="flex items-center justify-between mb-4">
-        <button
+        {/* <button
           onClick={handleAddMenu}
           className="px-4 py-2 text-white bg-green-500 rounded shadow-sm hover:bg-green-600"
         >
           Add New Menu
-        </button>
+        </button> */}
         <button
           onClick={() => setIsEditing(!isEditing)}
           className={`px-4 py-2 text-white rounded ${

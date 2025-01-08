@@ -571,3 +571,10 @@ export function NewUpdateRole(id, roleData){
     
 }
 
+export function ExportUserExcel(){
+    return request({
+        method: "GET",
+        url: '/user/export-users'
+    })
+}
+

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import * as XLSX from "xlsx";
-import { GetAllStaff } from "../../api/user";
+import { GetAllStaff , ExportUserExcel} from "../../api/user";
 import Swal from 'sweetalert2';
 import { AiOutlineFileExcel } from "react-icons/ai";
 
@@ -13,39 +13,45 @@ const Report = () => {
     setLoading(true);
   
     try {
-      const response = await GetAllStaff();
+      const response = await axios.get("http://192.168.168.4:8888/user/export-users", {
+        responseType: "blob", // Important to handle binary data
+      });
   
-      // Log the full response for debugging
-      console.log("Full Response:", response);
-      console.log("Response Data:", response.data);
+      console.log("API Response:", response);
   
-      // Extract the data array
-      let computerData = response.data.data;
+      // Create a blob from the response data
+      const blob = new Blob([response.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
   
-      if (!Array.isArray(computerData)) {
-        console.error("Unexpected data format:", computerData);
-        alert("Unexpected data format. Unable to generate report.");
-        setLoading(false);
-        return;
-      }
+      // Extract file name from headers (optional)
+      const contentDisposition = response.headers["content-disposition"];
+      const fileName = contentDisposition
+        ? contentDisposition.split("filename=")[1].replace(/"/g, "")
+        : "User_Report.xlsx";
   
-      // Generate the Excel report
-      const worksheet = XLSX.utils.json_to_sheet(computerData);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Computer Report");
+      // Create a link element to trigger download
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = fileName;
   
-      // Save the Excel file
-      XLSX.writeFile(workbook, "Computer_Report.xlsx");
-    //   alert("Report generated and downloaded successfully!");
+      // Append to DOM and trigger download
+      document.body.appendChild(link);
+      link.click();
+  
+      // Clean up
+      document.body.removeChild(link);
+  
+      // Show success message
       Swal.fire({
         title: "Download",
         text: "Report generated and downloaded successfully!",
         icon: "success",
         confirmButtonText: "Okay",
-    });
+      });
     } catch (error) {
       console.error("Error generating report:", error);
-    //   alert("Failed to generate the report. Please try again.");
+  
       Swal.fire({
         title: "Error!",
         text: "Failed to generate the report. Please try again.",
@@ -56,6 +62,7 @@ const Report = () => {
       setLoading(false);
     }
   };
+  
   
   
 
