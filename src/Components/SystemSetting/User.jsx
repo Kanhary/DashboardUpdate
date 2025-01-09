@@ -52,6 +52,8 @@ const User = () => {
   const [activeTab, setActiveTab] = useState('Create User');
   const [isUserCreated, setIsUserCreated] = useState(false);
   const [userId, setUserId] = useState(null);
+  const [mergedData, setMergedData] = useState([]);
+
 
   
   const [Avatar, setAvatar] = useState(null)
@@ -119,10 +121,23 @@ const User = () => {
   
   const fetchUsers = async () => {
     try {
-      const response = await GetAllUser();
-      setUsers(response.data.data);
+      const UserResponse = await GetAllUser();
+      const RoleResponse = await GetRole();
+      setUsers(UserResponse.data.data);
+      setRole(RoleResponse.data.data);
       // Assuming 'avatar' is a field inside each user object in the response:
       setAvatar(`http://localhost:5173/public/Img/${response.data.data.avatar}`);
+
+
+      const combined = usersData.map(user => {
+        const role = rolesData.find(role => role.roleId === user.roleId);
+        return {
+            ...user,
+            roleLabel: role ? role.roleLabel : 'Unknown', 
+        };
+      });
+
+    setMergedData(combined);
 
     } catch (err) {
       setError(err.message || 'An error occurred');
