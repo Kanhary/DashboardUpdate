@@ -578,3 +578,11 @@ export function ExportUserExcel(){
     })
 }
 
+
+export function RoleName(username){
+    return request({
+        method: "GET",
+        url: `/user/getRoleName/${username}`
+    })
+}
+

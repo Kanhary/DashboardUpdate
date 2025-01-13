@@ -53,6 +53,7 @@ const User = () => {
   const [isUserCreated, setIsUserCreated] = useState(false);
   const [userId, setUserId] = useState(null);
   const [mergedData, setMergedData] = useState([]);
+  const [roleName, setRoleName] = useState([]);
 
 
   
@@ -144,7 +145,23 @@ const User = () => {
     }
   };
   
-  // Fetch users and employees
+  const fetchRoleByUsername = async (username) => {
+    try {
+      const response = await axios.get(`http://192.168.168.4:8888/user/getRoleName/${username}`);
+      if (response.data.code === 200) {
+        // Assuming the response data contains the roleName
+        setRoleName((prevRoles) => ({
+          ...prevRoles,
+          [username]: response.data.data[0].roleName,  // Map username to roleName
+        }));
+      }
+    } catch (error) {
+      console.error('Error fetching role:', error);
+    }
+  };
+
+  
+  
   useEffect(() => {
     
     
@@ -180,6 +197,12 @@ const User = () => {
       }
     };
 
+
+    currentPageUsers.forEach(user => {
+      if (!roleName[user.username]) {  // Only fetch if role isn't already fetched
+        fetchRoleByUsername(user.username);
+      }
+    });
     // const fetchRole = async () => {
     //   try{
     //     const response = await 
@@ -190,6 +213,7 @@ const User = () => {
     fetchEmployees();
     fetchCurrentUser(); 
     fetchRole();
+    
     // setCurrentPage(0);
   }, []);
 
@@ -845,7 +869,7 @@ const optionUserCode = users.map(user => ({
                         </button>
                       </div>
                     </td>
-                    <td className='px-4 py-3 border-r'>{user.roleId}</td>
+                    <td className="px-4 py-3 border-r">{roles[user.username] || 'Loading...'}</td>
                     <td className='px-4 py-3 border-r'>{user.usercode}</td>
                     <td className='px-4 py-3 border-r'>{user.username}</td>
                     <td className='px-4 py-3 border-r'>{user.nickname}</td>
