@@ -122,41 +122,61 @@ const User = () => {
   
   const fetchUsers = async () => {
     try {
+      // Step 1: Fetch all users and roles
       const UserResponse = await GetAllUser();
       const RoleResponse = await GetRole();
-      setUsers(UserResponse.data.data);
-      setRole(RoleResponse.data.data);
-      // Assuming 'avatar' is a field inside each user object in the response:
-      setAvatar(`http://localhost:5173/public/Img/${response.data.data.avatar}`);
-
-
-      const combined = usersData.map(user => {
-        const role = rolesData.find(role => role.roleId === user.roleId);
+      const usersData = UserResponse.data.data;
+      const rolesData = RoleResponse.data.data;
+  
+      // Step 2: Fetch role names for each user
+      const rolePromises = usersData.map(async (user) => {
+        try {
+          const roleResponse = await axios.get(`http://192.168.168.4:8888/user/getRoleName/${user.username}`);
+          const roleName = roleResponse.data.data[0]?.roleName || 'Unknown'; // Extract roleName
+          return { ...user, roleName }; // Add roleName to user object
+        } catch (error) {
+          console.error(`Error fetching role for user ${user.username}:`, error);
+          return { ...user, roleName: 'Unknown' }; // Handle errors gracefully
+        }
+      });
+  
+      const usersWithRoles = await Promise.all(rolePromises);
+  
+      // Step 3: Map rolesData to add additional role details
+      const combined = usersWithRoles.map((user) => {
+        const role = rolesData.find((role) => role.roleId === user.roleId);
         return {
-            ...user,
-            roleLabel: role ? role.roleLabel : 'Unknown', 
+          ...user,
+          roleLabel: role ? role.roleLabel : 'Unknown', // Add roleLabel if available
+          avatar: `http://localhost:5173/public/Img/${user.avatar}`, // Add avatar URL
         };
       });
-
-    setMergedData(combined);
-
+  
+      // Step 4: Set the state with merged data
+      setMergedData(combined);
+      setUsers(combined);
     } catch (err) {
+      console.error('Error fetching data:', err);
       setError(err.message || 'An error occurred');
     }
   };
   
-  const fetchRoleByUsername = async (username) => {
+  
+  const fetchUsersWithRoles = async () => {
     try {
-      const response = await axios.get(`http://192.168.168.4:8888/user/getRoleName/${username}`);
-      if (response.data.code === 200) {
-        // Assuming the response data contains the roleName
-        setRoleName((prevRoles) => ({
-          ...prevRoles,
-          [username]: response.data.data[0].roleName,  // Map username to roleName
-        }));
-      }
+      const response = await axios.get('http://192.168.168.4:8888/user/allusersystem');
+      const usersData = response.data; // Assuming the API returns all users
+      
+      const rolePromises = usersData.map(async (user) => {
+        const roleResponse = await axios.get(`http://192.168.168.4:8888/user/getRoleName/${user.username}`);
+        const roleName = roleResponse.data.data[0]?.roleName || 'N/A';
+        return { ...user, roleName };
+      });
+
+      const usersWithRoles = await Promise.all(rolePromises);
+      setUsers(usersWithRoles);
     } catch (error) {
-      console.error('Error fetching role:', error);
+      console.error('Error fetching users or roles:', error);
     }
   };
 
@@ -198,11 +218,7 @@ const User = () => {
     };
 
 
-    currentPageUsers.forEach(user => {
-      if (!roleName[user.username]) {  // Only fetch if role isn't already fetched
-        fetchRoleByUsername(user.username);
-      }
-    });
+    
     // const fetchRole = async () => {
     //   try{
     //     const response = await 
@@ -472,33 +488,6 @@ const handleSaveEditRole = async () => {
   }
 };
 
-
-
-
-  // const handleClick = () => {
-  //   Swal.fire({
-  //     title: "Are you sure?",
-  //     text: "You won't be able to revert this!",
-  //     icon: "warning",
-  //     showCancelButton: true,
-  //     confirmButtonColor: "#22c55e",
-  //     cancelButtonColor: "#d33",
-  //     confirmButtonText: "Yes, delete it!"
-  //   }).then((result) => {
-  //     if (result.isConfirmed) {
-  //       Swal.fire({
-  //         title: "Deleted!",
-  //         text: "Your file has been deleted.",
-  //         icon: "success"
-  //       });
-  //     }
-  //   });
-  // };
-  
-
-  // const [uploadSuccess, setUploadSuccess] = useState(false);
-  
-  
 
   useEffect(() => {
     setCurrentPage(1); // Reset to first page when users data changes
@@ -850,7 +839,7 @@ const optionUserCode = users.map(user => ({
                 </tr>
               </thead>
               <tbody>
-                {currentPageUsers.map(user => (
+                {users.map(user => (
                   <tr key={`${user.id}-${user.username}`} className='transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50'>
                     <td className="sticky left-0 w-full h-full px-4 py-3 bg-white border-r">
                       <div className="flex items-center justify-center space-x-3">
@@ -869,7 +858,7 @@ const optionUserCode = users.map(user => ({
                         </button>
                       </div>
                     </td>
-                    <td className="px-4 py-3 border-r">{roles[user.username] || 'Loading...'}</td>
+                    <td className="px-4 py-3 border-r">{user.roleName}</td>
                     <td className='px-4 py-3 border-r'>{user.usercode}</td>
                     <td className='px-4 py-3 border-r'>{user.username}</td>
                     <td className='px-4 py-3 border-r'>{user.nickname}</td>
