@@ -17,7 +17,7 @@ const User = () => {
     username: '', 
     nickname: '',
     usercode: '', 
-    staffcode: '', 
+    staffCode: '', 
     email: '', 
     mobile: '',
     sex: '',
@@ -29,7 +29,7 @@ const User = () => {
     updater: '',
     updateTime: '',
     createTime: '',
-    roleid: '',
+    roleId: '',
     userid: ''
   };
 
@@ -160,28 +160,7 @@ const User = () => {
       setError(err.message || 'An error occurred');
     }
   };
-  
-  
-  const fetchUsersWithRoles = async () => {
-    try {
-      const response = await axios.get('http://192.168.168.4:8888/user/allusersystem');
-      const usersData = response.data; // Assuming the API returns all users
-      
-      const rolePromises = usersData.map(async (user) => {
-        const roleResponse = await axios.get(`http://192.168.168.4:8888/user/getRoleName/${user.username}`);
-        const roleName = roleResponse.data.data[0]?.roleName || 'N/A';
-        return { ...user, roleName };
-      });
-
-      const usersWithRoles = await Promise.all(rolePromises);
-      setUsers(usersWithRoles);
-    } catch (error) {
-      console.error('Error fetching users or roles:', error);
-    }
-  };
-
-  
-  
+    
   useEffect(() => {
     
     
@@ -423,6 +402,7 @@ const handleSaveRole = async () => {
       });
       closeAddModal();
       closeEditModal();
+      fetchUsers();
     } else {
       throw new Error(`Failed to assign role: ${response.statusText}`);
     }
@@ -463,8 +443,7 @@ const handleSaveEditRole = async () => {
 
   try {
     // Call the API with user ID and role IDs
-    const response = await UpdateRole(id, roleData);
-
+    const response = await AddUserRole(id, roleData);
     if (response.status === 200) {
       Swal.fire({
         title: "Success!",
@@ -473,6 +452,7 @@ const handleSaveEditRole = async () => {
       });
       closeAddModal();
       closeEditModal();
+      fetchUsers();
     } else {
       throw new Error(`Failed to assign role: ${response.statusText}`);
     }
@@ -595,7 +575,6 @@ const handleSaveEdit = async () => {
     // Prepare updated form data
     const updatedFormData = {
       ...formData,
-      roleId: selectedOption ? selectedOption.value : '',
       staffcode: selectedOption ? selectedOption.value : '',
       creator: formData.creator !== undefined ? formData.creator : currentUser, // Explicit check for undefined
       updater: currentUser,
@@ -604,32 +583,6 @@ const handleSaveEdit = async () => {
 
     console.log("Updated Form Data:", updatedFormData);
 
-    // If role is new or not selected, add it first
-    // if (selectedOption && selectedOption.isNew) {
-      
-      const roleData = {
-        userId: editingUser.id, // Use the current user's ID
-        roleId: selectedOption.value, // Use the selected option's value as roleId
-    };
-    
-
-    try {
-      const roleResponse = await AddUserRole(editingUser.id, roleData);
-      console.log("Role added response (raw):", roleResponse);
-    
-      if (roleResponse.status !== 200) {
-        console.error("Role addition failed with status:", roleResponse.status);
-        throw new Error("Failed to add role");
-      }
-    } catch (error) {
-      console.error("Error in AddUserRole:", error);
-      if (error.response) {
-        console.error("Backend returned error:", error.response.data);
-      }
-      throw error; // Re-throw the error to handle it upstream
-    }
-    
-    // }
 
     // After adding the role, proceed to update the user
     const response = await UpdateUser(editingUser.id, updatedFormData);
@@ -641,7 +594,8 @@ const handleSaveEdit = async () => {
         text: "User updated successfully.",
         icon: "success",
       });
-      closeEditModal(); // Close modal after success
+      closeEditModal(); 
+      fetchUsers();
     } else {
       Swal.fire({
         title: "Error!",
@@ -839,7 +793,7 @@ const optionUserCode = users.map(user => ({
                 </tr>
               </thead>
               <tbody>
-                {users.map(user => (
+                {currentPageUsers.map(user => (
                   <tr key={`${user.id}-${user.username}`} className='transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50'>
                     <td className="sticky left-0 w-full h-full px-4 py-3 bg-white border-r">
                       <div className="flex items-center justify-center space-x-3">
@@ -868,7 +822,7 @@ const optionUserCode = users.map(user => ({
                     <td className='px-4 py-3 border-r'>{user.sex}</td>
                     <td className='px-4 py-3 border-r'>{user.staffcode}</td>
                     <td className="px-4 py-3 border-r">
-                    <img src={`http://localhost:5173/public/Img/${user.avatar}`} alt="User Avatar" className="object-cover w-10 h-10 rounded-full"/>
+                    <img src={user.avatar} alt="User Avatar" className="object-cover w-10 h-10 rounded-full"/>
 
                     </td>
                     <td className='px-4 py-3 border-r'>{user.status}</td>
@@ -1324,7 +1278,7 @@ const optionUserCode = users.map(user => ({
                           <Select
                             options={optionsStaffCode}
                             onChange={handleStaffCode}  // Ensure handleStaffCode is passed correctly here
-                            value={optionsStaffCode.find(option => option.value === formData.staffcode)}
+                            value={optionsStaffCode.find(option => option.value === formData.staffCode)}
                             placeholder="Select or type to search"
                             className="basic-single"
                             classNamePrefix="select"
@@ -1405,7 +1359,7 @@ const optionUserCode = users.map(user => ({
                   </form>
                   
                   <footer className="flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">
-                    <button onClick={handleSave} className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto">
+                    <button onClick={handleSaveEdit} className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto">
                         Save
                       </button>
                       
@@ -1416,7 +1370,7 @@ const optionUserCode = users.map(user => ({
                 </div>
               )}
 
-{activeTab === 'assignRole' && (
+              {activeTab === 'assignRole' && (
                 <div className='flex flex-col min-h-[450px]'>
                   <form className='flex-grow px-6 space-y-6'>
                   
@@ -1438,7 +1392,7 @@ const optionUserCode = users.map(user => ({
                     <Select
                       options={optionRoleCode}
                       onChange={handleRole}  // Ensure handleStaffCode is passed correctly here
-                      value={optionRoleCode.find(option => option.value === formData.roleid)}
+                      value={optionRoleCode.find(option => option.value === formData.roleId)}
                       placeholder="Select or type to search"
                       className="basic-single"
                       classNamePrefix="select"

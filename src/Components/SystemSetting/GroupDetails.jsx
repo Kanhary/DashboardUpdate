@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { GetMenu, GetRole, AddMenuRole } from "../../api/user"; // Include relevant API methods
+import { GetMenu, GetRole } from "../../api/user"; // Include relevant API methods
 import Select from "react-select";
 import axios from "axios"; // Ensure axios is imported
 
 const GroupDetails = () => {
   const [roles, setRoles] = useState([]);
-  const [selectedRole, setSelectedRole] = useState(null);
+  const [roleId, setRoleId] = useState(null);
   const [menus, setMenus] = useState([]);
   const [flattenedMenus, setFlattenedMenus] = useState([]);
   const [roleMenuPermissions, setRoleMenuPermissions] = useState([]);
@@ -19,7 +19,7 @@ const GroupDetails = () => {
         const roleResponse = await GetRole();
         if (roleResponse.data.code === 200) {
           setRoles(roleResponse.data.data);
-          setSelectedRole(roleResponse.data.data[0]?.roleId);
+          setRoleId(roleResponse.data.data[0]?.roleId);
         }
 
         const menuResponse = await GetMenu();
@@ -40,22 +40,40 @@ const GroupDetails = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedRole) {
+    if (roleId) {
       const fetchRolePermissions = async () => {
         try {
-          const rolePermissionsResponse = await GetMenu(selectedRole);
-          if (rolePermissionsResponse.data.code === 200) {
-            setRoleMenuPermissions(rolePermissionsResponse.data.data);
+          const apiUrl = `http://192.168.168.4:8888/RoleMenu/menuName/${roleId}`;
+          const response = await axios.get(apiUrl);
+  
+          if (response.data.code === 200) {
+            const permissions = response.data.data; // Contains menuName data
+  
+            // Map permissions to menus
+            const updatedPermissions = flattenedMenus.map((menu) => {
+              // Check if the menuName exists in the permissions data
+              const matchedPermission = permissions.some(
+                (permission) => permission.menuName === menu.menuName
+              );
+  
+              return {
+                menuName: menu.menuName, // Use menuName for matching
+                enabled: matchedPermission, // Set enabled if the menuName matches
+              };
+            });
+  
+            setRoleMenuPermissions(updatedPermissions); // Update the state
           }
         } catch (error) {
           console.error("Error fetching role permissions:", error);
           setRoleMenuPermissions([]);
         }
       };
-
+  
       fetchRolePermissions();
     }
-  }, [selectedRole]);
+  }, [roleId, flattenedMenus]); // Trigger whenever roleId or flattenedMenus changes
+  
 
   const flattenMenus = (menus) => {
     const flattened = [];
@@ -68,19 +86,16 @@ const GroupDetails = () => {
     return flattened;
   };
 
-  const handleCheckboxChange = (menuId) => {
+  const handleCheckboxChange = (menuName) => {
     const updatedPermissions = roleMenuPermissions.map((permission) =>
-      permission.menuId === menuId
+      permission.menuName === menuName
         ? { ...permission, enabled: !permission.enabled }
         : permission
     );
-
-    if (!roleMenuPermissions.some((permission) => permission.menuId === menuId)) {
-      updatedPermissions.push({ menuId, enabled: true });
-    }
-
+  
     setRoleMenuPermissions(updatedPermissions);
   };
+  
 
   const handleSavePermissions = async () => {
     try {
@@ -105,30 +120,17 @@ const GroupDetails = () => {
       });
 
       alert("Permissions updated successfully!");
-      
+
       // Close editing mode after successful save
       setIsEditing(false);
-      
     } catch (error) {
       console.error("Error updating permissions:", error);
       alert("Failed to update permissions. Please try again.");
     }
-};
-
-
-  // const handleAddMenu = async () => {
-  //   try {
-  //     const newMenu = { menuName: "New Menu", menuDescription: "Description" }; // Example data
-  //     await AddMenuRole(selectedRole, newMenu);
-  //     alert("Menu added successfully!");
-  //     setMenus([...menus, newMenu]);
-  //   } catch (error) {
-  //     console.error("Error adding menu:", error);
-  //   }
-  // };
+  };
 
   const handleRoleChange = (selectedOption) => {
-    setSelectedRole(selectedOption.value);
+    setRoleId(selectedOption.value);
     setIsEditing(false);
   };
 
@@ -171,19 +173,13 @@ const GroupDetails = () => {
         <Select
           options={optionRoleCode}
           onChange={handleRoleChange}
-          value={optionRoleCode.find((option) => option.value === selectedRole)}
+          value={optionRoleCode.find((option) => option.value === roleId)}
           placeholder="Select a role"
           styles={customStyles}
         />
       </div>
 
       <div className="flex items-center justify-between mb-4">
-        {/* <button
-          onClick={handleAddMenu}
-          className="px-4 py-2 text-white bg-green-500 rounded shadow-sm hover:bg-green-600"
-        >
-          Add New Menu
-        </button> */}
         <button
           onClick={() => setIsEditing(!isEditing)}
           className={`px-4 py-2 text-white rounded ${
@@ -218,15 +214,17 @@ const GroupDetails = () => {
                   {menu.menuName}
                 </td>
                 <td className="px-4 py-2 text-center border">
-                  <input
-                    type="checkbox"
-                    className="w-4 h-4 text-blue-600"
-                    checked={roleMenuPermissions.some(
-                      (permission) => permission.menuId === menu.id && permission.enabled
-                    )}
-                    onChange={() => (isEditing ? handleCheckboxChange(menu.id) : null)}
-                    disabled={!isEditing}
-                  />
+                <input
+                  type="checkbox"
+                  className="w-4 h-4 text-blue-600"
+                  checked={
+                    roleMenuPermissions.find((permission) => permission.menuName === menu.menuName)?.enabled || false
+                  }
+                  onChange={() => (isEditing ? handleCheckboxChange(menu.menuName) : null)} // Change to menuName
+                  disabled={!isEditing}
+                />
+
+
                 </td>
               </tr>
             ))}

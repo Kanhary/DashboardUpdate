@@ -586,3 +586,10 @@ export function RoleName(username){
     })
 }
 
+export function roleMenuById(roleId){
+    return request({
+        method: "GET",
+        url: `/RoleMenu/menuName/${roleId}`
+    })
+}
+
