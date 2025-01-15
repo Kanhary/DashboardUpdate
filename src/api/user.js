@@ -403,6 +403,13 @@ export function AddComputerCourse(data){
     })
 }
 
+export function GetComputerCourseById(){
+    return request({
+        method: "GET",
+        url: `/Course/findCourseById/${id}`
+    })
+}
+
 export function UpdateComputerCourse(id, data) {
     return request({
       method: 'POST', 

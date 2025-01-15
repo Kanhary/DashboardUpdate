@@ -713,16 +713,31 @@ const StaffInfo = () => {
   const recordsPerPage = 8;
   //open edit modal
   const openEditModal = (
-    id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode, positionCode
-    ) => {
-      console.log({ id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode, positionCode });
-      
-      setEditingEmployees({ id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode, positionCode });
-      
-      setFormData({ id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode, positionCode });
-    
+    id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode, positionCode,
+    coursename, courseCode, fromdate, todate, organize, incountry, outcountry
+) => {
+    console.log({ 
+        id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode, positionCode,
+        coursename, courseCode, fromdate, todate, organize, incountry, outcountry 
+    });
+
+    setEditingEmployees({ 
+        id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode, positionCode 
+    });
+
+    setFormData({ 
+        id, staffCode, engName, khName, genderCode, height, weight, bod, currentAddress, branchCode, departCode, positionCode, 
+        fileUpload: null // Retaining fileUpload initialization
+    });
+
+    setDataCourse({
+        coursename, courseCode, staffcode: staffCode, staffname: engName,
+        fromdate, todate, organize, incountry, outcountry
+    });
+
     setIsEditModalOpen(true);
-  };
+};
+
   
   
   const openViewModal= (
@@ -1191,16 +1206,21 @@ const StaffInfo = () => {
                 handleChange={handleChange}
                 handleSaveEmployee={handleSaveEmployee}
                 closeEmployeeModal={closeEmployeeModal} 
-                closeEditModal={closeAllModals}
-                closeViewModal={closeViewModal}
+                closeEditModal={closeEditModal}
+                closeViewModal={closeViewModal}     
                 saveAllModal={saveAllModal}
                 offices={offices}
                 department={optionsDepartment}
                 handleDepartmentChange={handleDepartmentChange}
                 handlePositionChange={handlePositionChange}
                 handleCourseChange={handleCourseChange}
-                // disabled={isDisabled} 
+                handleStaffCode={handleStaffCode}
+                saveAllModalCourse={saveAllModalCourse}
+                DataCourse={DataCourse}
+                handleLocationChange={handleLocationChange}
                 handleCourseTypeChange={handleCourseTypeChange}
+                handleChangeCourse={handleChangeCourse}
+                handleStaffName={handleStaffName}
               />
             </div>
           </div>

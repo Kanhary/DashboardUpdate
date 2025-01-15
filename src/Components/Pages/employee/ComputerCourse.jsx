@@ -3,14 +3,17 @@ import { FaPen, FaTrashAlt } from "react-icons/fa";
 import Select from 'react-select';
 import { IoMdRefresh } from "react-icons/io";
 import Swal from 'sweetalert2';
-import { GetUserLogin, GetAllComputerCourse, AddComputerCourse, UpdateComputerCourse, DeleteComputerCourse} from '../../../api/user';
+import { GetUserLogin, GetAllComputerCourse, AddComputerCourse, UpdateComputerCourse, DeleteComputerCourse, GetAllStaff} from '../../../api/user';
 
 const ComputerCourse = () => {
   
   const [formData, setFormData] = useState({
+    courseCode: '',
+    staffname: '',
+    staffcode: '',
     fromDate: '',
     toDate: '',
-    courseName: '',
+    coursename: '',
     organize: '',
     inCountry: '',
     outCountry: '', 
@@ -27,18 +30,21 @@ const ComputerCourse = () => {
   const [Staffs, setStaff] = useState([]);
   const [selectedOption, setSelectedOption] = useState('');
   const [ComputerCode, setComputerCode] = useState([]);
+  const [employees, setEmployees] = useState([]);
+
+  const fetchAllComputerCourse = async () => {
+    try {
+      const response = await GetAllComputerCourse();
+      console.log(response.data.data); 
+      setComputerCourse(response.data.data);
+      
+    } catch (err) {
+      setError({ message: err.message || 'An error occurred' });
+    }
+  };
 
   useEffect(() => {
-    const fetchAllComputerCourse = async () => {
-      try {
-        const response = await GetAllComputerCourse();
-        console.log(response.data.data); 
-        setComputerCourse(response.data.data);
-        
-      } catch (err) {
-        setError({ message: err.message || 'An error occurred' });
-      }
-    };
+    
 
 
     const fetchCurrentUser = async () => {
@@ -51,10 +57,18 @@ const ComputerCourse = () => {
       }
     };
 
-
+    const fetchEmployees = async () => {
+      try {
+        const response = await GetAllStaff();
+        setEmployees(response.data.data)
+      } catch (err) {
+        setErrors(err.message || 'An error occurred');
+      }
+    };
     
     fetchCurrentUser();
     fetchAllComputerCourse();
+    fetchEmployees();
   }, []);
   
   const [currentPage, setCurrentPage] = useState(1);
@@ -142,7 +156,8 @@ const ComputerCourse = () => {
       });
   
       console.log('API Response:', response);
-      closeAddModal(); // Close the modal on successful save
+      closeAddModal(); 
+      fetchAllComputerCourse();
     } catch (error) {
       console.error('Error saving data', error);
   
@@ -180,7 +195,8 @@ const ComputerCourse = () => {
           text: "Course updated successfully",
           icon: "success"
         });
-        setIsEditModalOpen(false);  // Close the edit modal
+        setIsEditModalOpen(false);  
+        fetchAllComputerCourse();
       } else {
         const errorMessage = response.data.message || 'An unexpected error occurred.';
         Swal.fire({
@@ -264,13 +280,92 @@ const handleDeleteCourse = async (id) => {
   }
 };
 
+const handleStaffCode = (option) => {
+  console.log('Selected option:', option); // Check if selectedOption has the correct value
+  setSelectedOption(option);
+  setFormData((prevData) => ({
+    ...prevData,
+    staffcode: option ? option.value : '',
 
+  }));
+};
+
+const handleStaffName = (option) => {
+  console.log('Selected option:', option); // Check if selectedOption has the correct value
+  setSelectedOption(option);
+  setFormData((prevData) => ({
+    ...prevData,
+    staffname: option ? option.value : ''
+  }));
+};
+
+const handleChangeCourse = (e) => {
+  const { id, value } = e.target;
+  setFormData((prev) => ({
+    ...prev,
+    [id]: value
+  }));
+};
+
+// Handle the change for the select input (Staff Code)
+
+
+// Handle the change for radio buttons (Location)
+const handleLocationChange = (location) => {
+  setFormData((prev) => ({
+    ...prev,
+    location: location
+  }));
+};
+
+// Handle the change for radio buttons (Course Type)
+const handleCourseTypeChange = (courseType) => {
+  setDataCourse((prev) => ({
+    ...prev,
+    courseType: courseType
+  }));
+};
+
+const optionsStaffCode = employees.map(employee => ({
+  value: employee.staffCode, // Use a plain string
+  label: `${employee.staffCode}-${employee.engName}`,
+}));
+
+const optionsStaffName = employees.map(employee => ({
+  value: employee.khName, // Use a plain string
+  label: `${employee.staffCode}-${employee.khName}`,
+}));
 
   const handleRefresh = () => {
     window.location.reload();
   };
 
 
+  const customStyles = {
+    menu: (provided) => ({
+      ...provided,
+      maxHeight: '150px', // Limits the dropdown height to 150px
+      overflowY: 'auto', // Allows scrolling when content exceeds height
+      fontFamily: 'Noto Serif Khmer', // Custom font
+      fontSize: '14px', // Adjust the font size as needed
+      zIndex: 9999, // Ensures the dropdown appears above other elements
+      WebkitOverflowScrolling: 'touch', // Smooth scrolling for touch devices
+    }),
+    // menuPortal: (base) => ({ ...base, zIndex: 9999 }), // Ensures 
+    menuPortal: (provided) => ({
+      ...provided,
+      zIndex: 9999, // Ensures the portal is on top of other elements
+    }),
+    control: (provided, state) => ({
+      ...provided,
+      background: '#fff',
+      borderColor: '#9e9e9e',
+      minHeight: '30px',
+      height: '45px',
+      boxShadow: state.isFocused ? null : null,
+    }),
+  };
+  
   return (
     <section className='mt-10 font-khmer'>
       <h1 className='text-xl font-medium text-blue-800'>Course</h1>
@@ -326,7 +421,8 @@ const handleDeleteCourse = async (id) => {
               <tr>
                 <th scope="col" className="sticky left-0 px-4 py-3 bg-gray-100 border-t border-r" style={{ minWidth: '30px' }}>Action</th> 
                 <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Course Code</th>
-                {/* <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Staff Code</th> */}
+                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Staff Code</th>
+                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Staff Name</th>
                 <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '200px' }}>Course Name</th>
                 <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Organize</th>
                 {/* <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Gender Code</th> */}
@@ -362,8 +458,9 @@ const handleDeleteCourse = async (id) => {
                       </div>
                     </td>
                     <td className='px-4 py-4 border-r'>{computerCourse.courseCode}</td>
-                    {/* <td className='px-4 py-4 border-r'>{computerCourse.staffCode}</td> */}
-                    <td className='px-4 py-4 border-r'>{computerCourse.courseName}</td>
+                    <td className='px-4 py-4 border-r'>{computerCourse.staffcode}</td>
+                    <td className='px-4 py-4 border-r'>{computerCourse.staffname}</td>
+                    <td className='px-4 py-4 border-r'>{computerCourse.coursename}</td>
                     <td className='px-4 py-4 border-r'>{computerCourse.organize}</td>
                     <td className='px-4 py-4 border-r'>{computerCourse.fromDate}</td>
                     <td className='px-4 py-4 border-r'>{computerCourse.toDate}</td>
@@ -371,7 +468,7 @@ const handleDeleteCourse = async (id) => {
                     
                     <td className='px-4 py-4 border-r'>{computerCourse.inCountry}</td>
                     <td className='px-4 py-4 border-r'>{computerCourse.outCountry}</td>
-                    <td className='px-4 py-4 border-r'>{computerCourse.LastDate}</td>
+                    <td className='px-4 py-4 border-r'>{computerCourse.lastby}</td>
                   </tr>
                 ))}
               </tbody>
@@ -449,16 +546,6 @@ const handleDeleteCourse = async (id) => {
             <div className="px-6 py-6 space-y-6">
 
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                {/* Input for Office Code */}
-                <div>
-                    <label htmlFor="courseName" className="block mb-2 text-sm font-semibold text-gray-700">Course Name</label>
-                    <input
-                    id="courseName"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.courseName}
-                    onChange={handleChange}
-                    />
-                </div>
                 
                 <div>
                     <label htmlFor="courseCode" className="block mb-2 text-sm font-semibold text-gray-700">Course Code</label>
@@ -469,8 +556,51 @@ const handleDeleteCourse = async (id) => {
                     onChange={handleChange}
                     />
                 </div>
-                
+                <div>
+                    <label htmlFor="courseName" className="block mb-2 text-sm font-semibold text-gray-700">Course Name</label>
+                    <input
+                    id="courseName"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.coursename}
+                    onChange={handleChange}
+                    />
+                </div>
               </div>
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                
+                <div>
+                <label htmlFor="staffcode" className="block mb-2 text-sm font-semibold text-gray-700">
+                    Staff Code
+                </label>
+                <Select
+                    id="staffcode"
+                    options={optionsStaffCode}
+                    onChange={handleStaffCode}
+                    value={optionsStaffCode.find(option => option.value === formData.staffcode)}
+                    placeholder="Select or type to search staff code"
+                    className="basic-single"
+                    classNamePrefix="select"
+                    styles={customStyles}
+                />
+                </div>
+                <div>
+                <label htmlFor="staffname" className="block mb-2 text-sm font-semibold text-gray-700">
+                    Staff Name
+                </label>
+                <Select
+                    id="staffname"
+                    options={optionsStaffName}
+                    onChange={handleStaffName}
+                    value={optionsStaffName.find(option => option.value === formData.staffname)}
+                    placeholder="Select or type to search staff name"
+                    className="basic-single"
+                    classNamePrefix="select"
+                    styles={customStyles}
+                />
+                    
+                </div>
+              </div>
+              
               <div className="grid ">
                 
                 
@@ -564,81 +694,127 @@ const handleDeleteCourse = async (id) => {
             </header>
             <div className="px-6 py-6 space-y-6">
 
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                {/* Input for Office Code */}
-                <div>
-                    <label htmlFor="courseName" className="block mb-2 text-sm font-semibold text-gray-700">Course Name</label>
-                    <input
-                    id="courseName"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.courseName}
-                    onChange={handleChange}
-                    />
-                </div>
-                
-                <div>
-                    <label htmlFor="organize" className="block mb-2 text-sm font-semibold text-gray-700">Organize</label>
-                    <input
-                    id="organize"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.organize}
-                    onChange={handleChange}
-                    />
-                </div>
-                
-              </div>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              
-                <div>
-                    <label htmlFor="fromDate" className="block mb-2 text-sm font-semibold text-gray-700">From Date</label>
-                    <input
-                    id="fromDate"
-                    type='date'
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.fromDate}
-                    onChange={handleChange}
-                    />
-                </div>
+<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+  
+  <div>
+      <label htmlFor="courseCode" className="block mb-2 text-sm font-semibold text-gray-700">Course Code</label>
+      <input
+      id="courseCode"
+      className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+      value={formData.courseCode}
+      onChange={handleChange}
+      />
+  </div>
+  <div>
+      <label htmlFor="courseName" className="block mb-2 text-sm font-semibold text-gray-700">Course Name</label>
+      <input
+      id="coursename"
+      className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+      value={formData.coursename}
+      onChange={handleChange}
+      />
+  </div>
+</div>
+<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+  
+  <div>
+  <label htmlFor="staffcode" className="block mb-2 text-sm font-semibold text-gray-700">
+      Staff Code
+  </label>
+  <Select
+      id="staffcode"
+      options={optionsStaffCode}
+      onChange={handleStaffCode}
+      value={optionsStaffCode.find(option => option.value === formData.staffcode)}
+      placeholder="Select or type to search staff code"
+      className="basic-single"
+      classNamePrefix="select"
+      styles={customStyles}
+  />
+  </div>
+  <div>
+  <label htmlFor="staffname" className="block mb-2 text-sm font-semibold text-gray-700">
+      Staff Name
+  </label>
+  <Select
+      id="staffname"
+      options={optionsStaffName}
+      onChange={handleStaffName}
+      value={optionsStaffName.find(option => option.value === formData.staffname)}
+      placeholder="Select or type to search staff name"
+      className="basic-single"
+      classNamePrefix="select"
+      styles={customStyles}
+  />
+      
+  </div>
+</div>
 
-                
-                <div>
-                    <label htmlFor="toDate" className="block mb-2 text-sm font-semibold text-gray-700">To Date</label>
-                    <input
-                    id="toDate"
-                    type='date'
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.toDate}
-                    onChange={handleChange}
-                    />
-                </div>
+<div className="grid ">
+  
+  
+  <div>
+      <label htmlFor="organize" className="block mb-2 text-sm font-semibold text-gray-700">Organize</label>
+      <input
+      id="organize"
+      className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+      value={formData.organize}
+      onChange={handleChange}
+      />
+  </div>
+  
+</div>
+<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+ 
+  <div>
+      <label htmlFor="fromDate" className="block mb-2 text-sm font-semibold text-gray-700">From Date</label>
+      <input
+      id="fromDate"
+      type='date'
+      className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+      value={formData.fromDate}
+      onChange={handleChange}
+      />
+  </div>
 
-              </div>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                {/* Input for Office Code */}
-                <div>
-                    <label htmlFor="inCountry" className="block mb-2 text-sm font-semibold text-gray-700">In Country</label>
-                    <input
-                    id="inCountry"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.inCountry}
-                    onChange={handleChange}
-                    />
-                </div>
+  
+  <div>
+      <label htmlFor="toDate" className="block mb-2 text-sm font-semibold text-gray-700">To Date</label>
+      <input
+      id="toDate"
+      type='date'
+      className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+      value={formData.toDate}
+      onChange={handleChange}
+      />
+  </div>
 
-                {/* Input for Office Name */}
-                <div>
-                    <label htmlFor="outCountry" className="block mb-2 text-sm font-semibold text-gray-700">Out Country</label>
-                    <input
-                    id="outCountry"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.outCountry}
-                    onChange={handleChange}
-                    />
-                </div>
+</div>
+<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+  {/* Input for Office Code */}
+  <div>
+      <label htmlFor="inCountry" className="block mb-2 text-sm font-semibold text-gray-700">In Country</label>
+      <input
+      id="inCountry"
+      className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+      value={formData.inCountry}
+      onChange={handleChange}
+      />
+  </div>
 
-              </div>    
-              </div>
+  {/* Input for Office Name */}
+  <div>
+      <label htmlFor="outCountry" className="block mb-2 text-sm font-semibold text-gray-700">Out Country</label>
+      <input
+      id="outCountry"
+      className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+      value={formData.outCountry}
+      onChange={handleChange}
+      />
+  </div>
 
+</div>    
+</div>
             <footer className="flex flex-col-reverse items-center justify-end px-6 py-4 space-y-3 space-y-reverse bg-gray-100 rounded-b-xl md:flex-row md:space-x-3 md:space-y-0">
               
               <button onClick={handleUpdate} className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-green-500 to-green-700 hover:shadow-lg hover:scale-105 md:w-auto">
