@@ -7,8 +7,9 @@ import 'aos/dist/aos.css';
 import { AiOutlineClose } from 'react-icons/ai';
 // import LongCourse from './LongCourse';
 import { DelStaff, GetAllStaff } from '../../../api/user';
-import { AddStaff , UpdateStaff, GetDep, GetUserLogin, GetPosition, GetAllComputerCourse} from '../../../api/user';
+import { AddStaff , UpdateStaff, GetDep, GetUserLogin, GetPosition, GetAllComputerCourse, AddComputerCourse, UpdateComputerCourse} from '../../../api/user';
 import { motion, useScroll } from "framer-motion";
+import MenuTab from './MenuTab';
 
 const StaffInfo = () => {
   
@@ -32,6 +33,7 @@ const StaffInfo = () => {
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [selectedDate, setSelectedDate] = useState('');
   const [currentUser, setCurrentUser] = useState(null);
+  const [selectedOption, setSelectedOption] = useState('');
 
   const [errors, setErrors] = useState({});
 
@@ -77,12 +79,23 @@ const StaffInfo = () => {
     currentAddress: '',
     genderCode: '',
     departCode: '',
- 
     branchCode: '',
     positionCode: '',
     fileUpload: null,
-    // courseCode: ''
+    
   });
+
+  const [DataCourse, setDataCourse] = useState({
+    coursename: '',
+    courseCode: '',
+    staffcode: '',
+    staffname: '',
+    fromdate: '',
+    todate: '',
+    organize: '',
+    incountry: '',
+    outcountry: ''
+  })
   
   
   
@@ -206,6 +219,25 @@ const StaffInfo = () => {
       return updatedData;
     });
   };
+
+  const handleStaffCode = (option) => {
+    console.log('Selected option:', option); // Check if selectedOption has the correct value
+    setSelectedOption(option);
+    setDataCourse((prevData) => ({
+      ...prevData,
+      staffcode: option ? option.value : '',
+  
+    }));
+  };
+
+  const handleStaffName = (option) => {
+    console.log('Selected option:', option); // Check if selectedOption has the correct value
+    setSelectedOption(option);
+    setDataCourse((prevData) => ({
+      ...prevData,
+      staffname: option ? option.value : ''
+    }));
+  };
   const optionsDepartment = department.map(dep => ({
     value: dep.departCode,
     label: `${dep.departCode} - ${dep.departEngName}`
@@ -292,10 +324,39 @@ const StaffInfo = () => {
         [id]: value,
       }));
     }
+    
   };
   
+  const handleChangeCourse = (e) => {
+    const { id, value } = e.target;
+    setDataCourse((prev) => ({
+      ...prev,
+      [id]: value
+    }));
+  };
 
+  // Handle the change for the select input (Staff Code)
+  
 
+  // Handle the change for radio buttons (Location)
+  const handleLocationChange = (location) => {
+    setDataCourse((prev) => ({
+      ...prev,
+      location: location
+    }));
+  };
+
+  // Handle the change for radio buttons (Course Type)
+  const handleCourseTypeChange = (courseType) => {
+    setDataCourse((prev) => ({
+      ...prev,
+      courseType: courseType
+    }));
+  };
+
+  
+
+  
   const handleFileChange = (e) => {
     const { files } = e.target;
     setFormData(prevData => ({
@@ -405,7 +466,8 @@ const StaffInfo = () => {
           text: "Employee created successfully",
           icon: "success"
         });
-        setIsAddModalOpen(false);
+        // setIsAddModalOpen(false);
+        fetchAllStaff();
       } else {
         // Handle errors based on status codes
         const errorMessage = response.data.message || 'An unexpected error occurred.';
@@ -518,7 +580,135 @@ const StaffInfo = () => {
     }
   }; 
   
+  const handleSaveCourse = async () => {
+    // Ensure formData has the correct structure with all fields
+    const updatedFormData = {
+      ...DataCourse, // Spread existing form data
+      staffcode: DataCourse.staffcode || '', // Ensure staffcode is set
+      staffname: DataCourse.staffname || '',
+      createBy: currentUser, // Use the fetched username as creator
+      lastBy: currentUser, // Use the fetched username as updater
+      lastDate: new Date().toISOString(),
+      updateTime: new Date().toISOString(),
+    };
   
+    try {
+      console.log('Saving employee data:', updatedFormData);
+      const response = await AddComputerCourse(updatedFormData);
+  
+      if (response.status === 200) {
+        console.log('Employee saved successfully:', response);
+        Swal.fire({
+          title: "Successful",
+          text: "Employee created successfully",
+          icon: "success"
+        });
+        setIsAddModalOpen(false);
+      } else {
+        // Handle errors based on status codes
+        const errorMessage = response.data.message || 'An unexpected error occurred.';
+        if (response.status === 409) { // Conflict error
+          Swal.fire({
+            title: "Error",
+            text: "Staff already exists: " + errorMessage,
+            icon: "warning"
+          });
+        } else {
+          Swal.fire({
+            title: "Error",
+            text: "Error: " + errorMessage,
+            icon: "warning"
+          });
+        }
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error('Error response data:', error.response.data);
+        console.error('Error response status:', error.response.status);
+        console.error('Error response headers:', error.response.headers);
+  
+        Swal.fire({
+          title: "Error",
+          text: `Error: ${error.response.data.message || 'An unexpected error occurred.'}`,
+          icon: "warning"
+        });
+      } else if (error.request) {
+        console.error('Error request:', error.request);
+  
+        Swal.fire({
+          title: "Error",
+          text: "No response received from the server.",
+          icon: "warning"
+        });
+      } else {
+        console.error('Error message:', error.message);
+  
+        Swal.fire({
+          title: "Error",
+          text: "An error occurred while setting up the request.",
+          icon: "warning"
+        });
+      }
+    }
+  };
+  
+
+  const handleSaveEditCourse = async () => {
+    try {
+      console.log('Saving employee data:', formData);
+      const id = formData.id;  // Ensure this is valid
+      if (!id) {
+        Swal.fire({
+          title: "Error",
+          text: "ID are missing",
+          icon: "warning"
+      });
+        return;
+      }
+      const response = await UpdateComputerCourse(id, formData);
+
+      if (response.status === 200) {
+        console.log('Employee updated successfully:', response.data);
+        Swal.fire({
+          title: "Successful",
+          text: "Employee update successfully",
+          icon: "success"
+      });
+        setIsEditModalOpen(false);  // Close the edit modal
+      } else {
+        const errorMessage = response.data.message || 'An unexpected error occurred.';
+        // alert('Error: ' + errorMessage);
+        Swal.fire({
+          title: "Successful",
+          text: "Error :" + errorMessage,
+          icon: "warning"
+      });
+      }
+    } 
+    catch (error) {
+      if (error.response) {
+        // Server responded with a status other than 2xx
+        console.error('Error response data:', error.response.data);
+        alert(`Error: ${error.response.data.message || 'An unexpected error occurred.'}`);
+      } else if (error.request) {
+        // Request was made but no response received
+        console.error('Error request:', error.request);
+        alert('No response received from the server.');
+      } else {
+        // Error setting up the request
+        console.error('Error message:', error.message);
+        alert('An error occurred while setting up the request.');
+      }
+    }
+  };
+  
+  const saveAllModalCourse = async () => {
+    if (isAddModalOpen) {
+      await handleSaveCourse();
+    } else if (isEditModalOpen) {
+      await handleSaveEditCourse();
+    } 
+  }; 
   
   const recordsPerPage = 8;
   //open edit modal
@@ -932,7 +1122,7 @@ const StaffInfo = () => {
       </div>
      
       <div className="px-4">
-        <TabMenu
+        <MenuTab
           formData={formData}
           errors={errors}
           handleChange={handleChange}
@@ -946,6 +1136,13 @@ const StaffInfo = () => {
           handleDepartmentChange={handleDepartmentChange}
           handlePositionChange={handlePositionChange}
           handleCourseChange={handleCourseChange}
+          handleStaffCode={handleStaffCode}
+          saveAllModalCourse={saveAllModalCourse}
+          DataCourse={DataCourse}
+          handleLocationChange={handleLocationChange}
+          handleCourseTypeChange={handleCourseTypeChange}
+          handleChangeCourse={handleChangeCourse}
+          handleStaffName={handleStaffName}
           // disabled={isDisabled} 
         />
       </div>
@@ -1003,6 +1200,7 @@ const StaffInfo = () => {
                 handlePositionChange={handlePositionChange}
                 handleCourseChange={handleCourseChange}
                 // disabled={isDisabled} 
+                handleCourseTypeChange={handleCourseTypeChange}
               />
             </div>
           </div>

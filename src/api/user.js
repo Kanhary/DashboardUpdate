@@ -391,14 +391,14 @@ export function DeleteWife(id) {
 export function GetAllComputerCourse(){
     return request({
         method: "GET",
-        url: '/ComputerCourse/findAllComCourse'
+        url: '/Course/findAllComCourse'
     })
 }
 
 export function AddComputerCourse(data){
     return request({
         method: "POST",
-        url: '/ComputerCourse/addNewCourse',
+        url: '/Course/addNewCourse',
         data: data
     })
 }
@@ -406,7 +406,7 @@ export function AddComputerCourse(data){
 export function UpdateComputerCourse(id, data) {
     return request({
       method: 'POST', 
-      url: `/ComputerCourse/updateCourseById/${id}`, 
+      url: `/Course/updateCourseById/${id}`, 
       data: data
     });
 }
