@@ -33,7 +33,7 @@ const Dashboard = () => {
     datasets: [
       {
         label: 'Computer Status',
-        data: [100, 10, 5], // Example data for Active, Inactive, and Broken computers
+        data: [100, 10, 5], 
         backgroundColor: [
           'rgba(99, 102, 241, 0.7)', // Active
           'rgba(239, 68, 68, 0.7)', // Inactive

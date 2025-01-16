@@ -1,28 +1,33 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { FaPen, FaTrashAlt } from "react-icons/fa";
-import Select from 'react-select';
+import Select from "react-select";
 import { IoMdRefresh } from "react-icons/io";
-import Swal from 'sweetalert2';
-import { GetUserLogin, GetCompany,AddNewCompany, UpdateCompany, DeleteCompany} from '../../../api/user';
+import Swal from "sweetalert2";
+import {
+  GetUserLogin,
+  GetCompany,
+  AddNewCompany,
+  UpdateCompany,
+  DeleteCompany,
+} from "../../../api/user";
 
 const Company = () => {
-  
   const INITAIL_FORM_DATA = useState({
-    companyCode: '',
-    engName: '',
-    khName: '',
-    phone: '', 
-    address: '',
-    email: '',
-    vatNo: '',
-    bankName: '',
-    bankAccName: '',
-    bankAccNso: '',
-    bankBranch: '',
-    companyLogo: '',
+    companyCode: "",
+    engName: "",
+    khName: "",
+    phone: "",
+    address: "",
+    email: "",
+    vatNo: "",
+    bankName: "",
+    bankAccName: "",
+    bankAccNso: "",
+    bankBranch: "",
+    companyLogo: "",
   });
-  
-  const [searchTerm, setSearchTerm] = useState('');
+
+  const [searchTerm, setSearchTerm] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [formData, setFormData] = useState(INITAIL_FORM_DATA);
@@ -35,43 +40,38 @@ const Company = () => {
   // const officeList = [
   //   { OfficeCode: 'ICT', OfficeName: 'ការិយាល័យ បច្ចេកវិទ្យា/ព័ត៏មានវិទ្យា', Department: 'នាយកដ្ឋាន រដ្ឋបាល', BranchCode: 'TS3', CompanyCode: 'PPAP' },
   //   { OfficeCode: 'CCTV', OfficeName: 'ការិយាល័យ សន្ដិសុខ/ប្រព័ន្ធ CCTV Camera', Department: 'នាយកដ្ឋាន រដ្ឋបាល', BranchCode: 'TS3', CompanyCode: 'PPAP' },
-  
-  // ];
 
+  // ];
 
   const fetchAllCompany = async () => {
     try {
       const response = await GetCompany();
-      console.log(response.data.data); 
+      console.log(response.data.data);
       setCompany(response.data.data);
-      
     } catch (err) {
-      setError({ message: err.message || 'An error occurred' });
+      setError({ message: err.message || "An error occurred" });
     }
   };
   useEffect(() => {
-    
-
-
     const fetchCurrentUser = async () => {
       try {
         const response = await GetUserLogin(); // Call the API to get the current user
         setCurrentUser(response.data.data.username); // Assuming the response contains a username field
-        console.log('Fetched user:', response.data.data.username);
+        console.log("Fetched user:", response.data.data.username);
       } catch (error) {
-        console.error('Error fetching current user:', error);
+        console.error("Error fetching current user:", error);
       }
     };
     fetchAllCompany();
     fetchCurrentUser();
-    
   }, []);
-  
+
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 8;
-  const filteredCompany = companies.filter(company =>
-    company.khName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    company.companyCode.includes(searchTerm)
+  const filteredCompany = companies.filter(
+    (company) =>
+      company.khName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      company.companyCode.includes(searchTerm)
   );
   const totalPages = Math.ceil(filteredCompany.length / recordsPerPage);
 
@@ -83,7 +83,10 @@ const Company = () => {
 
   const indexOfLastRecord = currentPage * recordsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-  const currentCompany = filteredCompany.slice(indexOfFirstRecord, indexOfLastRecord);
+  const currentCompany = filteredCompany.slice(
+    indexOfFirstRecord,
+    indexOfLastRecord
+  );
 
   const getPaginationItems = () => {
     let pages = [];
@@ -91,11 +94,26 @@ const Company = () => {
       pages = [...Array(totalPages)].map((_, index) => index + 1);
     } else {
       if (currentPage < 4) {
-        pages = [1, 2, 3, 4, '...', totalPages];
+        pages = [1, 2, 3, 4, "...", totalPages];
       } else if (currentPage > totalPages - 3) {
-        pages = [1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+        pages = [
+          1,
+          "...",
+          totalPages - 3,
+          totalPages - 2,
+          totalPages - 1,
+          totalPages,
+        ];
       } else {
-        pages = [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages];
+        pages = [
+          1,
+          "...",
+          currentPage - 1,
+          currentPage,
+          currentPage + 1,
+          "...",
+          totalPages,
+        ];
       }
     }
     return pages;
@@ -111,7 +129,6 @@ const Company = () => {
     setIsEditModalOpen(true);
   };
 
-
   const closeEditModal = () => {
     setEditingCompany(null);
     setFormData(INITAIL_FORM_DATA);
@@ -120,29 +137,35 @@ const Company = () => {
 
   const handleChange = (e) => {
     const { id, value } = e.target;
-    setFormData(prev => ({ ...prev, [id]: value }));
+    setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
   const handleSaveNew = () => {
-    console.log('Save & New clicked', formData);
-    setFormData({ OfficeCode: '', OfficeName: '', Department: '', BranchCode: '', CompanyCode: '' });
+    console.log("Save & New clicked", formData);
+    setFormData({
+      OfficeCode: "",
+      OfficeName: "",
+      Department: "",
+      BranchCode: "",
+      CompanyCode: "",
+    });
   };
 
   const handleSave = async () => {
     // Prepare the data for submission
     const updatedFormData = {
       ...formData, // Spread the current formData state
-      
+
       createdby: currentUser,
       lastby: currentUser,
       createTime: new Date().toISOString(),
       updateTime: new Date().toISOString(),
     };
-  
+
     try {
       // Call your API to save the data
       const response = await AddNewCompany(updatedFormData);
-  
+
       // Show success alert
       Swal.fire({
         title: "Saved!",
@@ -150,13 +173,13 @@ const Company = () => {
         icon: "success",
         confirmButtonText: "Okay",
       });
-  
-      console.log('API Response:', response);
+
+      console.log("API Response:", response);
       closeAddModal(); // Close the modal on successful save
       fetchAllCompany();
     } catch (error) {
-      console.error('Error saving data', error);
-  
+      console.error("Error saving data", error);
+
       // Show error alert if something goes wrong
       Swal.fire({
         title: "Error!",
@@ -166,165 +189,175 @@ const Company = () => {
       });
     }
   };
-  
-  
 
   const handleUpdate = async () => {
     try {
-      console.log('Saving company data:', formData);
-      const id = formData.id;  // Ensure this is valid
+      console.log("Saving company data:", formData);
+      const id = formData.id; // Ensure this is valid
       if (!id) {
         Swal.fire({
           title: "Error",
           text: "Company ID is missing",
-          icon: "warning"
+          icon: "warning",
         });
         return;
       }
-  
+
       const response = await UpdateCompany(id, formData);
-  
+
       if (response.status === 200) {
-        console.log('Company updated successfully:', response.data);
+        console.log("Company updated successfully:", response.data);
         Swal.fire({
           title: "Successful",
           text: "Company updated successfully",
-          icon: "success"
+          icon: "success",
         });
-        setIsEditModalOpen(false);  // Close the edit modal
+        setIsEditModalOpen(false); // Close the edit modal
         fetchAllCompany();
       } else {
-        const errorMessage = response.data.message || 'An unexpected error occurred.';
+        const errorMessage =
+          response.data.message || "An unexpected error occurred.";
         Swal.fire({
           title: "Error",
           text: "Error: " + errorMessage,
-          icon: "warning"
+          icon: "warning",
         });
       }
     } catch (error) {
       if (error.response) {
-        console.error('Error response data:', error.response.data);
+        console.error("Error response data:", error.response.data);
         Swal.fire({
           title: "Error",
-          text: error.response.data.message || 'An unexpected error occurred.',
-          icon: "error"
+          text: error.response.data.message || "An unexpected error occurred.",
+          icon: "error",
         });
       } else if (error.request) {
-        console.error('Error request:', error.request);
+        console.error("Error request:", error.request);
         Swal.fire({
           title: "Error",
           text: "No response received from the server.",
-          icon: "error"
+          icon: "error",
         });
       } else {
-        console.error('Error message:', error.message);
+        console.error("Error message:", error.message);
         Swal.fire({
           title: "Error",
           text: "An error occurred while setting up the request.",
-          icon: "error"
+          icon: "error",
         });
       }
     }
   };
 
-const deleteOffice = async (id) => {
-  try {
+  const deleteOffice = async (id) => {
+    try {
       // Show a confirmation prompt before deleting
       const result = await Swal.fire({
-          title: "Are you sure?",
-          text: "You won't be able to revert this!",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#22c55e",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "Yes, delete it!",
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#22c55e",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
       });
 
       if (result.isConfirmed) {
-          // Call DeleteOffice function to send the API request
-          const response = await DeleteCompany(id); // Pass the office id here
-          console.log('Response:', response);  // Log the response to confirm deletion
+        // Call DeleteOffice function to send the API request
+        const response = await DeleteCompany(id); // Pass the office id here
+        console.log("Response:", response); // Log the response to confirm deletion
 
-          if (response.status === 200) {  // Check for successful response
-              Swal.fire({
-                  title: "Deleted!",
-                  text: "Company has been deleted.",
-                  icon: "success",
-                  confirmButtonText: "Okay",
-              });
+        if (response.status === 200) {
+          // Check for successful response
+          Swal.fire({
+            title: "Deleted!",
+            text: "Company has been deleted.",
+            icon: "success",
+            confirmButtonText: "Okay",
+          });
 
-              // Remove the deleted office from the list
-              const updatedOffices = companies.filter(company => company.id !== id);
-              setCompany(updatedOffices);  // Update the state with the remaining offices
-          } else {
-              Swal.fire({
-                  title: "Error!",
-                  text: "Failed to delete company.",
-                  icon: "error",
-                  confirmButtonText: "Okay",
-              });
-          }
+          // Remove the deleted office from the list
+          const updatedOffices = companies.filter(
+            (company) => company.id !== id
+          );
+          setCompany(updatedOffices); // Update the state with the remaining offices
+        } else {
+          Swal.fire({
+            title: "Error!",
+            text: "Failed to delete company.",
+            icon: "error",
+            confirmButtonText: "Okay",
+          });
+        }
       }
-  } catch (error) {
-      console.error('Error:', error.response ? error.response.data : error.message);
+    } catch (error) {
+      console.error(
+        "Error:",
+        error.response ? error.response.data : error.message
+      );
       Swal.fire({
-          title: 'Error!',
-          text: error.response?.data?.message || 'Failed to connect to the server.',
-          icon: 'error',
-          confirmButtonText: 'Okay',
+        title: "Error!",
+        text:
+          error.response?.data?.message || "Failed to connect to the server.",
+        icon: "error",
+        confirmButtonText: "Okay",
       });
-  }
-};
-
-  
-  
+    }
+  };
 
   // const optionsBranch = branch.map(branch => ({
   //   value: branch.BranchCode,
   //   label: `${branch.BranchCode} - ${branch.BranchName}`
   // }));
-  
- 
 
   // const optionCompany = company.map(com => ({
   //   value: com.CompanyCode,
   //   label: `${com.CompanyCode} - ${com.CompanyName}`
   // }));
-    
+
   // const optionsDepartment = [
   //   {value: 'នាយកដ្ឋាន រដ្ឋបាល', label: 'នាយកដ្ឋាន រដ្ឋបាល'},
   //   {value: 'នាយកដ្ឋាន បុគ្គលិក/ធនធានមនុស្ស', label: 'នាយកដ្ឋាន បុគ្គលិក/ធនធានមនុស្ស'},
-    
-  // ]
 
-  
+  // ]
 
   const handleRefresh = () => {
     window.location.reload();
   };
 
-
   return (
-    <section className='mt-10 font-khmer'>
-      <h1 className='text-xl font-medium text-blue-800'>តារាងក្រុមហ៊ុន</h1>
-      <div className='mt-3 border'></div>
-      <div className='w-full mt-4' data-aos='fade-up'>
-        <div className='relative w-full overflow-hidden bg-white shadow-md sm:rounded-lg'>
-          <div className='flex flex-col items-center justify-between p-4 space-y-3 md:flex-row md:space-y-0 md:space-x-4'>
-            <div className='w-full md:w-1/2'>
-              <form className='flex items-center'>
-                <label htmlFor="simple-search" className='sr-only'>Search</label>
-                <div className='relative w-full'>
-                  <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
-                    <svg aria-hidden="true" className="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                      <path fillRule="evenodd" d="M8 4a4  4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+    <section className="mt-10 font-khmer">
+      <h1 className="text-xl font-medium text-blue-800">តារាងក្រុមហ៊ុន</h1>
+      <div className="mt-3 border"></div>
+      <div className="w-full mt-4" data-aos="fade-up">
+        <div className="relative w-full overflow-hidden bg-white shadow-md sm:rounded-lg">
+          <div className="flex flex-col items-center justify-between p-4 space-y-3 md:flex-row md:space-y-0 md:space-x-4">
+            <div className="w-full md:w-1/2">
+              <form className="flex items-center">
+                <label htmlFor="simple-search" className="sr-only">
+                  Search
+                </label>
+                <div className="relative w-full">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <svg
+                      aria-hidden="true"
+                      className="w-5 h-5 text-gray-500"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M8 4a4  4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                   </div>
                   <input
                     type="text"
-                    id='simple-search'
-                    className='block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500'
-                    placeholder='ស្វែងរក'
+                    id="simple-search"
+                    className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500"
+                    placeholder="ស្វែងរក"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     required=""
@@ -332,8 +365,8 @@ const deleteOffice = async (id) => {
                 </div>
               </form>
             </div>
-            <div className='flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3'>
-            <button
+            <div className="flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3">
+              <button
                 onClick={handleRefresh}
                 className="flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
               >
@@ -341,45 +374,137 @@ const deleteOffice = async (id) => {
                 Refresh
               </button>
               <button
-                type='button'
-                className='flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95'
+                type="button"
+                className="flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
                 onClick={openAddModal}
               >
-                <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                  <path clipRule="evenodd" fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
+                <svg
+                  className="w-4 h-4 mr-2"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
+                  <path
+                    clipRule="evenodd"
+                    fillRule="evenodd"
+                    d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                  />
                 </svg>
                 បន្ថែម
               </button>
             </div>
           </div>
-          
-          <div className='w-full overflow-x-auto' data-aos='fade-right'>
-            <table className='w-full text-sm text-left text-gray-500'>
-              <thead className='text-xs text-gray-700 uppercase bg-gray-100'>
-              <tr>
-                <th scope="col" className="sticky left-0 px-4 py-3 bg-gray-100 border-t border-r" style={{ minWidth: '30px' }}>Action</th> 
-                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Company Code</th>
-                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '200px' }}>Khmer Name</th>
-                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>English Name</th>
-                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Phone Number</th>
-                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Email</th>
-                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Address</th>
-                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>VAT No</th>
-                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Bank Name</th>
-                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '200px' }}>Bank Account Name</th>
-                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '200px' }}>Bank Account No</th>
-                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Bank Branch</th>
-                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Company Logo</th>
-              </tr>
 
+          <div className="w-full overflow-x-auto" data-aos="fade-right">
+            <table className="w-full text-sm text-left text-gray-500">
+              <thead className="text-xs text-gray-700 uppercase bg-gray-100">
+                <tr>
+                  <th
+                    scope="col"
+                    className="sticky left-0 px-4 py-3 bg-gray-100 border-t border-r"
+                    style={{ minWidth: "30px" }}
+                  >
+                    Action
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 border-t border-r"
+                    style={{ minWidth: "150px" }}
+                  >
+                    Company Code
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 border-t border-r"
+                    style={{ minWidth: "200px" }}
+                  >
+                    Khmer Name
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 border-t border-r"
+                    style={{ minWidth: "150px" }}
+                  >
+                    English Name
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 border-t border-r"
+                    style={{ minWidth: "150px" }}
+                  >
+                    Phone Number
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 border-t border-r"
+                    style={{ minWidth: "150px" }}
+                  >
+                    Email
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 border-t border-r"
+                    style={{ minWidth: "150px" }}
+                  >
+                    Address
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 border-t border-r"
+                    style={{ minWidth: "150px" }}
+                  >
+                    VAT No
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 border-t border-r"
+                    style={{ minWidth: "150px" }}
+                  >
+                    Bank Name
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 border-t border-r"
+                    style={{ minWidth: "200px" }}
+                  >
+                    Bank Account Name
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 border-t border-r"
+                    style={{ minWidth: "200px" }}
+                  >
+                    Bank Account No
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 border-t border-r"
+                    style={{ minWidth: "150px" }}
+                  >
+                    Bank Branch
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 border-t border-r"
+                    style={{ minWidth: "150px" }}
+                  >
+                    Company Logo
+                  </th>
+                </tr>
               </thead>
               <tbody>
-                {currentCompany.map(company=> (
-                  <tr key={company.id} className='transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50'>
-                    
-                    <td className="sticky left-0 h-full px-4 py-3 bg-white border-r" >
-                      <div className="flex justify-start space-x-3" style={{minWidth: '30px'}}>
-                      {/* <input type="checkbox" className="mr-1 action-checkbox"/> */}
+                {currentCompany.map((company) => (
+                  <tr
+                    key={company.id}
+                    className="transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50"
+                  >
+                    <td className="sticky left-0 h-full px-4 py-3 bg-white border-r">
+                      <div
+                        className="flex justify-start space-x-3"
+                        style={{ minWidth: "30px" }}
+                      >
+                        {/* <input type="checkbox" className="mr-1 action-checkbox"/> */}
                         <button
                           className="text-blue-600 hover:text-blue-800"
                           onClick={() => openEditModal(company)}
@@ -395,19 +520,30 @@ const deleteOffice = async (id) => {
                         </button>
                       </div>
                     </td>
-                    <td className='px-4 py-4 border-r' >{company.companyCode}</td>
-                    <td className='px-4 py-4 border-r'>{company.khName}</td>
-                    <td className='px-4 py-4 border-r' style={{minWidth: '300px'}}>{company.engName}</td>
+                    <td className="px-4 py-4 border-r">
+                      {company.companyCode}
+                    </td>
+                    <td className="px-4 py-4 border-r">{company.khName}</td>
+                    <td
+                      className="px-4 py-4 border-r"
+                      style={{ minWidth: "300px" }}
+                    >
+                      {company.engName}
+                    </td>
                     {/* <td className='px-4 py-4 border-r'>{company.departCode}</td> */}
-                    <td className='px-4 py-4 border-r'>{company.phone}</td>
-                    <td className='px-4 py-4 border-r'>{company.email}</td>
-                    <td className='px-4 py-4 border-r'>{company.address}</td>
-                    <td className='px-4 py-4 border-r'>{company.vatNo}</td>
-                    <td className='px-4 py-4 border-r'>{company.bankName}</td>
-                    <td className='px-4 py-4 border-r'>{company.bankAccName}</td>
-                    <td className='px-4 py-4 border-r'>{company.bankAccNso}</td>
-                    <td className='px-4 py-4 border-r'>{company.bankBranch}</td>
-                    <td className='px-4 py-4 border-r'>{company.companyLogo}</td>
+                    <td className="px-4 py-4 border-r">{company.phone}</td>
+                    <td className="px-4 py-4 border-r">{company.email}</td>
+                    <td className="px-4 py-4 border-r">{company.address}</td>
+                    <td className="px-4 py-4 border-r">{company.vatNo}</td>
+                    <td className="px-4 py-4 border-r">{company.bankName}</td>
+                    <td className="px-4 py-4 border-r">
+                      {company.bankAccName}
+                    </td>
+                    <td className="px-4 py-4 border-r">{company.bankAccNso}</td>
+                    <td className="px-4 py-4 border-r">{company.bankBranch}</td>
+                    <td className="px-4 py-4 border-r">
+                      {company.companyLogo}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -426,10 +562,22 @@ const deleteOffice = async (id) => {
                   <button
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className={`flex items-center justify-center py-2 px-3 text-gray-500 bg-gradient-to-r from-gray-200 to-gray-300 border rounded-lg shadow-md hover:bg-gradient-to-r hover:from-gray-300 hover:to-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-200 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`flex items-center justify-center py-2 px-3 text-gray-500 bg-gradient-to-r from-gray-200 to-gray-300 border rounded-lg shadow-md hover:bg-gradient-to-r hover:from-gray-300 hover:to-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-200 ${
+                      currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
                   >
-                    <svg className="w-4 h-4 md:w-5 md:h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                      <path fillRule="evenodd" d="M12.293 14.707a1 1 0 01-1.414 0L6.586 10.414a1 1 0 010-1.414l4.293-4.293a1 1 0 011.414 1.414L8.414 10l3.879 3.879a1 1 0 010 1.414z" clipRule="evenodd" />
+                    <svg
+                      className="w-4 h-4 md:w-5 md:h-5"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M12.293 14.707a1 1 0 01-1.414 0L6.586 10.414a1 1 0 010-1.414l4.293-4.293a1 1 0 011.414 1.414L8.414 10l3.879 3.879a1 1 0 010 1.414z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                   </button>
                 </li>
@@ -446,7 +594,11 @@ const deleteOffice = async (id) => {
                     <li key={index}>
                       <button
                         onClick={() => handlePageChange(page)}
-                        className={`flex items-center justify-center py-2 px-3 border rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-200 ${currentPage === page ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white border-blue-600 shadow-lg' : 'text-gray-500 bg-gradient-to-r from-gray-200 to-gray-300 hover:from-gray-300 hover:to-gray-400'}`}
+                        className={`flex items-center justify-center py-2 px-3 border rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-200 ${
+                          currentPage === page
+                            ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white border-blue-600 shadow-lg"
+                            : "text-gray-500 bg-gradient-to-r from-gray-200 to-gray-300 hover:from-gray-300 hover:to-gray-400"
+                        }`}
                       >
                         {page}
                       </button>
@@ -459,10 +611,24 @@ const deleteOffice = async (id) => {
                   <button
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className={`flex items-center justify-center py-2 px-3 text-gray-500 bg-gradient-to-r from-gray-200 to-gray-300 border rounded-lg shadow-md hover:bg-gradient-to-r hover:from-gray-300 hover:to-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-200 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`flex items-center justify-center py-2 px-3 text-gray-500 bg-gradient-to-r from-gray-200 to-gray-300 border rounded-lg shadow-md hover:bg-gradient-to-r hover:from-gray-300 hover:to-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-200 ${
+                      currentPage === totalPages
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
+                    }`}
                   >
-                    <svg className="w-4 h-4 md:w-5 md:h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                      <path fillRule="evenodd" d="M7.707 14.707a1 1 0 010-1.414L11.586 10 7.707 6.121a1 1 0 111.414-1.414l4.293 4.293a1 1 010 1.414l-4.293 4.293a1 1 01-1.414 0z" clipRule="evenodd" />
+                    <svg
+                      className="w-4 h-4 md:w-5 md:h-5"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M7.707 14.707a1 1 0 010-1.414L11.586 10 7.707 6.121a1 1 0 111.414-1.414l4.293 4.293a1 1 010 1.414l-4.293 4.293a1 1 01-1.414 0z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                   </button>
                 </li>
@@ -474,161 +640,19 @@ const deleteOffice = async (id) => {
 
       {/* Add Office Modal */}
       {isAddModalOpen && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
-    <div className="relative w-full max-w-2xl mx-auto transition-all transform bg-white shadow-2xl rounded-xl" data-aos='zoom-in'>
-      <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
-        <h2 className="text-xl font-bold text-white md:text-2xl">បន្ថែមក្រុមហ៊ុនថ្មី</h2>
-        <button onClick={closeAddModal} className="text-2xl text-white transition duration-200 hover:text-gray-300 md:text-3xl">
-          &times;
-        </button>
-      </header>
-      <div className="px-6 py-6 space-y-6">
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {/* Input for Office Code */}
-          <div>
-            <label htmlFor="companyCode" className="block mb-2 text-sm font-semibold text-gray-700">Company Code</label>
-            <input
-              id="companyCode"
-              className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-              value={formData.companyCode}
-              onChange={handleChange}
-            />
-          </div>
-
-          {/* Input for Office Name */}
-          <div>
-            <label htmlFor="khName" className="block mb-2 text-sm font-semibold text-gray-700">Khmer Name</label>
-            <input
-              id="khName"
-              className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-              value={formData.khName}
-              onChange={handleChange}
-            />
-          </div>
-
-          
-          <div>
-            <label htmlFor="engName" className="block mb-2 text-sm font-semibold text-gray-700">English Name</label>
-            <input
-              id="engName"
-              className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-              value={formData.engName}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <label htmlFor="vatNo" className="block mb-2 text-sm font-semibold text-gray-700">English Name</label>
-            <input
-              id="vatNo"
-              className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-              value={formData.vatNo}
-              onChange={handleChange}
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="phone" className="block mb-2 text-sm font-semibold text-gray-700">Phone Number</label>
-            <input
-              id="phone"
-              className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-              value={formData.phone}
-              onChange={handleChange}
-            />
-          </div>
-          
-
-          <div>
-            <label htmlFor="email" className="block mb-2 text-sm font-semibold text-gray-700">Email</label>
-            <input
-              id="email"
-              className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-              value={formData.email}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <label htmlFor="address" className="block mb-2 text-sm font-semibold text-gray-700">Address</label>
-            <input
-              id="address"
-              className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-              value={formData.address}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <label htmlFor="bankName" className="block mb-2 text-sm font-semibold text-gray-700">Bank Name</label>
-            <input
-              id="bankName"
-              className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-              value={formData.bankName}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <label htmlFor="bankAccName" className="block mb-2 text-sm font-semibold text-gray-700">Bank Account Name</label>
-            <input
-              id="bankAccName"
-              className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-              value={formData.bankAccName}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <label htmlFor="bankAccNo" className="block mb-2 text-sm font-semibold text-gray-700">Bank Account No</label>
-            <input
-              id="bankAccNo"
-              className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-              value={formData.bankAccNso}
-              onChange={handleChange}
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="bankBranch" className="block mb-2 text-sm font-semibold text-gray-700">Bank Branch</label>
-            <input
-              id="bankBranch"
-              className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-              value={formData.bankBranch}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <label htmlFor="companyLogo" className="block mb-2 text-sm font-semibold text-gray-700">Company Logo</label>
-            <input
-              id="companyLogo"
-              type='file'
-              className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-              value={formData.companyLogo}
-              onChange={handleChange}
-            />
-          </div>
-         
-          
-        </div>
-      </div>
-      <footer className="flex flex-col-reverse items-center justify-end px-6 py-4 space-y-3 space-y-reverse bg-gray-100 rounded-b-xl md:flex-row md:space-x-3 md:space-y-0">
-        <button onClick={handleSaveNew} className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto">
-          Save & New
-        </button>
-        <button onClick={handleSave} className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-green-500 to-green-700 hover:shadow-lg hover:scale-105 md:w-auto">
-          Save
-        </button>
-        <button onClick={closeAddModal} className="w-full px-5 py-2 text-sm font-medium text-gray-700 transition duration-200 transform bg-gray-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105 md:w-auto">
-          Cancel
-        </button>
-      </footer>
-    </div>
-  </div>
-)}
-
-
-      {/* Edit Office Modal */}
-      {isEditModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
-          <div className="relative w-1/2 mx-auto transition-all transform bg-white shadow-2xl rounded-xl" data-aos='zoom-in'>
+          <div
+            className="relative w-full max-w-2xl mx-auto transition-all transform bg-white shadow-2xl rounded-xl"
+            data-aos="zoom-in"
+          >
             <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
-              <h2 className="text-xl font-bold text-white md:text-2xl">កែប្រែព័ត៌មានក្រុមហ៊ុន</h2>
-              <button onClick={closeEditModal} className="text-2xl text-white transition duration-200 hover:text-gray-300 md:text-3xl">
+              <h2 className="text-xl font-bold text-white md:text-2xl">
+                បន្ថែមក្រុមហ៊ុនថ្មី
+              </h2>
+              <button
+                onClick={closeAddModal}
+                className="text-2xl text-white transition duration-200 hover:text-gray-300 md:text-3xl"
+              >
                 &times;
               </button>
             </header>
@@ -636,7 +660,12 @@ const deleteOffice = async (id) => {
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 {/* Input for Office Code */}
                 <div>
-                  <label htmlFor="companyCode" className="block mb-2 text-sm font-semibold text-gray-700">Company Code</label>
+                  <label
+                    htmlFor="companyCode"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Company Code
+                  </label>
                   <input
                     id="companyCode"
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
@@ -647,7 +676,12 @@ const deleteOffice = async (id) => {
 
                 {/* Input for Office Name */}
                 <div>
-                  <label htmlFor="khName" className="block mb-2 text-sm font-semibold text-gray-700">Khmer Name</label>
+                  <label
+                    htmlFor="khName"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Khmer Name
+                  </label>
                   <input
                     id="khName"
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
@@ -656,9 +690,13 @@ const deleteOffice = async (id) => {
                   />
                 </div>
 
-                
                 <div>
-                  <label htmlFor="engName" className="block mb-2 text-sm font-semibold text-gray-700">English Name</label>
+                  <label
+                    htmlFor="engName"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    English Name
+                  </label>
                   <input
                     id="engName"
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
@@ -667,16 +705,27 @@ const deleteOffice = async (id) => {
                   />
                 </div>
                 <div>
-            <label htmlFor="vatNo" className="block mb-2 text-sm font-semibold text-gray-700">VAT No</label>
-            <input
-              id="vatNo"
-              className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-              value={formData.vatNo}
-              onChange={handleChange}
-            />
-          </div>
+                  <label
+                    htmlFor="vatNo"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    English Name
+                  </label>
+                  <input
+                    id="vatNo"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.vatNo}
+                    onChange={handleChange}
+                  />
+                </div>
+
                 <div>
-                  <label htmlFor="phone" className="block mb-2 text-sm font-semibold text-gray-700">Phone Number</label>
+                  <label
+                    htmlFor="phone"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Phone Number
+                  </label>
                   <input
                     id="phone"
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
@@ -684,10 +733,14 @@ const deleteOffice = async (id) => {
                     onChange={handleChange}
                   />
                 </div>
-                
 
                 <div>
-                  <label htmlFor="email" className="block mb-2 text-sm font-semibold text-gray-700">Email</label>
+                  <label
+                    htmlFor="email"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Email
+                  </label>
                   <input
                     id="email"
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
@@ -696,7 +749,12 @@ const deleteOffice = async (id) => {
                   />
                 </div>
                 <div>
-                  <label htmlFor="address" className="block mb-2 text-sm font-semibold text-gray-700">Address</label>
+                  <label
+                    htmlFor="address"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Address
+                  </label>
                   <input
                     id="address"
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
@@ -705,7 +763,12 @@ const deleteOffice = async (id) => {
                   />
                 </div>
                 <div>
-                  <label htmlFor="bankName" className="block mb-2 text-sm font-semibold text-gray-700">Bank Name</label>
+                  <label
+                    htmlFor="bankName"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Bank Name
+                  </label>
                   <input
                     id="bankName"
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
@@ -714,7 +777,12 @@ const deleteOffice = async (id) => {
                   />
                 </div>
                 <div>
-                  <label htmlFor="bankAccName" className="block mb-2 text-sm font-semibold text-gray-700">Bank Account Name</label>
+                  <label
+                    htmlFor="bankAccName"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Bank Account Name
+                  </label>
                   <input
                     id="bankAccName"
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
@@ -723,17 +791,27 @@ const deleteOffice = async (id) => {
                   />
                 </div>
                 <div>
-                  <label htmlFor="bankAccNso" className="block mb-2 text-sm font-semibold text-gray-700">Bank Account No</label>
+                  <label
+                    htmlFor="bankAccNo"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Bank Account No
+                  </label>
                   <input
-                    id="bankAccNso"
+                    id="bankAccNo"
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                     value={formData.bankAccNso}
                     onChange={handleChange}
                   />
                 </div>
-                
+
                 <div>
-                  <label htmlFor="bankBranch" className="block mb-2 text-sm font-semibold text-gray-700">Bank Branch</label>
+                  <label
+                    htmlFor="bankBranch"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Bank Branch
+                  </label>
                   <input
                     id="bankBranch"
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
@@ -742,25 +820,39 @@ const deleteOffice = async (id) => {
                   />
                 </div>
                 <div>
-                  <label htmlFor="companyLogo" className="block mb-2 text-sm font-semibold text-gray-700">Company Logo</label>
+                  <label
+                    htmlFor="companyLogo"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Company Logo
+                  </label>
                   <input
                     id="companyLogo"
-                    type='file'
+                    type="file"
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                     value={formData.companyLogo}
                     onChange={handleChange}
                   />
                 </div>
-              
-                
               </div>
             </div>
             <footer className="flex flex-col-reverse items-center justify-end px-6 py-4 space-y-3 space-y-reverse bg-gray-100 rounded-b-xl md:flex-row md:space-x-3 md:space-y-0">
-              
-              <button onClick={handleUpdate} className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-green-500 to-green-700 hover:shadow-lg hover:scale-105 md:w-auto">
+              <button
+                onClick={handleSaveNew}
+                className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto"
+              >
+                Save & New
+              </button>
+              <button
+                onClick={handleSave}
+                className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-green-500 to-green-700 hover:shadow-lg hover:scale-105 md:w-auto"
+              >
                 Save
               </button>
-              <button onClick={closeEditModal} className="w-full px-5 py-2 text-sm font-medium text-gray-700 transition duration-200 transform bg-gray-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105 md:w-auto">
+              <button
+                onClick={closeAddModal}
+                className="w-full px-5 py-2 text-sm font-medium text-gray-700 transition duration-200 transform bg-gray-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105 md:w-auto"
+              >
                 Cancel
               </button>
             </footer>
@@ -768,6 +860,220 @@ const deleteOffice = async (id) => {
         </div>
       )}
 
+      {/* Edit Office Modal */}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
+          <div
+            className="relative w-1/2 mx-auto transition-all transform bg-white shadow-2xl rounded-xl"
+            data-aos="zoom-in"
+          >
+            <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
+              <h2 className="text-xl font-bold text-white md:text-2xl">
+                កែប្រែព័ត៌មានក្រុមហ៊ុន
+              </h2>
+              <button
+                onClick={closeEditModal}
+                className="text-2xl text-white transition duration-200 hover:text-gray-300 md:text-3xl"
+              >
+                &times;
+              </button>
+            </header>
+            <div className="px-6 py-6 space-y-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                {/* Input for Office Code */}
+                <div>
+                  <label
+                    htmlFor="companyCode"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Company Code
+                  </label>
+                  <input
+                    id="companyCode"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.companyCode}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                {/* Input for Office Name */}
+                <div>
+                  <label
+                    htmlFor="khName"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Khmer Name
+                  </label>
+                  <input
+                    id="khName"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.khName}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="engName"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    English Name
+                  </label>
+                  <input
+                    id="engName"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.engName}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="vatNo"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    VAT No
+                  </label>
+                  <input
+                    id="vatNo"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.vatNo}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="phone"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Phone Number
+                  </label>
+                  <input
+                    id="phone"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.phone}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Email
+                  </label>
+                  <input
+                    id="email"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.email}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="address"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Address
+                  </label>
+                  <input
+                    id="address"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.address}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="bankName"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Bank Name
+                  </label>
+                  <input
+                    id="bankName"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.bankName}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="bankAccName"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Bank Account Name
+                  </label>
+                  <input
+                    id="bankAccName"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.bankAccName}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="bankAccNso"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Bank Account No
+                  </label>
+                  <input
+                    id="bankAccNso"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.bankAccNso}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="bankBranch"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Bank Branch
+                  </label>
+                  <input
+                    id="bankBranch"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.bankBranch}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="companyLogo"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Company Logo
+                  </label>
+                  <input
+                    id="companyLogo"
+                    type="file"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.companyLogo}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+            </div>
+            <footer className="flex flex-col-reverse items-center justify-end px-6 py-4 space-y-3 space-y-reverse bg-gray-100 rounded-b-xl md:flex-row md:space-x-3 md:space-y-0">
+              <button
+                onClick={handleUpdate}
+                className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-green-500 to-green-700 hover:shadow-lg hover:scale-105 md:w-auto"
+              >
+                Save
+              </button>
+              <button
+                onClick={closeEditModal}
+                className="w-full px-5 py-2 text-sm font-medium text-gray-700 transition duration-200 transform bg-gray-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105 md:w-auto"
+              >
+                Cancel
+              </button>
+            </footer>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

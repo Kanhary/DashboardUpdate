@@ -694,127 +694,127 @@ const optionsStaffName = employees.map(employee => ({
             </header>
             <div className="px-6 py-6 space-y-6">
 
-<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-  
-  <div>
-      <label htmlFor="courseCode" className="block mb-2 text-sm font-semibold text-gray-700">Course Code</label>
-      <input
-      id="courseCode"
-      className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-      value={formData.courseCode}
-      onChange={handleChange}
-      />
-  </div>
-  <div>
-      <label htmlFor="courseName" className="block mb-2 text-sm font-semibold text-gray-700">Course Name</label>
-      <input
-      id="coursename"
-      className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-      value={formData.coursename}
-      onChange={handleChange}
-      />
-  </div>
-</div>
-<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-  
-  <div>
-  <label htmlFor="staffcode" className="block mb-2 text-sm font-semibold text-gray-700">
-      Staff Code
-  </label>
-  <Select
-      id="staffcode"
-      options={optionsStaffCode}
-      onChange={handleStaffCode}
-      value={optionsStaffCode.find(option => option.value === formData.staffcode)}
-      placeholder="Select or type to search staff code"
-      className="basic-single"
-      classNamePrefix="select"
-      styles={customStyles}
-  />
-  </div>
-  <div>
-  <label htmlFor="staffname" className="block mb-2 text-sm font-semibold text-gray-700">
-      Staff Name
-  </label>
-  <Select
-      id="staffname"
-      options={optionsStaffName}
-      onChange={handleStaffName}
-      value={optionsStaffName.find(option => option.value === formData.staffname)}
-      placeholder="Select or type to search staff name"
-      className="basic-single"
-      classNamePrefix="select"
-      styles={customStyles}
-  />
-      
-  </div>
-</div>
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                
+                <div>
+                    <label htmlFor="courseCode" className="block mb-2 text-sm font-semibold text-gray-700">Course Code</label>
+                    <input
+                    id="courseCode"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.courseCode}
+                    onChange={handleChange}
+                    />
+                </div>
+                <div>
+                    <label htmlFor="courseName" className="block mb-2 text-sm font-semibold text-gray-700">Course Name</label>
+                    <input
+                    id="coursename"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.coursename}
+                    onChange={handleChange}
+                    />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                
+                <div>
+                <label htmlFor="staffcode" className="block mb-2 text-sm font-semibold text-gray-700">
+                    Staff Code
+                </label>
+                <Select
+                    id="staffcode"
+                    options={optionsStaffCode}
+                    onChange={handleStaffCode}
+                    value={optionsStaffCode.find(option => option.value === formData.staffcode)}
+                    placeholder="Select or type to search staff code"
+                    className="basic-single"
+                    classNamePrefix="select"
+                    styles={customStyles}
+                />
+                </div>
+                <div>
+                <label htmlFor="staffname" className="block mb-2 text-sm font-semibold text-gray-700">
+                    Staff Name
+                </label>
+                <Select
+                    id="staffname"
+                    options={optionsStaffName}
+                    onChange={handleStaffName}
+                    value={optionsStaffName.find(option => option.value === formData.staffname)}
+                    placeholder="Select or type to search staff name"
+                    className="basic-single"
+                    classNamePrefix="select"
+                    styles={customStyles}
+                />
+                    
+                </div>
+              </div>
 
-<div className="grid ">
-  
-  
-  <div>
-      <label htmlFor="organize" className="block mb-2 text-sm font-semibold text-gray-700">Organize</label>
-      <input
-      id="organize"
-      className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-      value={formData.organize}
-      onChange={handleChange}
-      />
-  </div>
-  
-</div>
-<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
- 
-  <div>
-      <label htmlFor="fromDate" className="block mb-2 text-sm font-semibold text-gray-700">From Date</label>
-      <input
-      id="fromDate"
-      type='date'
-      className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-      value={formData.fromDate}
-      onChange={handleChange}
-      />
-  </div>
+              <div className="grid ">
+                
+                
+                <div>
+                    <label htmlFor="organize" className="block mb-2 text-sm font-semibold text-gray-700">Organize</label>
+                    <input
+                    id="organize"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.organize}
+                    onChange={handleChange}
+                    />
+                </div>
+                
+              </div>
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              
+                <div>
+                    <label htmlFor="fromDate" className="block mb-2 text-sm font-semibold text-gray-700">From Date</label>
+                    <input
+                    id="fromDate"
+                    type='date'
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.fromDate}
+                    onChange={handleChange}
+                    />
+                </div>
 
-  
-  <div>
-      <label htmlFor="toDate" className="block mb-2 text-sm font-semibold text-gray-700">To Date</label>
-      <input
-      id="toDate"
-      type='date'
-      className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-      value={formData.toDate}
-      onChange={handleChange}
-      />
-  </div>
+                
+                <div>
+                    <label htmlFor="toDate" className="block mb-2 text-sm font-semibold text-gray-700">To Date</label>
+                    <input
+                    id="toDate"
+                    type='date'
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.toDate}
+                    onChange={handleChange}
+                    />
+                </div>
 
-</div>
-<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-  {/* Input for Office Code */}
-  <div>
-      <label htmlFor="inCountry" className="block mb-2 text-sm font-semibold text-gray-700">In Country</label>
-      <input
-      id="inCountry"
-      className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-      value={formData.inCountry}
-      onChange={handleChange}
-      />
-  </div>
+              </div>
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                {/* Input for Office Code */}
+                <div>
+                    <label htmlFor="inCountry" className="block mb-2 text-sm font-semibold text-gray-700">In Country</label>
+                    <input
+                    id="inCountry"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.inCountry}
+                    onChange={handleChange}
+                    />
+                </div>
 
-  {/* Input for Office Name */}
-  <div>
-      <label htmlFor="outCountry" className="block mb-2 text-sm font-semibold text-gray-700">Out Country</label>
-      <input
-      id="outCountry"
-      className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-      value={formData.outCountry}
-      onChange={handleChange}
-      />
-  </div>
+                {/* Input for Office Name */}
+                <div>
+                    <label htmlFor="outCountry" className="block mb-2 text-sm font-semibold text-gray-700">Out Country</label>
+                    <input
+                    id="outCountry"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.outCountry}
+                    onChange={handleChange}
+                    />
+                </div>
 
-</div>    
-</div>
+              </div>    
+            </div>
             <footer className="flex flex-col-reverse items-center justify-end px-6 py-4 space-y-3 space-y-reverse bg-gray-100 rounded-b-xl md:flex-row md:space-x-3 md:space-y-0">
               
               <button onClick={handleUpdate} className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-green-500 to-green-700 hover:shadow-lg hover:scale-105 md:w-auto">
