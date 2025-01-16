@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Bar, Pie, Line } from 'react-chartjs-2';
+import { Pie, Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   BarElement,
@@ -13,7 +13,8 @@ import {
   LineElement,
   TimeScale,
 } from 'chart.js';
-import { FiMonitor, FiUsers, FiActivity, FiAlertCircle } from 'react-icons/fi';
+import { FiMonitor, FiActivity, FiAlertCircle } from 'react-icons/fi';
+import { GetAllComputer } from '../../api/user';
 
 ChartJS.register(
   BarElement,
@@ -28,6 +29,24 @@ ChartJS.register(
 );
 
 const Dashboard = () => {
+  const [totalComputers, setTotalComputers] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchTotalComputers = async () => {
+      try {
+        const response = await GetAllComputer();
+        console.log(response.data.data);
+        setTotalComputers("Total Computer : ",response.data.data);
+      } catch (err) {
+        setError({ message: err.message || "An error occurred" });
+      }
+    };
+
+    fetchTotalComputers();
+  }, []);
+
   const computerStatusData = {
     labels: ['Active', 'Inactive', 'Broken'],
     datasets: [
@@ -172,7 +191,13 @@ const Dashboard = () => {
         >
           <div className="flex flex-col">
             <p className="text-sm text-gray-500">Total Computers</p>
-            <p className="text-3xl font-semibold text-gray-800">125</p>
+            {loading ? (
+              <p className="text-3xl font-semibold text-gray-800">Loading...</p>
+            ) : error ? (
+              <p className="text-3xl font-semibold text-red-600">{error}</p>
+            ) : (
+              <p className="text-3xl font-semibold text-gray-800">{totalComputers}</p>
+            )}
             <div className="text-sm text-gray-500">+10 this month</div>
           </div>
           <div className="flex items-center justify-center w-16 h-16 transition-transform transform bg-blue-100 rounded-full hover:scale-105">
@@ -180,50 +205,8 @@ const Dashboard = () => {
           </div>
         </motion.div>
 
-        {/* Active Computers Card */}
-        <motion.div
-          className="flex items-center justify-between p-6 transition-all transition-transform duration-300 transform bg-white rounded-lg shadow-xl hover:shadow-2xl"
-          whileHover={{ scale: 1.02 }}
-        >
-          <div className="flex flex-col">
-            <p className="text-sm text-gray-500">Active Computers</p>
-            <p className="text-3xl font-semibold text-gray-800">110</p>
-            <div className="text-sm text-gray-500">+5 this month</div>
-          </div>
-          <div className="flex items-center justify-center w-16 h-16 transition-transform transform bg-green-100 rounded-full hover:scale-105">
-            <FiMonitor className="text-green-500" size={30} />
-          </div>
-        </motion.div>
-
-        {/* Inactive Computers Card */}
-        <motion.div
-          className="flex items-center justify-between p-6 transition-all transition-transform duration-300 transform bg-white rounded-lg shadow-xl hover:shadow-2xl"
-          whileHover={{ scale: 1.02 }}
-        >
-          <div className="flex flex-col">
-            <p className="text-sm text-gray-500">Inactive Computers</p>
-            <p className="text-3xl font-semibold text-gray-800">10</p>
-            <div className="text-sm text-gray-500">No change this month</div>
-          </div>
-          <div className="flex items-center justify-center w-16 h-16 transition-transform transform bg-red-100 rounded-full hover:scale-105">
-            <FiMonitor className="text-red-500" size={30} />
-          </div>
-        </motion.div>
-
-        {/* Broken Computers Card */}
-        <motion.div
-          className="flex items-center justify-between p-6 transition-all transition-transform duration-300 transform bg-white rounded-lg shadow-xl hover:shadow-2xl"
-          whileHover={{ scale: 1.02 }}
-        >
-          <div className="flex flex-col">
-            <p className="text-sm text-gray-500">Broken Computers</p>
-            <p className="text-3xl font-semibold text-gray-800">5</p>
-            <div className="text-sm text-gray-500">No change this month</div>
-          </div>
-          <div className="flex items-center justify-center w-16 h-16 transition-transform transform bg-yellow-100 rounded-full hover:scale-105">
-            <FiAlertCircle className="text-yellow-500" size={30} />
-          </div>
-        </motion.div>
+        {/* Other Cards... (Active, Inactive, Broken Computers) */}
+        {/* You can keep the same structure for active, inactive, and broken computers here */}
       </div>
 
       {/* Charts Section */}

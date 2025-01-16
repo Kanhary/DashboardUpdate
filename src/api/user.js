@@ -567,3 +567,10 @@ export function roleMenuById(roleId) {
     url: `/RoleMenu/menuName/${roleId}`,
   });
 }
+
+export function GetAllComputer() {
+    return request({
+      method: "GET",
+      url: `/Product/totalComputerCount`,
+    });
+}
