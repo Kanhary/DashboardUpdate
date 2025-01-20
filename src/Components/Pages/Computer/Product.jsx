@@ -12,26 +12,32 @@ import {
   UpdateProduct,
   DeleteProduct,
   GetAllStaff,
+  GetDep,
 } from "../../../api/user";
-import Category from "./Category";
+
 
 const Product = () => {
   const INITAIL_FORM_DATA = {
     productCode: "",
-    engName: "",
-    khName: "",
-    categoryId: "",
-    subCategoryId: "",
-    model: "",
+    deviceName: "",
+    staffCode: "",
+    departCode: "",
+    categoryCode: "",
+    modelName: "",
+    brand: "",
+    ramSize: "",
+    storageSize: "",
+    storageType: "",
     serialNumber: "",
     purchaseDate: "",
-    wanrreantyExpiration: "",
+    warrantyExpiration: "",
     location: "",
-    unitorSet: "",
+    unitOrSet: "",
     price: "",
-    ipAddress: "",
+    ipaddress: "",
     macAddress: "",
-    staffCode: "",
+    note: "",
+    supply: ""
   };
   const [searchTerm, setSearchTerm] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -45,6 +51,7 @@ const Product = () => {
   const [SubCategories, setSubCategory] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [Staffs, setStaff] = useState([]);
+  const [department, setDepartment] = useState([]);
 
   // const DepList = [
   //   { CompanyCode: 'PPAP', DepartmentCode: 'Dep-admin', Department: 'នាយកដ្ឋាន រដ្ឋបាល',  BranchCode: 'TS3' },
@@ -98,10 +105,23 @@ const Product = () => {
         setError({ message: err.message || "An error occurred" });
       }
     };
+
+    const fetchAllDep = async () => {
+      try {
+        const response = await GetDep();
+        console.log(response.data.data);
+        setDepartment(response.data.data);
+      } catch (err) {
+        setError({ message: err.message || "An error occurred" });
+      }
+    };
+    
     fetchAllStaff();
     fetchSubCategory();
     fetchCategory();
     fetchComputer();
+    fetchAllDep()
+    fetchCurrentUser();
   }, []);
 
   // useEffect(() => {
@@ -195,12 +215,11 @@ const Product = () => {
     // Prepare the data for submission
     const updatedFormData = {
       ...formData,
-      id: formData.categoryId || "",
-      id: formData.subCatogryId,
+      categoryCode: formData.categoryCode || "",
       createdby: currentUser,
-      lastby: currentUser,
-      createTime: new Date().toISOString(),
-      updateTime: new Date().toISOString(),
+      lastBy: currentUser,
+      lastDate: new Date().toISOString(),
+      
     };
 
     try {
@@ -346,13 +365,19 @@ const Product = () => {
     }
   };
 
-  const handleBranchChange = (selectedOption) => {
+  const handleRAMSizeChange = (selectedOption) => {
     setFormData((prevData) => ({
       ...prevData,
-      BranchCode: selectedOption ? selectedOption.value : "",
+      ramSize: selectedOption ? selectedOption.value : "",
     }));
   };
-
+  const handleStatusChange = (selectedOption) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      status: selectedOption ? selectedOption.value : "",
+    }));
+  };
+  
   const handleCompanyCodeChange = (selectedOption) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -388,14 +413,25 @@ const Product = () => {
       height: "30px",
     }),
   };
-  const optionsBranch = [
-    { value: "TS3", label: "TS3" },
-    { value: "LM17", label: "LM17" },
+  const optionsRamSize = [
+    { value: "4", label: "4G" },
+    { value: "8", label: "8G" },
+    { value: "16", label: "16G" },
+    { value: "32", label: "32G" },
+    { value: "64", label: "64G" },
   ];
+
+  const optionsStatus = [
+    { value: "Active", label: "Active" },
+    { value: "In Maintenance", label: "In Maintenance" },
+    { value: "Retired", label: "Retired" },
+    
+  ];
+  
   const handleUnitOrSet = (selectedOption) => {
     setFormData((prevData) => ({
       ...prevData,
-      unitorSet: selectedOption ? selectedOption.value : "",
+      unitOrSet: selectedOption ? selectedOption.value : "",
     }));
   };
   const optionUnitOrSet = [
@@ -408,7 +444,7 @@ const Product = () => {
   // }));
 
   const optionsCategoryId = categories.map((category) => ({
-    value: category.id,
+    value: category.categoryCode,
     label: `${category.categoryCode}-${category.categoryName}`,
   }));
 
@@ -427,11 +463,11 @@ const Product = () => {
   };
 
   const handleCategoryId = (option) => {
-    console.log("Selected option:", option); // Check if selectedOption has the correct value
+    console.log("Selected option:", option); 
     setSelectedOption(option);
     setFormData((prevData) => ({
       ...prevData,
-      categoryId: option ? option.value : "",
+      categoryCode: option ? option.value : "",
     }));
   };
 
@@ -444,9 +480,27 @@ const Product = () => {
     }));
   };
 
+  const handleDepartmentChange = (selectedOption) => {
+    console.log("Selected department option:", selectedOption);
+
+    setFormData((prevData) => {
+      const updatedData = {
+        ...prevData,
+        departCode: selectedOption ? selectedOption.value : "",
+      };
+      console.log("Updated formData:", updatedData); // Check if the updated data is correct
+      return updatedData;
+    });
+  };
+
   const optionsStaffCode = (Staffs || []).map((staff) => ({
     value: staff.staffCode,
     label: `${staff.staffCode}-${staff.khName}`,
+  }));
+
+  const optionsDepartment = department.map((dep) => ({
+    value: dep.departCode,
+    label: `${dep.departCode} - ${dep.departEngName}`,
   }));
 
   const handleRefresh = () => {
@@ -546,21 +600,22 @@ const Product = () => {
                     className="px-4 py-3 border-r"
                     style={{ minWidth: "180px" }}
                   >
-                    English Name
+                    Device Name
                   </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-r"
-                    style={{ minWidth: "250px" }}
-                  >
-                    Khmer Name
-                  </th>
+                  
                   <th
                     scope="col"
                     className="px-4 py-3 border-r"
                     style={{ minWidth: "250px" }}
                   >
                     Staff Code
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 border-r"
+                    style={{ minWidth: "150px" }}
+                  >
+                    Department
                   </th>
                   <th
                     scope="col"
@@ -574,14 +629,42 @@ const Product = () => {
                     className="px-4 py-3 border-r"
                     style={{ minWidth: "150px" }}
                   >
-                    SubCategory
+                    Model
                   </th>
                   <th
                     scope="col"
                     className="px-4 py-3 border-r"
                     style={{ minWidth: "150px" }}
                   >
-                    Model
+                    Brand
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 border-r"
+                    style={{ minWidth: "150px" }}
+                  >
+                    Processor
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 border-r"
+                    style={{ minWidth: "150px" }}
+                  >
+                    RAM Size
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 border-r"
+                    style={{ minWidth: "150px" }}
+                  >
+                    Storage Size
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 border-r"
+                    style={{ minWidth: "150px" }}
+                  >
+                    Storage Type
                   </th>
                   <th
                     scope="col"
@@ -602,7 +685,7 @@ const Product = () => {
                     className="px-4 py-3 border-r"
                     style={{ minWidth: "150px" }}
                   >
-                    Warrenty Expiration
+                    Warranty EXP
                   </th>
                   <th
                     scope="col"
@@ -616,7 +699,14 @@ const Product = () => {
                     className="px-4 py-3 border-r"
                     style={{ minWidth: "150px" }}
                   >
-                    Unit or Set
+                    Quantity
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 border-r"
+                    style={{ minWidth: "150px" }}
+                  >
+                    Unit Or Set
                   </th>
                   <th
                     scope="col"
@@ -637,7 +727,42 @@ const Product = () => {
                     className="px-4 py-3 border-r"
                     style={{ minWidth: "150px" }}
                   >
-                    Mac Address
+                    MAC Address
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 border-r"
+                    style={{ minWidth: "150px" }}
+                  >
+                    Status
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 border-r"
+                    style={{ minWidth: "150px" }}
+                  >
+                    Note
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 border-r"
+                    style={{ minWidth: "150px" }}
+                  >
+                    Supplier
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 border-r"
+                    style={{ minWidth: "150px" }}
+                  >
+                    Last By
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 border-r"
+                    style={{ minWidth: "150px" }}
+                  >
+                    Last Date
                   </th>
                 </tr>
               </thead>
@@ -663,35 +788,31 @@ const Product = () => {
                         />
                       </div>
                     </td>
-                    <td className="px-4 py-4 border-r">
-                      {computer.productCode}
-                    </td>
-                    <td className="px-4 py-4 border-r">{computer.engName}</td>
-                    <td className="px-4 py-4 border-r">{computer.khName}</td>
+                    <td className="px-4 py-4 border-r">{computer.productCode}</td>
+                    <td className="px-4 py-4 border-r">{computer.deviceName}</td>
                     <td className="px-4 py-4 border-r">{computer.staffCode}</td>
-                    <td className="px-4 py-4 border-r">
-                      {computer.categoryId}
-                    </td>
-                    <td className="px-4 py-4 border-r">
-                      {computer.subCategoryId}
-                    </td>
-                    <td className="px-4 py-4 border-r">{computer.model}</td>
-                    <td className="px-4 py-4 border-r">
-                      {computer.serialNumber}
-                    </td>
-                    <td className="px-4 py-4 border-r">
-                      {computer.purchaseDate}
-                    </td>
-                    <td className="px-4 py-4 border-r">
-                      {computer.wanrreantyExpiration}
-                    </td>
+                    <td className="px-4 py-4 border-r">{computer.departCode}</td>
+                    <td className="px-4 py-4 border-r">{computer.categoryCode}</td>
+                    <td className="px-4 py-4 border-r">{computer.modelName}</td>
+                    <td className="px-4 py-4 border-r">{computer.brand}</td>
+                    <td className="px-4 py-4 border-r">{computer.processor}</td>
+                    <td className="px-4 py-4 border-r">{computer.ramSize}</td>
+                    <td className="px-4 py-4 border-r">{computer.storageSize}</td>
+                    <td className="px-4 py-4 border-r">{computer.storageType }</td>
+                    <td className="px-4 py-4 border-r">{computer.serialNumber}</td>
+                    <td className="px-4 py-4 border-r">{computer.purchaseDate}</td>
+                    <td className="px-4 py-4 border-r">{computer.warrantyExpiration}</td>
                     <td className="px-4 py-4 border-r">{computer.location}</td>
-                    <td className="px-4 py-4 border-r">{computer.unitorSet}</td>
+                    <td className="px-4 py-4 border-r">{computer.storageSize}</td>
+                    <td className="px-4 py-4 border-r">{computer.unitOrSet}</td>
                     <td className="px-4 py-4 border-r">{computer.price}</td>
-                    <td className="px-4 py-4 border-r">{computer.ipAddress}</td>
-                    <td className="px-4 py-4 border-r">
-                      {computer.macAddress}
-                    </td>
+                    <td className="px-4 py-4 border-r">{computer.ipaddress}</td>
+                    <td className="px-4 py-4 border-r">{computer.macAddress}</td>
+                    <td className="px-4 py-4 border-r">{computer.status}</td>
+                    <td className="px-4 py-4 border-r">{computer.note}</td>
+                    <td className="px-4 py-4 border-r">{computer.supply}</td>
+                    <td className="px-4 py-4 border-r">{computer.lastBy}</td>
+                    <td className="px-4 py-4 border-r">{computer.lastDate}</td>
                   </tr>
                 ))}
               </tbody>
@@ -793,7 +914,7 @@ const Product = () => {
             className="relative mx-auto transition-all transform bg-white shadow-2xl rounded-xl h-[700px] overflow-y-auto w-[1000px]"
             data-aos="zoom-in"
           >
-            <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
+            <header className="sticky top-0 z-50 flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl ">
               <h2 className="text-xl font-bold text-white md:text-2xl">
                 បន្ថែមនាយកដ្ឋានថ្មី
               </h2>
@@ -827,64 +948,32 @@ const Product = () => {
                     htmlFor="engName"
                     className="block mb-2 text-sm font-semibold text-gray-700"
                   >
-                    English Name
+                    Device Name
                   </label>
                   <input
-                    id="engName"
+                    id="deviceName"
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.engName}
+                    value={formData.deviceName}
                     onChange={handleChange}
                   />
                 </div>
               </div>
-              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                <div className="w-full md:w-1/2">
-                  <label
-                    htmlFor="khName"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
-                  >
-                    Khmer Name
-                  </label>
-                  <input
-                    id="khName"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.khName}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
 
-                <div className="w-full md:w-1/2">
-                  <label
-                    htmlFor="model"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
-                  >
-                    Model
-                  </label>
-                  <input
-                    id="model"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.model}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
               <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                <div className="w-full md:w-1/2">
+              <div className="w-full md:w-1/2">
                   <label
-                    htmlFor="subCatogryId"
+                    htmlFor="staffcode"
                     className="block mb-2 text-sm font-semibold text-gray-700"
                   >
-                    Sub-Category ID
+                    Staff Code
                   </label>
                   <Select
-                    options={optionsSubCategoryId}
-                    onChange={handleSubCategoryId}
-                    placeholder="Select Company Code"
-                    value={optionsSubCategoryId.find(
-                      (option) => option.value === formData.subcategoryId
+                    options={optionsStaffCode}
+                    onChange={handleStaffCode} // Ensure handleStaffCode is passed correctly here
+                    value={optionsStaffCode.find(
+                      (option) => option.value === formData.staffCode
                     )}
-                    isClearable
+                    placeholder="Select or type to search"
                     className="basic-single"
                     classNamePrefix="select"
                     styles={customStyles}
@@ -896,36 +985,35 @@ const Product = () => {
                     htmlFor="CompanyCode"
                     className="block mb-2 text-sm font-semibold text-gray-700"
                   >
-                    Category ID
+                    Department
                   </label>
                   <Select
-                    options={optionsCategoryId}
-                    onChange={handleCategoryId}
-                    placeholder="Select Company Code"
-                    value={optionsCategoryId.find(
-                      (option) => option.value === formData.categoryId
-                    )}
-                    isClearable
-                    className="basic-single"
-                    classNamePrefix="select"
-                    styles={customStyles}
-                  />
+                  options={optionsDepartment}
+                  onChange={handleDepartmentChange}
+                  placeholder="Select Department"
+                  value={optionsDepartment.find(
+                    (option) => option.value === formData.departCode
+                  )}
+                  isClearable
+                  className="basic-single"
+                  classNamePrefix="select"
+                  styles={customStyles}
+                />
                 </div>
               </div>
 
               <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
                 <div className="w-full md:w-1/2">
                   <label
-                    htmlFor="productCode"
+                    htmlFor="brand"
                     className="block mb-2 text-sm font-semibold text-gray-700"
                   >
-                    Warranty Expiration
+                    Brand Name
                   </label>
                   <input
-                    id="serialNumber"
-                    type="date"
+                    id="brand"
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.serialNumber}
+                    value={formData.brand}
                     onChange={handleChange}
                     required
                   />
@@ -933,20 +1021,88 @@ const Product = () => {
 
                 <div className="w-full md:w-1/2">
                   <label
-                    htmlFor="purchaseDate"
+                    htmlFor="modelName"
                     className="block mb-2 text-sm font-semibold text-gray-700"
                   >
-                    Purchase Date
+                    Model
                   </label>
                   <input
-                    type="date"
-                    id="purchaseDate"
+                    id="modelName"
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.purchaseDate}
+                    value={formData.modelName}
                     onChange={handleChange}
                   />
                 </div>
               </div>
+              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                <div className="w-full md:w-1/2">
+                  <label
+                    htmlFor="staffcode"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    RAM size
+                  </label>
+                  <Select
+                    options={optionsRamSize}
+                    onChange={handleRAMSizeChange} // Ensure handleStaffCode is passed correctly here
+                    value={optionsRamSize.find(
+                      (option) => option.value === formData.ramSize
+                    )}
+                    placeholder="Select or type to search"
+                    className="basic-single"
+                    classNamePrefix="select"
+                    styles={customStyles}
+                  />
+                </div>
+                <div className="w-full md:w-1/2">
+                  <label
+                    htmlFor="processor"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Processor
+                  </label>
+                  <input
+                    id="processor"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.processor }
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                <div className="w-full md:w-1/2">
+                  <label
+                    htmlFor="storageSize"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Storage Size
+                  </label>
+                  <input
+                    id="storageSize"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.storageSize}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="w-full md:w-1/2">
+                  <label
+                    htmlFor="storageType"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Storage Type
+                  </label>
+                  <input
+                    id="storageType"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.storageType}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
               <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
                 <div className="w-full md:w-1/2">
                   <label
@@ -982,56 +1138,51 @@ const Product = () => {
               <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
                 <div className="w-full md:w-1/2">
                   <label
-                    htmlFor="staffcode"
+                    htmlFor="warrantyExpiration"
                     className="block mb-2 text-sm font-semibold text-gray-700"
                   >
-                    Staff Code
+                    Warranty Expiration
                   </label>
-                  <Select
-                    options={optionsStaffCode}
-                    onChange={handleStaffCode} // Ensure handleStaffCode is passed correctly here
-                    value={optionsStaffCode.find(
-                      (option) => option.value === formData.staffCode
-                    )}
-                    placeholder="Select or type to search"
-                    className="basic-single"
-                    classNamePrefix="select"
-                    styles={customStyles}
+                  <input
+                    id="warrantyExpiration"
+                    type="date"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.warrantyExpiration}
+                    onChange={handleChange}
+                    required
                   />
                 </div>
+
                 <div className="w-full md:w-1/2">
                   <label
-                    htmlFor="CompanyCode"
+                    htmlFor="purchaseDate"
                     className="block mb-2 text-sm font-semibold text-gray-700"
                   >
-                    Unit Or Set
+                    Purchase Date
                   </label>
-                  <Select
-                    options={optionUnitOrSet}
-                    onChange={handleUnitOrSet}
-                    placeholder="Select Company Code"
-                    value={optionUnitOrSet.find(
-                      (option) => option.value === formData.unitorSet
-                    )}
-                    isClearable
-                    className="basic-single"
-                    classNamePrefix="select"
-                    styles={customStyles}
+                  <input
+                    type="date"
+                    id="purchaseDate"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.purchaseDate}
+                    onChange={handleChange}
                   />
                 </div>
               </div>
+
+
               <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
                 <div className="w-full md:w-1/2">
                   <label
-                    htmlFor="productCode"
+                    htmlFor="ipaddress"
                     className="block mb-2 text-sm font-semibold text-gray-700"
                   >
                     IP Address
                   </label>
                   <input
-                    id="ipAddress"
+                    id="ipaddress"
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.ipAddress}
+                    value={formData.ipaddress}
                     onChange={handleChange}
                     required
                   />
@@ -1052,22 +1203,138 @@ const Product = () => {
                   />
                 </div>
               </div>
-              <div className="flex ">
-                <div className="w-full">
+
+              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+              <div className="w-full md:w-1/2">
                   <label
-                    htmlFor="engName"
+                    htmlFor="categoryCode"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Category Code
+                  </label>
+                  <Select
+                    options={optionsCategoryId}
+                    onChange={handleCategoryId}
+                    placeholder="Select Company Code"
+                    value={optionsCategoryId.find(
+                      (option) => option.value === formData.categoryCode
+                    )}
+                    isClearable
+                    className="basic-single"
+                    classNamePrefix="select"
+                    styles={customStyles}
+                  />
+                </div>
+                <div className="w-full md:w-1/2">
+                  <label
+                    htmlFor="unitOrSet"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Unit or Set
+                  </label>
+                  <Select
+                    options={optionUnitOrSet}
+                    onChange={handleUnitOrSet}
+                    placeholder="Select Company Code"
+                    value={optionUnitOrSet.find(
+                      (option) => option.value === formData.unitOrSet
+                    )}
+                    isClearable
+                    className="basic-single"
+                    classNamePrefix="select"
+                    styles={customStyles}
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                <div className="w-full md:w-1/2">
+                  <label
+                    htmlFor="quantity"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Quantity
+                  </label>
+                  <input
+                    id="quantity"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.quantity}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="w-full md:w-1/2">
+                  <label
+                    htmlFor="supply"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Supplier
+                  </label>
+                  <input
+                    id="supply"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.supply}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                <div className="w-full md:w-1/2">
+                  <label
+                    htmlFor="note"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Note
+                  </label>
+                  <input
+                    id="note"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.note}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="w-full md:w-1/2">
+                  <label
+                    htmlFor="status"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Status
+                  </label>
+                  <Select
+                    options={optionsStatus}
+                    onChange={handleStatusChange}
+                    placeholder="Select computer status"
+                    value={optionsStatus.find(
+                      (option) => option.value === formData.status
+                    )}
+                    isClearable
+                    className="basic-single"
+                    classNamePrefix="select"
+                    styles={customStyles}
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+              <div className="w-full">
+                  <label
+                    htmlFor="location"
                     className="block mb-2 text-sm font-semibold text-gray-700"
                   >
                     Location
                   </label>
                   <input
-                    id="macAddress"
+                    id="location"
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.macAddress}
+                    value={formData.location}
                     onChange={handleChange}
+                    required
                   />
                 </div>
               </div>
+              
             </div>
             <footer className="flex flex-col-reverse items-center justify-end px-6 py-4 space-y-3 space-y-reverse bg-gray-100 rounded-b-xl md:flex-row md:space-x-3 md:space-y-0">
               <button

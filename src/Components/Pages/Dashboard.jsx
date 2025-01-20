@@ -29,7 +29,7 @@ ChartJS.register(
 );
 
 const Dashboard = () => {
-  const [totalComputers, setTotalComputers] = useState({});
+  const [totalComputers, setTotalComputers] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -37,10 +37,12 @@ const Dashboard = () => {
     const fetchTotalComputers = async () => {
       try {
         const response = await GetAllComputer();
-        console.log(response.data.data);
-        setTotalComputers("Total Computer : ",response.data.data);
+        console.log(response.data.data); // Debugging line
+        setTotalComputers(response.data.data); // Set only the data
       } catch (err) {
-        setError({ message: err.message || "An error occurred" });
+        setError(err.message || "An error occurred");
+      } finally {
+        setLoading(false); // Ensure loading is false at the end
       }
     };
 
@@ -206,7 +208,6 @@ const Dashboard = () => {
         </motion.div>
 
         {/* Other Cards... (Active, Inactive, Broken Computers) */}
-        {/* You can keep the same structure for active, inactive, and broken computers here */}
       </div>
 
       {/* Charts Section */}

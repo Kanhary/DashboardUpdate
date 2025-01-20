@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Route, Routes, Navigate } from "react-router-dom";
+import { Route, Routes, Navigate, useNavigate } from "react-router-dom";
 // import Header_page from './HeaderPage';
 import Sidebar from "./Sidebar";
 import Computer from "../Pages/Computer/Computer";
@@ -27,14 +27,29 @@ function MainDashboard() {
   const [isSidebarOpen, setSidebarOpen] = useState(true); // Start with sidebar open for better UX
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1000);
-    return () => clearTimeout(timer);
-  }, []);
+  const navigate = useNavigate();
 
-  if (loading) {
-    return <Loader />;
-  }
+  // Timeout duration (e.g., 15 minutes)
+  const timeoutDuration = 30 * 60 * 1000;
+
+  useEffect(() => {
+    // Simulate loading
+    const timer = setTimeout(() => setLoading(false), 1000);
+
+    // Session timeout logic
+    const timeout = setTimeout(() => {
+      // alert("Session expired. Redirecting to login.");
+      navigate("/"); // Redirect to login page
+    }, timeoutDuration);
+
+    // Cleanup timers on unmount
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(timeout);
+    };
+  }, [navigate]);
+
+  
 
   const toggleSidebar = () => {
     setSidebarOpen((prevState) => !prevState);

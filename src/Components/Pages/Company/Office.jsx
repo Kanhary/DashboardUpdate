@@ -334,12 +334,7 @@ const OfficeList = () => {
     });
   };
 
-  const handleBranchChange = (selectedOption) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      BranchCode: selectedOption ? selectedOption.value : "",
-    }));
-  };
+  
   const handleCompanyChange = (selectedOption) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -375,10 +370,8 @@ const OfficeList = () => {
       height: "30px",
     }),
   };
-  const optionsBranch = [
-    { value: "TS3", label: "TS3" },
-    { value: "LM17", label: "LM17" },
-  ];
+  
+  
 
   // const optionsBranch = branch.map(branch => ({
   //   value: branch.BranchCode,
