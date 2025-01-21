@@ -536,7 +536,7 @@ const StaffInfo = () => {
           text: "Employee update successfully",
           icon: "success",
         });
-        setIsEditModalOpen(false); // Close the edit modal
+        setIsEditModalOpen(false); 
       } else {
         const errorMessage =
           response.data.message || "An unexpected error occurred.";

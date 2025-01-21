@@ -353,8 +353,8 @@ const TabMenu = ({
               data-aos='zoom-in'>
               {[
         { id: 'staffCode', label: 'អត្ថលេខ', type: 'text', required: true },
-        { id: 'engName', label: 'គោត្តនាម/នាម', type: 'text', required: true },
-        { id: 'khName', label: 'អក្សរឡាតាំង', type: 'text', required: true },
+        { id: 'engName', label: 'អក្សរឡាតាំង', type: 'text', required: true },
+        { id: 'khName', label: 'គោត្តនាម/នាម', type: 'text', required: true },
         { id: 'height', label: 'កម្ពស់', type: 'text' },
         { id: 'weight', label: 'ទម្ងន់', type: 'text' },
         { id: 'bod', label: 'ថ្ងៃខែឆ្នាំកំណើត', type: 'date' },
