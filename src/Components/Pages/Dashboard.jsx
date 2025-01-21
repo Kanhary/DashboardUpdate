@@ -14,7 +14,7 @@ import {
   TimeScale,
 } from 'chart.js';
 import { FiMonitor, FiActivity, FiAlertCircle } from 'react-icons/fi';
-import { GetAllComputer } from '../../api/user';
+import { GetAllComputer, GetProduct } from '../../api/user';
 
 ChartJS.register(
   BarElement,
@@ -30,6 +30,7 @@ ChartJS.register(
 
 const Dashboard = () => {
   const [totalComputers, setTotalComputers] = useState(null);
+  const [allComputer, setAllComputer] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -46,19 +47,49 @@ const Dashboard = () => {
       }
     };
 
+
+    const fetchAllComputer = async () => {
+      try{
+        const response = await GetProduct();
+        console.log(response.data.data);
+        setAllComputer(response.data.data);
+      }catch (err) {
+        setError(err.message); 
+      } finally{
+        setLoading(false);
+      }
+    };
+
+    fetchAllComputer();
     fetchTotalComputers();
   }, []);
 
+  const statusCounts = allComputer.reduce(
+    (acc, device) => {
+      if (device.status === "Active") acc.active += 1;
+      else if (device.status === "In Maintenance") acc.maintenance += 1;
+      else acc.broken += 1; // Assume any other status means "broken"
+      return acc;
+    },
+    { active: 0, maintenance: 0, broken: 0 }
+  );
+
   const computerStatusData = {
-    labels: ['Active', 'Inactive', 'Broken'],
+    labels: ["Active", "In Maintenance", "Broken"],
     datasets: [
       {
-        label: 'Computer Status',
-        data: [100, 10, 5], 
+        label: "Computer Status",
+        data: [statusCounts.active, statusCounts.maintenance, statusCounts.broken],
         backgroundColor: [
           'rgba(99, 102, 241, 0.7)', // Active
           'rgba(239, 68, 68, 0.7)', // Inactive
           'rgba(234, 179, 8, 0.7)',  // Broken
+        ],
+        
+        hoverBackgroundColor: [
+          'rgba(99, 102, 241, 0.9)',
+          'rgba(239, 68, 68, 0.9)',
+          'rgba(234, 179, 8, 0.9)',
         ],
         borderColor: [
           'rgba(99, 102, 241, 1)',
@@ -67,14 +98,36 @@ const Dashboard = () => {
         ],
         borderWidth: 2,
         borderRadius: 12,
-        hoverBackgroundColor: [
-          'rgba(99, 102, 241, 0.9)',
-          'rgba(239, 68, 68, 0.9)',
-          'rgba(234, 179, 8, 0.9)',
-        ],
       },
     ],
   };
+
+  // const computerStatusData = {
+  //   labels: ['Active', 'Inactive', 'Broken'],
+  //   datasets: [
+  //     {
+  //       label: 'Computer Status',
+  //       data: [100, 10, 5], 
+  //       backgroundColor: [
+  //         'rgba(99, 102, 241, 0.7)', // Active
+  //         'rgba(239, 68, 68, 0.7)', // Inactive
+  //         'rgba(234, 179, 8, 0.7)',  // Broken
+  //       ],
+  //       borderColor: [
+  //         'rgba(99, 102, 241, 1)',
+  //         'rgba(239, 68, 68, 1)',
+  //         'rgba(234, 179, 8, 1)',
+  //       ],
+  //       borderWidth: 2,
+  //       borderRadius: 12,
+  //       hoverBackgroundColor: [
+  //         'rgba(99, 102, 241, 0.9)',
+  //         'rgba(239, 68, 68, 0.9)',
+  //         'rgba(234, 179, 8, 0.9)',
+  //       ],
+  //     },
+  //   ],
+  // };
 
   const computerTrendData = {
     labels: ['January', 'February', 'March', 'April', 'May', 'June'],
@@ -207,7 +260,47 @@ const Dashboard = () => {
           </div>
         </motion.div>
 
-        {/* Other Cards... (Active, Inactive, Broken Computers) */}
+        {/* Active Computers */}
+        <motion.div className="flex items-center justify-between p-6 transition-all transition-transform duration-300 transform bg-white rounded-lg shadow-xl hover:shadow-2xl"
+          whileHover={{ scale: 1.02 }}>
+          <div className="flex items-center justify-between px-8">
+          <div>
+            <p className="text-sm text-gray-500">Active Computers</p>
+            {loading ? (
+              <p className="text-3xl font-semibold text-gray-800">Loading...</p>
+            ) : (
+              <p className="text-3xl font-semibold text-gray-800">{statusCounts.active}</p>
+            )}
+          </div>
+          <FiActivity className="text-green-500" size={40} />
+        </div>
+        </motion.div>
+
+        {/* In Maintenance */}
+        <div className="flex items-center justify-between p-6 bg-white rounded-lg shadow-lg">
+          <div>
+            <p className="text-sm text-gray-500">In Maintenance</p>
+            {loading ? (
+              <p className="text-3xl font-semibold text-gray-800">Loading...</p>
+            ) : (
+              <p className="text-3xl font-semibold text-gray-800">{statusCounts.maintenance}</p>
+            )}
+          </div>
+          <FiActivity className="text-yellow-500" size={40} />
+        </div>
+
+        {/* Broken Computers */}
+        <div className="flex items-center justify-between p-6 bg-white rounded-lg shadow-lg">
+          <div>
+            <p className="text-sm text-gray-500">Broken Computers</p>
+            {loading ? (
+              <p className="text-3xl font-semibold text-gray-800">Loading...</p>
+            ) : (
+              <p className="text-3xl font-semibold text-gray-800">{statusCounts.broken}</p>
+            )}
+          </div>
+          <FiAlertCircle className="text-red-500" size={40} />
+        </div>
       </div>
 
       {/* Charts Section */}

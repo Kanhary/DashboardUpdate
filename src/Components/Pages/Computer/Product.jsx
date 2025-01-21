@@ -218,7 +218,7 @@ const Product = () => {
       categoryCode: formData.categoryCode || "",
       createdby: currentUser,
       lastBy: currentUser,
-      lastDate: new Date().toISOString(),
+      lastdate: new Date().toISOString(),
       
     };
 
@@ -584,7 +584,7 @@ const Product = () => {
                 <tr>
                   <th
                     scope="col"
-                    className="sticky left-0 px-4 py-3 bg-gray-100 border-r"
+                    className="sticky left-0 w-full h-full px-4 py-3 bg-white border-r"
                   >
                     Action
                   </th>
@@ -772,7 +772,7 @@ const Product = () => {
                     key={computer.id}
                     className="transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50"
                   >
-                    <td className="sticky left-0 flex px-6 py-5 bg-white border-r">
+                    <td className="sticky left-0 w-full h-full px-4 py-3 bg-white border-r">
                       <div className="flex items-center justify-center space-x-3">
                         <input
                           type="checkbox"
@@ -812,7 +812,7 @@ const Product = () => {
                     <td className="px-4 py-4 border-r">{computer.note}</td>
                     <td className="px-4 py-4 border-r">{computer.supply}</td>
                     <td className="px-4 py-4 border-r">{computer.lastBy}</td>
-                    <td className="px-4 py-4 border-r">{computer.lastDate}</td>
+                    <td className="px-4 py-4 border-r">{computer.lastdate}</td>
                   </tr>
                 ))}
               </tbody>

@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import { AiOutlineFileExcel } from "react-icons/ai";
 
 const Report = () => {
-  const [loading, setLoading] = useState({ users: false, staff: false, import: false });
+  const [loading, setLoading] = useState({ users: false, staff: false, import: false, computer: false });
   const [selectedFile, setSelectedFile] = useState(null);
   const fileInputRef = useRef(null); // Create a ref for the file input
 
@@ -150,6 +150,38 @@ const Report = () => {
                 >
                   <AiOutlineFileExcel className="mr-2" size={20} />
                   {loading.staff ? "Generating..." : "Export"}
+                </button>
+              </td>
+              <td className="px-6 py-4 text-sm border border-gray-300">
+                <div className="flex items-center space-x-4">
+                  <input
+                    type="file"
+                    ref={fileInputRef} // Attach the ref to the file input
+                    onChange={handleFileChange}
+                    accept=".xlsx, .xls"
+                    className="block w-full text-sm border border-gray-300 rounded-lg shadow-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 focus:ring-1 disabled:opacity-50 disabled:pointer-events-none text-neutral-400 file:border-0 file:me-4 file:py-3 file:px-4 file:bg-blue-600 file:text-white"
+                  />
+                  <button
+                    onClick={() => uploadFile("http://192.168.168.4:8888/staffImport/import-staff", "Staff")}
+                    disabled={loading.import}
+                    className={`flex items-center px-4 py-2 text-white text-sm font-medium rounded-lg shadow-md ${loading.import ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`}
+                  >
+                    <AiOutlineFileExcel className="mr-2" size={20} />
+                    {loading.import ? "Uploading..." : "Import"}
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr className="bg-white hover:bg-gray-50">
+              <td className="px-6 py-4 text-sm font-medium text-gray-700 border border-gray-300">Computer</td>
+              <td className="px-6 py-4 text-sm border border-gray-300">
+                <button
+                  onClick={() => downloadExcel("http://192.168.168.4:8888/product/exportProduct", "Computer.xlsx", "staff")}
+                  disabled={loading.computer}
+                  className={`flex items-center px-4 py-2 text-white text-sm font-medium rounded-lg shadow-md ${loading.computer ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"}`}
+                >
+                  <AiOutlineFileExcel className="mr-2" size={20} />
+                  {loading.computer ? "Generating..." : "Export"}
                 </button>
               </td>
               <td className="px-6 py-4 text-sm border border-gray-300">

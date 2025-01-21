@@ -443,7 +443,7 @@ const SubCategory = () => {
                 <tr>
                   <th
                     scope="col"
-                    className="sticky left-0 px-4 py-3 bg-gray-100 border-t border-r"
+                    className="sticky left-0 w-full h-full px-4 py-3 bg-white border-r"
                     style={{ minWidth: "30px" }}
                   >
                     Action
@@ -485,7 +485,7 @@ const SubCategory = () => {
                     key={Subcategory.id}
                     className="transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50"
                   >
-                    <td className="sticky left-0 h-full px-4 py-3 bg-white border-r">
+                    <td className="sticky left-0 w-full h-full px-4 py-3 bg-white border-r">
                       <div
                         className="flex justify-start space-x-3"
                         style={{ minWidth: "30px" }}
