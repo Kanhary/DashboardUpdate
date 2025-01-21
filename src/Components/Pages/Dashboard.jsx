@@ -253,7 +253,7 @@ const Dashboard = () => {
             ) : (
               <p className="text-3xl font-semibold text-gray-800">{totalComputers}</p>
             )}
-            <div className="text-sm text-gray-500">+10 this month</div>
+            {/* <div className="text-sm text-gray-500">+10 this month</div> */}
           </div>
           <div className="flex items-center justify-center w-16 h-16 transition-transform transform bg-blue-100 rounded-full hover:scale-105">
             <FiMonitor className="text-blue-500" size={30} />
@@ -261,20 +261,20 @@ const Dashboard = () => {
         </motion.div>
 
         {/* Active Computers */}
-        <motion.div className="flex items-center justify-between p-6 transition-all transition-transform duration-300 transform bg-white rounded-lg shadow-xl hover:shadow-2xl"
-          whileHover={{ scale: 1.02 }}>
-          <div className="flex items-center justify-between px-8">
+        <div className="flex items-center justify-between p-6 bg-white rounded-lg shadow-lg">
           <div>
-            <p className="text-sm text-gray-500">Active Computers</p>
+            <p className="text-sm text-gray-500">In Maintenance</p>
             {loading ? (
               <p className="text-3xl font-semibold text-gray-800">Loading...</p>
             ) : (
               <p className="text-3xl font-semibold text-gray-800">{statusCounts.active}</p>
             )}
           </div>
-          <FiActivity className="text-green-500" size={40} />
+          <div className='flex items-center justify-center w-16 h-16 transition-transform transform bg-green-100 rounded-full hover:scale-105'>
+            <FiMonitor className="text-green-500" size={40} />
+          </div>
+          
         </div>
-        </motion.div>
 
         {/* In Maintenance */}
         <div className="flex items-center justify-between p-6 bg-white rounded-lg shadow-lg">
@@ -286,7 +286,10 @@ const Dashboard = () => {
               <p className="text-3xl font-semibold text-gray-800">{statusCounts.maintenance}</p>
             )}
           </div>
-          <FiActivity className="text-yellow-500" size={40} />
+          <div className='flex items-center justify-center w-16 h-16 transition-transform transform bg-yellow-100 rounded-full hover:scale-105'>
+            <FiMonitor className="text-yellow-500" size={40} />
+          </div>
+          
         </div>
 
         {/* Broken Computers */}
@@ -299,7 +302,10 @@ const Dashboard = () => {
               <p className="text-3xl font-semibold text-gray-800">{statusCounts.broken}</p>
             )}
           </div>
-          <FiAlertCircle className="text-red-500" size={40} />
+          <div className='flex items-center justify-center w-16 h-16 transition-transform transform bg-red-100 rounded-full hover:scale-105'>
+            <FiMonitor className="text-red-500" size={40} />
+          </div>
+          
         </div>
       </div>
 
@@ -311,13 +317,6 @@ const Dashboard = () => {
         </div>
 
         <div className="p-6 bg-white rounded-lg shadow-lg">
-          <h2 className="mb-4 text-lg font-semibold text-gray-800">Computer Trend Over Time</h2>
-          <Line data={computerTrendData} options={chartOptions} />
-        </div>
-      </div>
-
-      {/* Recent Activities Section */}
-      <div className="p-6 bg-white rounded-lg shadow-lg">
         <h2 className="mb-4 text-lg font-semibold text-gray-800">Recent Activities</h2>
         <ul className="space-y-4">
           {recentActivities.map((activity) => (
@@ -331,6 +330,28 @@ const Dashboard = () => {
           ))}
         </ul>
       </div>
+
+        {/* <div className="p-6 bg-white rounded-lg shadow-lg">
+          <h2 className="mb-4 text-lg font-semibold text-gray-800">Computer Trend Over Time</h2>
+          <Line data={computerTrendData} options={chartOptions} />
+        </div> */}
+      </div>
+
+      {/* Recent Activities Section */}
+      {/* <div className="p-6 bg-white rounded-lg shadow-lg">
+        <h2 className="mb-4 text-lg font-semibold text-gray-800">Recent Activities</h2>
+        <ul className="space-y-4">
+          {recentActivities.map((activity) => (
+            <li key={activity.id} className="flex items-center">
+              <div className="mr-3">{activity.icon}</div>
+              <div>
+                <p className="text-gray-700">{activity.activity}</p>
+                <p className="text-sm text-gray-500">{activity.time}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div> */}
     </div>
   );
 };
