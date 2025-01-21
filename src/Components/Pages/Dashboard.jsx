@@ -98,6 +98,7 @@ const Dashboard = () => {
         ],
         borderWidth: 2,
         borderRadius: 12,
+        
       },
     ],
   };
@@ -173,6 +174,7 @@ const Dashboard = () => {
         borderColor: 'rgba(255, 255, 255, 0.2)',
         borderWidth: 1,
         borderRadius: 8,
+        
       },
     },
     scales: {
@@ -263,7 +265,7 @@ const Dashboard = () => {
         {/* Active Computers */}
         <div className="flex items-center justify-between p-6 bg-white rounded-lg shadow-lg">
           <div>
-            <p className="text-sm text-gray-500">In Maintenance</p>
+            <p className="text-sm text-gray-500">In Active  </p>
             {loading ? (
               <p className="text-3xl font-semibold text-gray-800">Loading...</p>
             ) : (
