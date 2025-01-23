@@ -27,7 +27,7 @@ const User = () => {
     username: "",
     nickname: "",
     usercode: "",
-    staffCode: "",
+    staffcode: "",
     email: "",
     mobile: "",
     sex: "",
@@ -104,7 +104,6 @@ const User = () => {
         const updatedData = {
           ...prevData,
           avatar: file,
-          path: pictureUrl, // Temporary URL for image preview
         };
         console.log("Updated formData:", updatedData);
         return updatedData;
@@ -295,76 +294,83 @@ const User = () => {
 
   const handleSave = async () => {
     const validationErrors = {};
-
+  
     // Validate required fields
-    if (!formData.staffcode)
-      validationErrors.staffcode = "Staff Code is required";
+    if (!formData.staffcode) validationErrors.staffcode = "Staff Code is required";
     if (!formData.username) validationErrors.username = "Username is required";
     if (!formData.email) validationErrors.email = "Email is required";
     if (!formData.password) validationErrors.password = "Password is required";
-
-    // Check for validation errors
+  
     if (Object.keys(validationErrors).length > 0) {
       console.log("Validation errors:", validationErrors);
       setErrors(validationErrors);
-      return; // Stop if there are validation errors
+      return;
     }
-
-    // Prepare the updated form data
+  
     const updatedFormData = {
-      ...formData,
+      usercode: formData.usercode || "",
+      username: formData.username,
+      email: formData.email,
+      password: formData.password,
+      mobile: formData.mobile || "",
+      nickname: formData.nickname || "",
       roleId: selectedOption ? selectedOption.value : "",
-      staffcode: selectedOption ? selectedOption.value : "",
-      creator: currentUser, // Use the fetched username as creator
-      updater: currentUser, // Use the fetched username as updater
+      staffcode: formData.staffcode || "",
+      creator: currentUser,
+      updater: currentUser,
       createTime: new Date().toISOString(),
       updateTime: new Date().toISOString(),
+      avatar: formData.avatar || null,
     };
-
-    console.log("FormData before API call:", updatedFormData); // Debug: check if staffcode is correct
-
+  
+    console.log("Payload being sent:", updatedFormData);
+  
     setIsLoading(true);
-
+  
     try {
-      // Call the API to add the user
+      // 1. Upload image if exists
+      // if (formData.avatar && typeof formData.avatar !== "string") {
+      //   const imageFormData = new FormData();
+      //   imageFormData.append("file", formData.avatar);
+  
+      //   const imageResponse = await axios.post(
+      //     "http://192.168.168.4:8888/user/upload-image",
+      //     imageFormData,
+      //     { headers: { "Content-Type": "multipart/form-data" } }
+      //   );
+  
+      //   updatedFormData.avatar = imageResponse.data.imageUrl; // Assuming API returns the image URL
+      //   console.log("Image uploaded successfully:", imageResponse.data.imageUrl);
+      // }
+  
+      // 2. Add user
       const addUserResponse = await AddUser(updatedFormData);
-
-      // Log the response for debugging
       console.log("User created successfully:", addUserResponse);
-
-      // Display success message
+  
       Swal.fire({
         title: "Success!",
         text: "User created successfully.",
         icon: "success",
       });
-      // window.location.reload();
-
+      openAddModal(false);
       fetchUsers();
-      // closeAddModal(); // Close the modal on success
     } catch (error) {
       console.error("Error during user creation:", error);
-
-      // Enhanced error handling
+  
       if (error.response) {
         const errorMessage =
           error.response.data.message || "Error during user creation";
-        console.error("Response data:", error.response.data); // Log the detailed error response
-
-        // Handle specific error for user already exists
-        if (errorMessage.includes("User already exists")) {
-          setErrors({
-            general:
-              "This user already exists. Please use a different username or email.",
-          });
-        } else {
-          setErrors({ general: errorMessage });
-        }
+        console.error("Response data:", error.response.data);
+  
+        setErrors({
+          general: errorMessage.includes("User already exists")
+            ? "This user already exists. Please use a different username or email."
+            : errorMessage,
+        });
       } else {
         setErrors({ general: "Network error" });
       }
-
-      // Display error message
+  
       Swal.fire({
         title: "Error!",
         text:
@@ -373,9 +379,11 @@ const User = () => {
         icon: "error",
       });
     } finally {
-      setIsLoading(false); // Ensure loading state is reset
+      setIsLoading(false);
     }
   };
+  
+  
 
   const handleSaveRole = async () => {
     const { id, roleId } = formData; // Extract user ID and role ID(s) from formData
@@ -1309,45 +1317,49 @@ const User = () => {
                     </div>
 
                     {/* Right Side: Picture Upload */}
-                    <div className="flex items-center w-full space-y-4 justify-evenly lg:justify-center lg:flex-col md:w-1/4">
-                      <div className="relative flex items-center justify-center w-40 h-40 overflow-hidden bg-gray-100 rounded-lg shadow-lg">
-                        {formData.avatar ? (
-                          <img
-                            src={formData.path} // Use the stored path
-                            alt="Profile"
-                            className="object-cover w-full h-full"
-                          />
-                        ) : (
-                          <svg
-                            className="w-12 h-12 text-gray-400"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M12 4v16m8-8H4"
-                            />
-                          </svg>
-                        )}
-                      </div>
-                      <input
-                        type="file"
-                        id="avatar"
-                        accept="image/*"
-                        onChange={handlePictureChange}
-                        className="hidden"
-                      />
-                      <label
-                        htmlFor="avatar"
-                        className="flex items-center px-4 py-2 text-sm font-semibold text-center text-white transition-colors duration-200 bg-blue-500 rounded-lg cursor-pointer hover:bg-blue-600"
-                      >
-                        {formData.avatar ? "Change Picture" : "Upload Picture"}
-                      </label>
-                    </div>
+                    <form
+        action="http://192.168.168.4:8888/user/upload-image"
+        method="POST"
+        encType="multipart/form-data"
+        className="flex items-center w-full space-y-4 justify-evenly lg:justify-center lg:flex-col md:w-1/4"
+      >
+        <div className="relative flex items-center justify-center w-40 h-40 overflow-hidden bg-gray-100 rounded-lg shadow-lg">
+          {formData.avatar ? (
+            <img
+              src={
+                typeof formData.avatar === "string"
+                  ? formData.avatar
+                  : URL.createObjectURL(formData.avatar)
+              }
+              alt="Profile"
+              className="object-cover w-full h-full"
+            />
+          ) : (
+            <svg
+              className="w-12 h-12 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+          )}
+        </div>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) =>
+            setFormData({ ...formData, avatar: e.target.files[0] })
+          }
+          className="mt-2"
+        />
+      </form>
                   </form>
 
                   <footer className="flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">
