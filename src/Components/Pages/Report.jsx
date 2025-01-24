@@ -194,7 +194,7 @@ const Report = () => {
                     className="block w-full text-sm border border-gray-300 rounded-lg shadow-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 focus:ring-1 disabled:opacity-50 disabled:pointer-events-none text-neutral-400 file:border-0 file:me-4 file:py-3 file:px-4 file:bg-blue-600 file:text-white"
                   />
                   <button
-                    onClick={() => uploadFile("http://192.168.168.4:8888/staffImport/import-staff", "Staff")}
+                    onClick={() => uploadFile("http://192.168.168.4:8888/product/importProduct", "product")}
                     disabled={loading.import}
                     className={`flex items-center px-4 py-2 text-white text-sm font-medium rounded-lg shadow-md ${loading.import ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`}
                   >

@@ -107,27 +107,29 @@ const StaffInfo = () => {
     3: ["Finance Office 1", "Finance Office 2"], // Offices under Finance
   };
 
-  useEffect(() => {
-    const fetchAllStaff = async () => {
-      try {
-        const response = await GetAllStaff();
-        console.log("Response data:", response.data);
 
-        const employeesData = response.data?.data || response.data;
-        if (Array.isArray(employeesData)) {
-          setEmployees(employeesData);
-        } else {
-          console.error("Unexpected data format:", employeesData);
-          setErrors({ message: "Unexpected API response format" });
-        }
-      } catch (err) {
-        // Log and capture more details about the error
-        console.error("Error details:", err.response || err);
-        const errorMessage =
-          err.response?.data?.message || "An unknown error occurred";
-        setErrors({ message: errorMessage });
+  const fetchAllStaff = async () => {
+    try {
+      const response = await GetAllStaff();
+      console.log("Response data:", response.data);
+
+      const employeesData = response.data?.data || response.data;
+      if (Array.isArray(employeesData)) {
+        setEmployees(employeesData);
+      } else {
+        console.error("Unexpected data format:", employeesData);
+        setErrors({ message: "Unexpected API response format" });
       }
-    };
+    } catch (err) {
+      // Log and capture more details about the error
+      console.error("Error details:", err.response || err);
+      const errorMessage =
+        err.response?.data?.message || "An unknown error occurred";
+      setErrors({ message: errorMessage });
+    }
+  };
+  useEffect(() => {
+    
 
     const fetchAllDep = async () => {
       try {
@@ -424,7 +426,8 @@ const StaffInfo = () => {
     const date = new Date(isoString);
     return date.toLocaleString();
   };
-  const handleSaveEmployee = async () => {
+  const handleSaveEmployee = async (e) => {
+    e.preventDefault();
     // Ensure formData has the correct structure with all fields
     const updatedFormData = {
       ...formData, // Spread existing form data

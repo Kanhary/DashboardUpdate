@@ -82,22 +82,22 @@ const Dashboard = () => {
         data: [statusCounts.active, statusCounts.maintenance, statusCounts.broken],
         backgroundColor: [
           'rgba(99, 102, 241, 0.7)', // Active
-          'rgba(239, 68, 68, 0.7)', // Inactive
-          'rgba(234, 179, 8, 0.7)',  // Broken
+          'rgba(234, 179, 8, 0.7)',// Inactive
+          'rgba(239, 68, 68, 0.7)',  // Broken
         ],
         
         hoverBackgroundColor: [
           'rgba(99, 102, 241, 0.9)',
-          'rgba(239, 68, 68, 0.9)',
           'rgba(234, 179, 8, 0.9)',
+          'rgba(239, 68, 68, 0.9)',
         ],
         borderColor: [
           'rgba(99, 102, 241, 1)',
-          'rgba(239, 68, 68, 1)',
           'rgba(234, 179, 8, 1)',
+          'rgba(239, 68, 68, 1)',
         ],
         borderWidth: 2,
-        borderRadius: 12,
+        // borderRadius: 12,
         
       },
     ],
@@ -173,7 +173,7 @@ const Dashboard = () => {
         padding: 12,
         borderColor: 'rgba(255, 255, 255, 0.2)',
         borderWidth: 1,
-        borderRadius: 8,
+        // borderRadius: 8,
         
       },
     },
@@ -265,7 +265,7 @@ const Dashboard = () => {
         {/* Active Computers */}
         <div className="flex items-center justify-between p-6 bg-white rounded-lg shadow-lg">
           <div>
-            <p className="text-sm text-gray-500">In Active  </p>
+            <p className="text-sm text-gray-500">In Active Computers </p>
             {loading ? (
               <p className="text-3xl font-semibold text-gray-800">Loading...</p>
             ) : (

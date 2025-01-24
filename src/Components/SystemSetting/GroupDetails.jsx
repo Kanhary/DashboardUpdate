@@ -99,7 +99,7 @@ const GroupDetails = () => {
 
   const handleSavePermissions = async () => {
     try {
-      const roleId = selectedRole;
+      // const roleId = selectedRole;
 
       if (!roleId) {
         console.error("Role ID is missing!");
@@ -128,6 +128,7 @@ const GroupDetails = () => {
       alert("Failed to update permissions. Please try again.");
     }
   };
+  
 
   const handleRoleChange = (selectedOption) => {
     setRoleId(selectedOption.value);

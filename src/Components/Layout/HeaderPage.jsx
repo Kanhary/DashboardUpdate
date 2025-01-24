@@ -16,6 +16,7 @@ const HeaderPage = ({ toggleSidebar }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [username, setUsername] = useState("");
+  const [id, setID] = useState("");
   const [avatar, setAvatar] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [profileImage, setProfileImage] = useState("");
@@ -31,8 +32,10 @@ const HeaderPage = ({ toggleSidebar }) => {
     GetUserLogin()
       .then((res) => {
         setUsername(res.data.data.username);
+        setID(res.data.data.id)
         // Set the new avatar URL when the login is successful
         setAvatar(`http://localhost:5173/public/img/${res.data.data.avatar}`);
+        
       })
       .catch((error) => {
         console.error("Error fetching user data:", error);
@@ -78,40 +81,38 @@ const HeaderPage = ({ toggleSidebar }) => {
 
   const handleSaveProfileImage = () => {
     if (newProfileImage) {
-      // Get only the file name from the selected image
-      const fileName = newProfileImage.name;
-
-      // Prepare form data with only the file name
+      // Prepare form data with the actual file
       const formData = new FormData();
-      formData.append("avatar", fileName); // Only send the file name, not the actual file
-
+      formData.append("avatar", newProfileImage); // Append the entire file, not just the file name
+  
       // Get the token from local storage
       const token = localStorage.getItem("token");
-      // Make API call to upload only the file name
+  
+      // Make API call to upload the actual file
       axios
-        .post("http://192.168.168.4:8888/user/4/upload-image", formData, {
+        .post(`http://192.168.168.4:8888/user/${id}/upload-image`, formData, {
           headers: {
             Authorization: token,
+            "Content-Type": "multipart/form-data", // Set the correct content type for file uploads
           },
         })
         .then((response) => {
-          console.log("Filename uploaded successfully:", response.data);
-
-          // Close the edit modal and show success alert
+          console.log("Image uploaded successfully:", response.data);
+  
+          // Update the UI and close the modal
           setIsEditModalOpen(false);
           setShowSuccessAlert(true);
-
+          GetUserLogin();
+  
           // Hide alert after 3 seconds
           setTimeout(() => setShowSuccessAlert(false), 3000);
         })
         .catch((error) => {
           console.error(
-            "Error uploading filename:",
+            "Error uploading image:",
             error.response?.data || error.message
           );
-          alert(
-            "Failed to upload filename. Please check the server requirements."
-          );
+          alert("Failed to upload image. Please try again.");
         });
     } else {
       // Handle case when the image is removed
@@ -119,11 +120,12 @@ const HeaderPage = ({ toggleSidebar }) => {
       localStorage.removeItem("profileImage");
       setIsEditModalOpen(false);
       setShowImageRemovalAlert(true);
-
+  
       // Hide alert after 3 seconds
       setTimeout(() => setShowImageRemovalAlert(false), 3000);
     }
   };
+  
 
   // const handleImageChange = (e) => {
   //   setNewProfileImage(e.target.files[0]);

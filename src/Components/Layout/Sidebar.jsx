@@ -174,7 +174,7 @@ const NavItem = ({ icon, text, onClick, to, isActive, dropdownIcon }) => {
   return (
     <li
       className={`flex items-center justify-between px-4 py-3 transition-colors duration-200 cursor-pointer hover:bg-white/10 rounded-md ${
-        isActive ? "bg-white/10" : ""
+        isActive ? "bg-gray-100 text-gray-900" : ""
       }`}
       onClick={onClick}
     >
@@ -182,8 +182,7 @@ const NavItem = ({ icon, text, onClick, to, isActive, dropdownIcon }) => {
         <span className="text-xl">{icon}</span>
         <span className="ml-3 text-base font-normal">{text}</span>
       </Link>
-      {dropdownIcon && <span>{dropdownIcon}</span>}{" "}
-      {/* Render dropdownIcon only if it exists */}
+      {dropdownIcon && <span>{dropdownIcon}</span>}
     </li>
   );
 };
