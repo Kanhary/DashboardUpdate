@@ -5,6 +5,11 @@ import { FaLaptop, FaHdd, FaUser, FaClock } from "react-icons/fa";
 // import { FaHardDrive, FaUser, FaClock } from 'react-icons/fa'; 
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { GetAllComputer, GetProduct, GetMaintenance, AddNewMaintenance, UpdateMaintenance, DeleteMaintenance, GetFile } from '../../api/user';
+import Select from "react-select";
+import Swal from "sweetalert2";
+import { FaPen, FaTrashAlt } from "react-icons/fa";
+import axios from 'axios';
 
 const MaintenancePage = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -12,69 +17,434 @@ const MaintenancePage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState('All');
   const [startDate, setStartDate] = useState('');
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const computersPerPage = 5;
+  const [data, setData] = useState([]);
+  const [selectStaff, setSelectStaff] = useState("");
+  const [selectComputer, setSelectComputer] = useState("");
+  const [formData, setFormData] = useState({productCode: '', lastMaintenance: new Date().toISOString().split("T")[0], technician: '', users: '', history: '', activeDate: new Date().toISOString().split("T")[0], maintenanceId: '', description: ''})
+  const [maintenanceData, setMaintenaceData] = useState([]);
+  const openAddModal = () => setIsAddModalOpen(true);
+  const closeAddModal = () => setIsAddModalOpen(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeTab, setActiveTab] = useState("បន្ថែម");
+  const [detailTab, setDetailTab] = useState("Details");
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingMaintenance, setEditingMaintenance] = useState(null);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
+  // const [maintenanceId, setMaintenanceId] = useState("");
+  const [selectedOption, setSelectedOption] = useState("");
+  const [files, setFile] = useState([]);
+  const [fileName, setFileName] = useState("");
+  const [fileData, setFileData] = useState("");
 
-  const maintenanceData = [
-    {
-      id: 1,
-      computerName: 'PC-01',
-      lastMaintenance: '2024-09-20',
-      technician: 'Alice Johnson',
-      hardwareHistory: [
-        { type: 'CPU', model: 'Intel Core i7', date: '2024-06-15', notes: 'Upgraded from i5' },
-        { type: 'RAM', capacity: '16GB DDR4', date: '2024-08-01', notes: 'Increased for multitasking' },
-        { type: 'Storage', typeOfStorage: '512GB SSD', date: '2024-05-10', notes: 'Upgraded from 256GB SSD' },
-      ],
-      hardDisk: '1TB HDD',
-      startDate: '2023-01-10',
-      activeUser: { name: 'John Doe', 
-      // role: 'Administrator', lastLogin: '2024-10-05', status: 'Active' 
-    },
-    },
-    {
-      id: 2,
-      computerName: 'PC-02',
-      lastMaintenance: '2024-09-25',
-      technician: 'Bob Smith',
-      hardwareHistory: [
-        { type: 'CPU', model: 'AMD Ryzen 5', date: '2024-03-10', notes: 'Standard installation' },
-        { type: 'RAM', capacity: '8GB DDR4', date: '2024-04-12', notes: 'Installed for regular usage' },
-      ],
-      hardDisk: '512GB SSD',
-      startDate: '2023-05-15',
-      activeUser: { name: 'Jane Doe', 
-                    // role: 'User', lastLogin: '2024-10-06', status: 'Inactive' 
-                  },
-    },
-    {
-      id: 3,
-      computerName: 'PC-03',
-      lastMaintenance: '2024-09-20',
-      technician: 'Alice Johnson',
-      hardwareHistory: [
-        { type: 'CPU', model: 'Intel Core i7', date: '2024-06-15', notes: 'Upgraded from i5' },
-        { type: 'RAM', capacity: '16GB DDR4', date: '2024-08-01', notes: 'Increased for multitasking' },
-        { type: 'Storage', typeOfStorage: '512GB SSD', date: '2024-05-10', notes: 'Upgraded from 256GB SSD' },
-      ],
-      hardDisk: '1TB HDD',
-      startDate: '2023-01-10',
-      activeUser: { name: 'John Doe', 
-                    // role: 'Administrator', lastLogin: '2024-10-05', status: 'Active' 
-                  },
-    },
-  ];
+  const fetchMaintenace = async () => {
+    try {
+      const response = await GetMaintenance();
+      console.log("Get Staff code :", response.data.data);
+      setMaintenaceData(response.data.data);
+    } catch (err) {
+      setError({ message: err.message || "An error occurred" });
+    }
+  };
+
+  useEffect(() => {
+    console.log("🔄 useEffect Triggered - Checking maintenanceId...");
+    console.log("Maintenance ID:", selectedComputer?.id);
+  
+    if (detailTab === "ឯកសារយោង" && selectedComputer?.id) {
+      fetchFiles(selectedComputer.id);
+    }
+  }, [detailTab, selectedComputer]);
   
 
-  const filteredData = maintenanceData.filter(computer => {
-    const computerStartDate = new Date(computer.startDate); // Convert string date to Date object
+  const handleTabChange = (tab) => {
+    console.log("Switching tab to:", tab);
+    console.log("Selected Computer Data:", selectedComputer);
+    console.log("Maintenance ID:", selectedComputer?.maintenanceId);
+  
+    setDetailTab(tab);
+  
+    if (tab === "ឯកសារយោង" && selectedComputer?.maintenanceId) {
+      fetchFiles(selectedComputer.maintenanceId);
+    }
+  };
+  
     
-    return (
-      (computer.computerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-       computer.activeUser.name.toLowerCase().includes(searchQuery.toLowerCase())) &&
-      (statusFilter === 'All' || computer.status === statusFilter) &&
-      (!startDate || computerStartDate >= startDate) // Compare properly as Date objects
-    );
-  });
+
+
+  const fetchFiles = async (maintenanceId) => {
+    if (!maintenanceId) {
+      console.warn("⚠️ No maintenance ID found, skipping fetch.");
+      return;
+    }
+  
+    try {
+      console.log(`🔍 Fetching files for Maintenance ID: ${maintenanceId}`);
+      const response = await GetFile(maintenanceId);
+      console.log("✅ Fetched files:", response.data.data);
+  
+      setFile(response.data.data || []);
+    } catch (err) {
+      console.error("❌ Error fetching files:", err);
+    }
+  };
+  
+
+  
+
+  useEffect(() => {
+    const fetchComputer = async () => {
+      try {
+        const response = await GetProduct();
+        console.log("Full API Response:", response); // Log the entire response
+        console.log("Extracted Data:", response.data.data); // Log the expected data
+    
+        if (response.data.data) {
+          setData(response.data.data);
+        } else {
+          console.error("Expected an array but got:", response.data.data);
+          setData([]); // Prevent .map() errors
+        }
+      } catch (err) {
+        console.error("API Error:", err);
+        setError({ message: err.message || "An error occurred" });
+        setData([]); // Set empty array to prevent crashes
+      }
+    };
+
+    
+
+    const fetchCurrentUser = async () => {
+      try {
+        const response = await GetUserLogin(); // Call the API to get the current user
+        setCurrentUser(response.data.data.username); // Assuming the response contains a username field
+        console.log("Fetched user:", response.data.data.username);
+      } catch (error) {
+        console.error("Error fetching current user:", error);
+      }
+    };
+
+    const fetchFile = async () => {
+      try {
+        const response = await GetFile(); // Call the API to get the current user
+        setCurrentUser(response.data.data); // Assuming the response contains a username field
+        console.log("Fetched user:", response.data.data);
+      } catch (error) {
+        console.error("Error fetching current user:", error);
+      }
+    };
+      
+      fetchMaintenace();
+      fetchComputer();
+      fetchCurrentUser();
+      fetchFile()
+  }, []);
+
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
+  };
+
+  // const handleFileChange = (event) => {
+  //   const file = event.target.files[0];
+  //   setSelectedFile(file ? file.name : null);
+  // };
+  const openEditModal = (computer) => {
+    setEditingMaintenance(computer);
+  
+    setFormData({
+      ...computer,
+      lastMaintenance: computer.lastMaintenance
+        ? new Date(computer.lastMaintenance).toISOString().split("T")[0]
+        : "",
+      activeDate: computer.activeDate
+        ? new Date(computer.activeDate).toISOString().split("T")[0]
+        : "",
+    });
+  
+    setIsEditModalOpen(true);
+  };
+  
+
+  const handleStaffChange = (selectedOption) => {
+    if (!selectedOption) {
+      setSelectStaff(""); // Reset staff selection
+      setSelectComputer(""); // Reset computer code
+      return;
+    }
+  
+    const deviceName = selectedOption.value;
+    setSelectStaff(deviceName);
+  
+    // Ensure data is not undefined before accessing .find()
+    const matchedRecord = data?.find((item) => item.deviceName === deviceName);
+    setSelectComputer(matchedRecord ? matchedRecord.productCode : "");
+  };
+  
+  // Ensure data is properly initialized to avoid runtime errors
+  const optionStaffCode = data?.map((item) => ({
+    value: item.deviceName,
+    label: item.deviceName,
+  })) || [];
+
+  const optionMaintenanceId = maintenanceData?.map((maintenance) => ({
+    value: maintenance.id,
+    label: `${maintenance.id} - ${maintenance.users}`,
+  })) || [];
+
+  const handlemaintenanceId = (selectedOption) => {
+    setFormData((prev) => ({
+      ...prev,
+      maintenanceId: selectedOption ? selectedOption.value : "", // Store selected ID as maintenanceId
+    }));
+  };
+  
+  
+  const handleSave = async () => {
+    // Prepare the data for submission
+    const updatedFormData = {
+      ...formData,
+      users: selectStaff || "", // Use plain string
+      productCode: selectComputer || "", // Use plain string
+      createdby: currentUser,
+      lastBy: currentUser,
+      lastdate: new Date().toISOString(),
+    };
+  
+    try {
+      // Call your API to save the data
+      const response = await AddNewMaintenance(updatedFormData);
+  
+      // Show success alert
+      Swal.fire({
+        title: "Saved!",
+        text: "Product has been saved successfully.",
+        icon: "success",
+        confirmButtonText: "Okay",
+      });
+  
+      console.log("API Response:", response);
+      closeAddModal(); // Close the modal on successful save
+      fetchMaintenace();
+    } catch (error) {
+      console.error("Error saving data", error);
+  
+      // Show error alert if something goes wrong
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to save product.",
+        icon: "error",
+        confirmButtonText: "Okay",
+      });
+    }
+  };
+
+  const handleSaveEdit = async () => {
+    if (!formData.id) {
+      Swal.fire({
+        title: "Error!",
+        text: "Maintenance ID is missing.",
+        icon: "error",
+        confirmButtonText: "Okay",
+      });
+      return;
+    }
+  
+    // Prepare the data for submission
+    const updatedFormData = {
+      ...formData,
+      users: selectStaff || "", // Use plain string
+      productCode: selectComputer || "", // Use plain string
+      lastBy: currentUser,
+      lastdate: new Date().toISOString(),
+    };
+  
+    try {
+      // Call your API to update the maintenance record
+      const response = await fetch(
+        `http://192.168.168.4:8888/Maintenance/updateMaintenanceById/${formData.id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedFormData),
+        }
+      );
+  
+      if (!response.ok) {
+        throw new Error("Failed to update maintenance.");
+      }
+  
+      // Show success alert
+      Swal.fire({
+        title: "Updated!",
+        text: "Maintenance record has been updated successfully.",
+        icon: "success",
+        confirmButtonText: "Okay",
+      });
+  
+      console.log("API Response:", await response.json());
+      closeEditModal(); // Close the modal on successful update
+      fetchMaintenace(); // Refresh maintenance data
+    } catch (error) {
+      console.error("Error updating data", error);
+  
+      // Show error alert
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to update maintenance.",
+        icon: "error",
+        confirmButtonText: "Okay",
+      });
+    }
+  };
+  
+
+    const handleDelete = async (id) => {
+        try {
+          const result = await Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#22c55e",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
+          });
+    
+          if (result.isConfirmed) {
+            const response = await DeleteMaintenance(id); // Pass the username here
+            console.log("Response:", response); // Log the response to confirm the deletion
+    
+            if (response.status === 200) {
+              // Check for a successful response
+              Swal.fire({
+                title: "Deleted!",
+                text: "User has been deleted.",
+                icon: "success",
+                confirmButtonText: "Okay",
+              });
+    
+              // Remove the deleted user from the list
+              const updatedUsers = computer.filter((user) => user.id !== id);
+              setFormData(updatedUsers);
+            } else {
+              Swal.fire({
+                title: "Error!",
+                text: "Failed to delete user.",
+                icon: "error",
+                confirmButtonText: "Okay",
+              });
+            }
+          }
+        } catch (error) {
+          console.error(
+            "Error:",
+            error.response ? error.response.data : error.message
+          );
+          Swal.fire({
+            title: "Error!",
+            text:
+              error.response?.data?.message || "Failed to connect to the server.",
+            icon: "error",
+            confirmButtonText: "Okay",
+          });
+        }
+      };
+  
+
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      background: "#fff",
+      borderColor: "#9e9e9e",
+      minHeight: "30px",
+      height: "37px",
+      boxShadow: state.isFocused ? null : null,
+    }),
+
+    valueContainer: (provided, state) => ({
+      ...provided,
+      height: "30px",
+      padding: "0 6px",
+    }),
+
+    input: (provided, state) => ({
+      ...provided,
+      margin: "0px",
+    }),
+    indicatorSeparator: (state) => ({
+      display: "none",
+    }),
+    indicatorsContainer: (provided, state) => ({
+      ...provided,
+      height: "30px",
+    }),
+  };
+
+  // const maintenanceData = [
+  //   {
+  //     id: 1,
+  //     computerName: 'PC-01',
+  //     lastMaintenance: '2024-09-20',
+  //     technician: 'Alice Johnson',
+  //     hardwareHistory: [
+  //       { type: 'CPU', model: 'Intel Core i7', date: '2024-06-15', notes: 'Upgraded from i5' },
+  //       { type: 'RAM', capacity: '16GB DDR4', date: '2024-08-01', notes: 'Increased for multitasking' },
+  //       { type: 'Storage', typeOfStorage: '512GB SSD', date: '2024-05-10', notes: 'Upgraded from 256GB SSD' },
+  //     ],
+  //     hardDisk: '1TB HDD',
+  //     startDate: '2023-01-10',
+  //     activeUser: { name: 'John Doe', 
+  //     // role: 'Administrator', lastLogin: '2024-10-05', status: 'Active' 
+  //   },
+  //   },
+  //   {
+  //     id: 2,
+  //     computerName: 'PC-02',
+  //     lastMaintenance: '2024-09-25',
+  //     technician: 'Bob Smith',
+  //     hardwareHistory: [
+  //       { type: 'CPU', model: 'AMD Ryzen 5', date: '2024-03-10', notes: 'Standard installation' },
+  //       { type: 'RAM', capacity: '8GB DDR4', date: '2024-04-12', notes: 'Installed for regular usage' },
+  //     ],
+  //     hardDisk: '512GB SSD',
+  //     startDate: '2023-05-15',
+  //     activeUser: { name: 'Jane Doe', 
+  //                   // role: 'User', lastLogin: '2024-10-06', status: 'Inactive' 
+  //                 },
+  //   },
+  //   {
+  //     id: 3,
+  //     computerName: 'PC-03',
+  //     lastMaintenance: '2024-09-20',
+  //     technician: 'Alice Johnson',
+  //     hardwareHistory: [
+  //       { type: 'CPU', model: 'Intel Core i7', date: '2024-06-15', notes: 'Upgraded from i5' },
+  //       { type: 'RAM', capacity: '16GB DDR4', date: '2024-08-01', notes: 'Increased for multitasking' },
+  //       { type: 'Storage', typeOfStorage: '512GB SSD', date: '2024-05-10', notes: 'Upgraded from 256GB SSD' },
+  //     ],
+  //     hardDisk: '1TB HDD',
+  //     startDate: '2023-01-10',
+  //     activeUser: { name: 'John Doe', 
+  //                   // role: 'Administrator', lastLogin: '2024-10-05', status: 'Active' 
+  //                 },
+  //   },
+  // ];
+  
+
+  const filteredData = maintenanceData.filter(
+    (computer) =>
+      computer.users?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
+      computer.productCode.includes(searchTerm)
+  );
   
 
   const indexOfLastComputer = currentPage * computersPerPage;
@@ -94,35 +464,121 @@ const MaintenancePage = () => {
     setSelectedComputer(null);
   };
 
+
+  const handleFileChange = (event) => {
+    const files = Array.from(event.target.files); // Convert FileList to array
+    if (files.length > 0) {
+      console.log("File selected:", files[0]); // Debugging
+      setSelectedFiles(files);
+    } else {
+      setSelectedFiles([]);
+    }
+  };
+  
+  
+  const handleFileUpload = async () => {
+    if (!selectedFiles || selectedFiles.length === 0) {
+      Swal.fire({
+        title: "Error!",
+        text: "Please select a valid file before uploading.",
+        icon: "error",
+      });
+      return;
+    }
+  
+    console.log("Selected Files:", selectedFiles);
+  
+    const formDataToSend = new FormData();
+    formDataToSend.append("maintenanceId", formData.maintenanceId);
+  
+    const file = selectedFiles[0];
+    if (!file || !(file instanceof File)) {
+      console.error("Invalid file:", file);
+      return;
+    }
+  
+    // formDataToSend.append("fileData", file);
+    formDataToSend.append("file", file); // 
+
+    formDataToSend.append("description", formData.description);
+  
+    console.log("FormData before sending:");
+    for (let pair of formDataToSend.entries()) {
+      console.log(`${pair[0]}:`, pair[1]);
+    }
+  
+    try {
+      const response = await axios.post(
+        "http://192.168.168.4:8888/Docs/uploadFilePdf",
+        formDataToSend,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+  
+      if (response.status === 200) {
+        Swal.fire({
+          title: "Success!",
+          text: "File uploaded successfully.",
+          icon: "success",
+        });
+        setSelectedFiles([]);
+        setFormData((prev) => ({ ...prev, maintenanceId: "" }));
+      } else {
+        throw new Error(`Upload failed: ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      Swal.fire({
+        title: "Error!",
+        text: error.response?.data?.message || "Failed to upload file.",
+        icon: "error",
+      });
+    }
+  };
+  
+  
+  
+  const handleFileClick = (selectedFileName) => {
+    // Find the file from the state
+    const file = files.find((file) => file.fileName === selectedFileName);
+  
+    if (!file || !file.fileData) {
+      console.warn("⚠️ File data not available.");
+      return;
+    }
+  
+    // Update state with the selected file
+    setFileName(file.fileName);
+    setFileData(file.fileData);
+  
+    // Convert Base64 to binary data
+    const byteCharacters = atob(file.fileData);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const fileBlob = new Blob([byteArray], { type: "application/pdf" });
+  
+    // Create a temporary URL for the file
+    const fileURL = URL.createObjectURL(fileBlob);
+  
+    // Open the file in a new tab
+    window.open(fileURL, "_blank");
+  };
+  
+
+
+
+
   return (
     <div className="min-h-screen mt-10">
       <h1 className='text-xl font-medium text-blue-800'>ការថែទាំ</h1>
       <div className='mt-3 border'></div>
-      {/* <div className="pb-2 mt-5 mb-5 border-b border-gray-300">
-        <div className="flex items-center mb-6">
-          
-          <div className="relative w-1/3">
-            <FaSearch className="absolute text-gray-400 transition duration-200 ease-in-out transform -translate-y-1/2 left-3 top-1/2" />
-            <input
-              type="text"
-              placeholder="Search by computer name or user name..."
-              className="w-full py-2 pl-10 pr-4 transition duration-300 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
 
-          <select
-            className="p-2 ml-3 transition duration-300 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            <option value="All">All Statuses</option>
-            <option value="Completed">Completed</option>
-            <option value="Pending">Pending</option>
-          </select>
-        </div>
-      </div> */}
 
       <div className='mt-4 bg-white rounded-md shadow-md'>
       <div className='flex flex-col items-center justify-between p-4 space-y-3 md:flex-row md:space-y-0 md:space-x-4'>
@@ -145,8 +601,8 @@ const MaintenancePage = () => {
             </div>
           </form>
         </div>
-        <div>
-          <label htmlFor="">Filter by Start Date : </label>
+        <div className="flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3" >
+          {/* <label htmlFor="">Filter by Start Date : </label> */}
           <input
             type="date"
             value={searchQuery}
@@ -154,12 +610,25 @@ const MaintenancePage = () => {
             className='p-2 text-white bg-blue-600 border border-gray-300 rounded-lg'
           />
           <button
-            type="button"
-            className="px-4 py-3 ml-2 text-sm text-white transition duration-200 bg-red-500 rounded-lg hover:bg-red-400"
-            onClick={() => setSearchQuery('')}
-          >
-            Clear
-          </button>
+                type="button"
+                className="flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
+                onClick={openAddModal}
+              >
+                <svg
+                  className="w-4 h-4 mr-2"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
+                  <path
+                    clipRule="evenodd"
+                    fillRule="evenodd"
+                    d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                  />
+                </svg>
+                បន្ថែម
+              </button>
         </div>
       </div>
 
@@ -167,6 +636,12 @@ const MaintenancePage = () => {
         <table className="w-full text-sm text-left text-gray-500">
           <thead className='text-xs text-gray-700 uppercase bg-gray-100 border-t-2'>
             <tr className="bg-gray-100 border-b">
+              <th
+                    scope="col"
+                    className="sticky left-0 px-4 py-3 bg-gray-100 border-t border-r"
+                  >
+                    Action
+              </th>
               <th className="p-4 py-3 border-r border-t">Computer Name</th>
               <th className="p-4 py-3 border-r border-t">Last Maintenance</th>
               <th className="p-4 py-3 border-r border-t">Technician</th>
@@ -177,12 +652,23 @@ const MaintenancePage = () => {
           <tbody>
             {currentComputers.map((computer) => (
               <tr key={computer.id} className="transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50">
-                <td className="p-4 py-3 border-r font-semibold">{computer.computerName}</td>
+                <td className="sticky left-0 z-10 flex items-center px-4 py-5 bg-white border-r">
+                  <FaPen
+                    className="text-blue-500 cursor-pointer hover:text-blue-700"
+                    onClick={() => openEditModal(computer)}
+                  />
+                  <FaTrashAlt
+
+                    className="ml-3 text-red-500 cursor-pointer hover:text-red-700"
+                    onClick={() => handleDelete(computer.id)}
+                  />
+                </td>
+                <td className="p-4 py-3 border-r font-semibold">{computer.productCode}</td>
               
                 <td className="p-4 py-3 border-r">{computer.lastMaintenance}</td>
                 <td className="p-4 py-3 border-r">{computer.technician}</td>
                 <td className="p-4 py-3 border-r">
-                  <span className="font-semibold">{computer.activeUser.name}</span>
+                  <span className="font-semibold">{computer.users}</span>
                 </td>
                 <td className="p-4 py-3">
                   <button
@@ -258,16 +744,16 @@ const MaintenancePage = () => {
 
       {/* details modal */}
       {selectedComputer && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-75 backdrop-blur-sm">
-          <div className="w-11/12 p-8 transition-all transform scale-100 bg-white rounded-lg shadow-xl md:w-3/4 lg:w-1/2">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
+          <div className="relative mx-auto transition-all transform bg-white shadow-2xl rounded-xl h-[600px] overflow-y-auto w-[1000px]">
             {/* Header */}
-            <div className="flex items-center justify-between pb-4 mb-6 border-b-2 border-gray-200">
+            <div className="flex items-center justify-between pb-4 mb-2 border-b-2 border-gray-200 p-6">
               <div className="flex items-center space-x-3">
                 <div className="p-2 bg-blue-100 rounded-full">
                   <FaLaptop className="text-blue-500" size={32} />
                 </div>
                 <h3 className="text-3xl font-extrabold text-gray-900">
-                  {selectedComputer.computerName}
+                  {selectedComputer.productCode}
                 </h3>
               </div>
               <button
@@ -280,48 +766,96 @@ const MaintenancePage = () => {
             </div>
 
             {/* Computer Details */}
-            <div className="grid grid-cols-2 gap-6 mb-10">
-              <div>
-                <p className="text-sm font-semibold text-gray-500">Last Maintenance:</p>
-                <p className="text-lg text-gray-900">{selectedComputer.lastMaintenance}</p>
+            <div className='px-6'>
+            <div className="w-full mb-4">
+              <div className="flex space-x-4 border-b mb-6">
+                <button
+                  className={`p-2 ${
+                    detailTab === "Details"
+                      ? "border-b-2 border-blue-500"
+                      : ""
+                  }`}
+                  onClick={() => handleTabChange("Details")}
+                >
+                  បន្ថែម
+                </button>
+                <button
+                  className={`p-2 ${
+                    detailTab === "ឯកសារយោង"
+                      ? "border-b-2 border-blue-500"
+                      : ""
+                  }`}
+                  onClick={() => handleTabChange("ឯកសារយោង")}
+                >
+                  ឯកសារយោង
+                </button>
               </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-500">Technician:</p>
-                <p className="text-lg text-gray-900">{selectedComputer.technician}</p>
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-500">Hard Disk:</p>
-                <div className="flex items-center space-x-2">
-                  <FaHdd className="text-gray-500" />
-                  <p className="text-lg text-gray-900">{selectedComputer.hardDisk}</p>
+              {detailTab === "Details" && (
+                <div>
+                  <div className="grid grid-cols-2 gap-6 mb-10">
+                    <div>
+                      <p className="text-sm font-semibold text-gray-500">Last Maintenance:</p>
+                      <p className="text-lg text-gray-900">{selectedComputer.lastMaintenance}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-500">Technician:</p>
+                      <p className="text-lg text-gray-900">{selectedComputer.technician}</p>
+                    </div>
+                    
+                    <div>
+                      <p className="text-sm font-semibold text-gray-500">Start Date:</p>
+                      <p className="text-lg text-gray-900">{selectedComputer.activeDate}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-500">Active User:</p>
+                      <div className="flex items-center space-x-2">
+                        <FaUser className="text-gray-500" />
+                        <p className="text-lg text-gray-900">{selectedComputer.users}</p>
+                      </div>
+                    </div>  
+                  </div>
+
+                {/* Hardware History */}
+                <h4 className="mb-4 text-xl font-semibold text-gray-800">Hardware History</h4>
+                <ul className="mb-8 space-y-2 text-gray-700 list-disc list-inside">
+                  {selectedComputer.history.split("\r\n").map((historyItem, index) => (
+                    <li key={index} className="leading-relaxed transition-colors duration-200 hover:text-blue-500">
+                      <span>{historyItem}</span>
+                    </li>
+                  ))}
+                </ul>
                 </div>
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-500">Start Date:</p>
-                <p className="text-lg text-gray-900">{selectedComputer.startDate}</p>
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-500">Active User:</p>
-                <div className="flex items-center space-x-2">
-                  <FaUser className="text-gray-500" />
-                  <p className="text-lg text-gray-900">{selectedComputer.activeUser.name}</p>
+              )}
+
+              {detailTab === "ឯកសារយោង" && (
+                <div>
+                  {isLoading ? (
+                    <p className="text-gray-500">Loading files...</p>
+                  ) : files.length > 0 ? (
+                    <ul>
+                      {files.map((file, index) => (
+                        <li key={index} className="p-2 bg-gray-100 rounded-md mb-2">
+                          <button
+                            className="text-blue-500 hover:underline"
+                            onClick={() => handleFileClick(file.fileName)}
+                          >
+                            {file.fileName}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-gray-500">No files available.</p>
+                  )}
                 </div>
-              </div>  
+              )}
             </div>
 
-            {/* Hardware History */}
-            <h4 className="mb-4 text-xl font-semibold text-gray-800">Hardware History</h4>
-            <ul className="mb-8 space-y-2 text-gray-700 list-disc list-inside">
-              {selectedComputer.hardwareHistory.map((item, index) => (
-                <li key={index} className="leading-relaxed transition-colors duration-200 hover:text-blue-500">
-                  <span className="font-medium">{item.type}:</span> {item.model || item.capacity}
-                  <span className="italic text-gray-600"> (Date: {item.date})</span> - {item.notes}
-                </li>
-              ))}
-            </ul>
+            </div>
+
 
             {/* Footer */}
-            <div className="flex justify-end space-x-4">
+            <div className="flex justify-end flex-shrink-0 p-4 space-x-4  rounded-b-xl">
               <button
                 className="px-6 py-2 text-white transition-all duration-300 bg-blue-500 rounded-lg shadow hover:bg-blue-600 focus:outline-none"
                 onClick={closeModal}
@@ -333,6 +867,516 @@ const MaintenancePage = () => {
           </div>
         </div>
       )}
+
+      {isAddModalOpen &&(
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
+          <div className="relative mx-auto transition-all transform bg-white shadow-2xl rounded-xl h-[600px] overflow-y-auto w-[1000px]" data-aos="zoom-in">
+          <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
+              <h2 className="text-xl font-bold text-white md:text-2xl">
+                បន្ថែមថ្មី
+              </h2>
+              <button
+                onClick={closeAddModal}
+                className="text-2xl text-white transition duration-200 hover:text-gray-300 md:text-3xl"
+              >
+                &times;
+              </button>
+            </header>
+
+            <div className="w-full p-4">
+              <div className="flex space-x-4 border-b">
+                <button
+                  className={`p-2 ${
+                    activeTab === "បន្ថែម"
+                      ? "border-b-2 border-blue-500"
+                      : ""
+                  }`}
+                  onClick={() => setActiveTab("បន្ថែម")}
+                >
+                  បន្ថែម
+                </button>
+                <button
+                  className={`p-2 ${
+                    activeTab === "ឯកសារយោង"
+                      ? "border-b-2 border-blue-500"
+                      : ""
+                  }`}
+                  onClick={() => setActiveTab("ឯកសារយោង")}
+                >
+                  ឯកសារយោង
+                </button>
+              </div>
+            </div>
+
+            <div>
+              {activeTab === "បន្ថែម" && (
+                <div>
+                  <div className="px-6 py-6 space-y-6">
+              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                <div className="w-full md:w-1/2">
+                <label className="block mb-2 text-sm font-semibold text-gray-700">Select Staff</label>
+                <Select
+                    options={optionStaffCode}
+                    onChange={handleStaffChange}
+                    placeholder="Select Company Code"
+                    value={optionStaffCode.find(
+                      (option) => option.value === data.deviceName
+                    )}
+                    isClearable
+                    className="basic-single"
+                    classNamePrefix="select"
+                    styles={customStyles}
+                  />
+                </div>
+                <div className="w-full md:w-1/2">
+                  <label className="block mb-2 text-sm font-semibold text-gray-700">Computer Code</label>
+                  <input
+                    type="text"
+                    value={selectComputer}
+                    readOnly
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+              <div className="w-full md:w-1/2">
+                  <label
+                    htmlFor="lastMaintenance"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Last Maintenance
+                  </label>
+                  <input
+                    type='date'
+                    id="lastMaintenance"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.lastMaintenance}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="w-full md:w-1/2">
+                  <label
+                    htmlFor="activeDate"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Active Date
+                  </label>
+                  <input
+                    type='date'
+                    id="activeDate"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.activeDate}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                <div className="w-full md:w-1/2">
+                  <label
+                    htmlFor="technician"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Technician
+                  </label>
+                  <input
+                    id="technician"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.technician}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                
+              </div>
+              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                <div className="w-full ">
+                  <label
+                    htmlFor="history"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    History
+                  </label>
+                  <textarea
+                    id="history"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.history}
+                    onChange={handleChange}
+                    required
+                    rows={5}
+                  />
+                </div>
+                
+              </div>
+            </div>
+            <footer className="flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">
+                    <button
+                      onClick={handleSave}
+                      className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto"
+                    >
+                      Save
+                    </button>
+
+                    <button
+                      // onClick={closeEditModal}
+                      className="w-full px-5 py-2 text-sm font-medium text-gray-700 transition duration-200 transform bg-gray-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105 md:w-auto"
+                    >
+                      Cancel
+                    </button>
+                  </footer>
+                </div>
+              )}
+
+              {activeTab === "ឯកសារយោង" && (
+                <div>
+                <div className="px-6 py-6 space-y-6">
+                  {/* Flexbox container for form fields */}
+                  <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                    {/* File input field */}
+                    <div className="w-full md:w-1/2">
+                      <label
+                        htmlFor="lastMaintenance"
+                        className="block mb-2 text-sm font-semibold text-gray-700"
+                      >
+                        ឯកសារយោង
+                      </label>
+                      <input
+                        type="file"
+                        id="file"
+                        onChange={handleFileChange}
+                        accept=".pdf"
+                        className="block w-full text-sm border border-gray-300 rounded-lg shadow-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 focus:ring-1 disabled:opacity-50 disabled:pointer-events-none text-neutral-400 file:border-0 file:me-4 file:py-3 file:px-4 file:bg-blue-600 file:text-white"
+                      />
+
+                      {selectedFiles && selectedFiles.length > 0 && (
+                        <p className="mt-2 text-sm text-gray-600">
+                          Selected file: {selectedFiles[0].name}
+                        </p>
+                      )}
+
+                    </div>
+          
+                    {/* Text input field */}
+                    <div className="w-full md:w-1/2">
+                      <label
+                        htmlFor="activeDate"
+                        className="block mb-2 text-sm font-semibold text-gray-700"
+                      >
+                        បរិយាយ
+                      </label>
+                      <Select
+                        options={optionMaintenanceId}
+                        onChange={handlemaintenanceId}
+                        placeholder="Select Company Code"
+                        value={optionMaintenanceId.find(
+                          (option) => option.value === formData.maintenanceId // Ensure correct mapping
+                        )}
+                        isClearable
+                        className="basic-single"
+                        classNamePrefix="select"
+                        styles={customStyles}
+                      />
+
+                    </div>
+                  </div>
+                  <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                    {/* File input field */}
+                    
+          
+                    {/* Text input field */}
+                    <div className="w-full">
+                      <label
+                        htmlFor="description"
+                        className="block mb-2 text-sm font-semibold text-gray-700"
+                      >
+                        បរិយាយ
+                      </label>
+                      <textarea
+                        id="description"
+                        type="text" 
+                        onChange={handleChange}
+                        value={formData.description}
+                        className="block w-full py-3 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200 text-center"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <button
+        onClick={handleFileUpload}
+        className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
+      >
+        Upload File
+      </button>
+                </div>
+                
+              </div>
+              )}
+              
+            </div>
+
+            
+          </div>
+        </div>
+      )}
+
+
+      {isEditModalOpen &&(
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
+          <div className="relative mx-auto transition-all transform bg-white shadow-2xl rounded-xl h-[600px] overflow-y-auto w-[1000px]" data-aos="zoom-in">
+          <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
+              <h2 className="text-xl font-bold text-white md:text-2xl">
+                បន្ថែមថ្មី
+              </h2>
+              <button
+                onClick={closeAddModal}
+                className="text-2xl text-white transition duration-200 hover:text-gray-300 md:text-3xl"
+              >
+                &times;
+              </button>
+            </header>
+
+            <div className="w-full p-4">
+              <div className="flex space-x-4 border-b">
+                <button
+                  className={`p-2 ${
+                    activeTab === "បន្ថែម"
+                      ? "border-b-2 border-blue-500"
+                      : ""
+                  }`}
+                  onClick={() => setActiveTab("បន្ថែម")}
+                >
+                  បន្ថែម
+                </button>
+                <button
+                  className={`p-2 ${
+                    activeTab === "ឯកសារយោង"
+                      ? "border-b-2 border-blue-500"
+                      : ""
+                  }`}
+                  onClick={() => setActiveTab("ឯកសារយោង")}
+                >
+                  ឯកសារយោង
+                </button>
+              </div>
+            </div>
+
+            <div>
+              {activeTab === "បន្ថែម" && (
+                <div>
+                  <div className="px-6 py-6 space-y-6">
+              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                <div className="w-full md:w-1/2">
+                <label className="block mb-2 text-sm font-semibold text-gray-700">Select Staff</label>
+                <Select
+                    options={optionStaffCode}
+                    onChange={handleStaffChange}
+                    placeholder="Select Company Code"
+                    value={optionStaffCode.find(
+                      (option) => option.value === data.deviceName
+                    )}
+                    isClearable
+                    className="basic-single"
+                    classNamePrefix="select"
+                    styles={customStyles}
+                  />
+                </div>
+                <div className="w-full md:w-1/2">
+                  <label className="block mb-2 text-sm font-semibold text-gray-700">Computer Code</label>
+                  <input
+                    type="text"
+                    value={selectComputer}
+                    readOnly
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+              <div className="w-full md:w-1/2">
+                  <label
+                    htmlFor="lastMaintenance"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Last Maintenance
+                  </label>
+                  <input
+                    type='date'
+                    id="lastMaintenance"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.lastMaintenance}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="w-full md:w-1/2">
+                  <label
+                    htmlFor="activeDate"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Active Date
+                  </label>
+                  <input
+                    type='date'
+                    id="activeDate"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.activeDate}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                <div className="w-full md:w-1/2">
+                  <label
+                    htmlFor="technician"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Technician
+                  </label>
+                  <input
+                    id="technician"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.technician}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                
+              </div>
+              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                <div className="w-full ">
+                  <label
+                    htmlFor="history"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    History
+                  </label>
+                  <textarea
+                    id="history"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.history}
+                    onChange={handleChange}
+                    required
+                    rows={5}
+                  />
+                </div>
+                
+              </div>
+            </div>
+            <footer className="flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">
+                    <button
+                      onClick={handleSave}
+                      className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto"
+                    >
+                      Save
+                    </button>
+
+                    <button
+                      // onClick={closeEditModal}
+                      className="w-full px-5 py-2 text-sm font-medium text-gray-700 transition duration-200 transform bg-gray-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105 md:w-auto"
+                    >
+                      Cancel
+                    </button>
+                  </footer>
+                </div>
+              )}
+
+              {activeTab === "ឯកសារយោង" && (
+                <div>
+                <div className="px-6 py-6 space-y-6">
+                  {/* Flexbox container for form fields */}
+                  <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                    {/* File input field */}
+                    <div className="w-full md:w-1/2">
+                      <label
+                        htmlFor="lastMaintenance"
+                        className="block mb-2 text-sm font-semibold text-gray-700"
+                      >
+                        ឯកសារយោង
+                      </label>
+                      <input
+                        type="file"
+                        id="file"
+                        onChange={handleFileChange}
+                        accept=".pdf"
+                        className="block w-full text-sm border border-gray-300 rounded-lg shadow-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 focus:ring-1 disabled:opacity-50 disabled:pointer-events-none text-neutral-400 file:border-0 file:me-4 file:py-3 file:px-4 file:bg-blue-600 file:text-white"
+                      />
+
+                      {selectedFiles && selectedFiles.length > 0 && (
+                        <p className="mt-2 text-sm text-gray-600">
+                          Selected file: {selectedFiles[0].name}
+                        </p>
+                      )}
+
+                    </div>
+          
+                    {/* Text input field */}
+                    <div className="w-full md:w-1/2">
+                      <label
+                        htmlFor="activeDate"
+                        className="block mb-2 text-sm font-semibold text-gray-700"
+                      >
+                      maintenanceId
+                      </label>
+                      <Select
+                        options={optionMaintenanceId}
+                        onChange={handlemaintenanceId}
+                        placeholder="Select Company Code"
+                        value={optionMaintenanceId.find(
+                          (option) => option.value === formData.maintenanceId // Ensure correct mapping
+                        )}
+                        isClearable
+                        className="basic-single"
+                        classNamePrefix="select"
+                        styles={customStyles}
+                      />
+
+                    </div>
+                  </div>
+                  <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                    {/* File input field */}
+                    
+          
+                    {/* Text input field */}
+                    <div className="w-full">
+                      <label
+                        htmlFor="description"
+                        className="block mb-2 text-sm font-semibold text-gray-700"
+                      >
+                        បរិយាយ
+                      </label>
+                      <textarea
+                        id="description"
+                        type="text" 
+                        onChange={handleChange}
+                        value={formData.description}
+                        className="block w-full py-3 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200 text-center"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleFileUpload}
+                    className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
+                  >
+                    Upload File
+                  </button>
+                </div>
+                
+              </div>
+              )}
+              
+            </div>
+
+            
+          </div>
+        </div>
+      )}
+      
 
     </div>
   );

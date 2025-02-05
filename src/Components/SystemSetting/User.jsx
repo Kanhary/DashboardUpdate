@@ -64,6 +64,7 @@ const User = () => {
   const [userId, setUserId] = useState(null);
   const [mergedData, setMergedData] = useState([]);
   const [roleName, setRoleName] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState([]);
 
   const [Avatar, setAvatar] = useState(null);
   const recordsPerPage = 8;

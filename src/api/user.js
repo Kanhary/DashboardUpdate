@@ -574,3 +574,51 @@ export function GetAllComputer() {
       url: `/Product/totalComputerCount`,
     });
 }
+
+
+export function GetMaintenance() {
+  return request({
+    method: "GET",
+    url: `/Maintenance/getAllMaintenances`,
+  });
+}
+
+export function AddNewMaintenance(data) {
+  return request({
+    method: "POST",
+    url: "/Maintenance/addNewMaintenance",
+    data: data,
+  });
+}
+
+
+export function UpdateMaintenance(id, data) {
+  return request({
+    method: "POST",
+    url: `/updateMaintenanceById/${id}`,
+    data: data,
+  });
+}
+
+export function DeleteMaintenance(id) {
+  return request({
+    method: "DELETE",
+    url: `/Maintenance/deleteMaintenanceById/${id}`,
+  });
+}
+
+export function uploadFile(data) {
+  return request({
+    method: "POST",
+    url: "/Docs/uploadFilePdf",
+    data: data,
+  });
+}
+
+
+export function GetFile(id) {
+  return request({
+    method: "GET",
+    url: `/Docs/getByMaintenanceId/${id}`,
+  });
+}
