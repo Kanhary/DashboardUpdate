@@ -53,7 +53,7 @@ const MaintenancePage = () => {
   };
 
   useEffect(() => {
-    console.log("🔄 useEffect Triggered - Checking maintenanceId...");
+    // console.log(" useEffect Triggered - Checking maintenanceId...");
     console.log("Maintenance ID:", selectedComputer?.id);
   
     if (detailTab === "ឯកសារយោង" && selectedComputer?.id) {
@@ -224,7 +224,7 @@ const MaintenancePage = () => {
       // Show success alert
       Swal.fire({
         title: "Saved!",
-        text: "Product has been saved successfully.",
+        text: "Maintenance has been saved successfully.",
         icon: "success",
         confirmButtonText: "Okay",
       });
@@ -238,7 +238,7 @@ const MaintenancePage = () => {
       // Show error alert if something goes wrong
       Swal.fire({
         title: "Error!",
-        text: "Failed to save product.",
+        text: "Failed to save maintenance.",
         icon: "error",
         confirmButtonText: "Okay",
       });
@@ -546,7 +546,7 @@ const MaintenancePage = () => {
     const file = files.find((file) => file.fileName === selectedFileName);
   
     if (!file || !file.fileData) {
-      console.warn("⚠️ File data not available.");
+      console.warn("File data not available.");
       return;
     }
   
@@ -571,6 +571,11 @@ const MaintenancePage = () => {
   };
   
 
+  const closeEditModal = (computer) => {
+    setEditingUser(null);
+    setFormData(computer);
+    setIsEditModalOpen(false);
+  };
 
 
 
@@ -745,7 +750,7 @@ const MaintenancePage = () => {
       {/* details modal */}
       {selectedComputer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
-          <div className="relative mx-auto transition-all transform bg-white shadow-2xl rounded-xl h-[600px] overflow-y-auto w-[1000px]">
+          <div className="relative mx-auto transition-all transform bg-white shadow-2xl rounded-xl h-[600px] overflow-y-auto w-[700px]">
             {/* Header */}
             <div className="flex items-center justify-between pb-4 mb-2 border-b-2 border-gray-200 p-6">
               <div className="flex items-center space-x-3">
@@ -1131,7 +1136,7 @@ const MaintenancePage = () => {
                 បន្ថែមថ្មី
               </h2>
               <button
-                onClick={closeAddModal}
+                onClick={closeEditModal}
                 className="text-2xl text-white transition duration-200 hover:text-gray-300 md:text-3xl"
               >
                 &times;
@@ -1269,14 +1274,14 @@ const MaintenancePage = () => {
             </div>
             <footer className="flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">
                     <button
-                      onClick={handleSave}
+                      onClick={handleSaveEdit}
                       className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto"
                     >
                       Save
                     </button>
 
                     <button
-                      // onClick={closeEditModal}
+                      onClick={closeEditModal}
                       className="w-full px-5 py-2 text-sm font-medium text-gray-700 transition duration-200 transform bg-gray-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105 md:w-auto"
                     >
                       Cancel
@@ -1371,7 +1376,7 @@ const MaintenancePage = () => {
               )}
               
             </div>
-
+            
             
           </div>
         </div>
