@@ -90,7 +90,7 @@ const HeaderPage = ({ toggleSidebar }) => {
   
       // Make API call to upload the actual file
       axios
-        .post(`http://192.168.168.4:8888/user/${id}/upload-image`, formData, {
+        .post(`http://192.168.100.55:2223/user/${id}/upload-image`, formData, {
           headers: {
             Authorization: token,
             "Content-Type": "multipart/form-data", // Set the correct content type for file uploads

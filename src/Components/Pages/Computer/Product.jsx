@@ -3,6 +3,8 @@ import { FaPen, FaTrashAlt } from "react-icons/fa";
 import Select from "react-select";
 import { IoMdRefresh } from "react-icons/io";
 import Swal from "sweetalert2";
+import { FiPlus } from "react-icons/fi";
+import axios from "axios";
 import {
   GetProduct,
   GetCategory,
@@ -13,6 +15,9 @@ import {
   DeleteProduct,
   GetAllStaff,
   GetDep,
+  GetFile,
+  AddNewMaintenance,
+  GetMaintenance,
 } from "../../../api/user";
 
 
@@ -52,6 +57,14 @@ const Product = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [Staffs, setStaff] = useState([]);
   const [department, setDepartment] = useState([]);
+  const [selectMaintenance, setMaintenance] = useState([]);
+  const [contextMenu, setContextMenu] = useState(null);
+  const [selectedProductId, setSelectedProductId] = useState(null);
+  const [selectComputer, setSelectComputer] = useState(null);
+  const [activeModal, setActiveModal] = useState(null);
+  const [maintenanceData, setMaintenaceData] = useState({id: ''});
+  const [maintenanceId, setMaintenanceId] = useState(null)
+
 
   // const DepList = [
   //   { CompanyCode: 'PPAP', DepartmentCode: 'Dep-admin', Department: 'នាយកដ្ឋាន រដ្ឋបាល',  BranchCode: 'TS3' },
@@ -115,6 +128,18 @@ const Product = () => {
         setError({ message: err.message || "An error occurred" });
       }
     };
+
+    const fetchMaintenace = async () => {
+        try {
+          const response = await GetMaintenance();
+          console.log("Get maintenance :", response.data.data);
+          setMaintenaceData(response.data.data);
+        } catch (err) {
+          setError({ message: err.message || "An error occurred" });
+        }
+    };
+
+
     
     fetchAllStaff();
     fetchSubCategory();
@@ -122,6 +147,7 @@ const Product = () => {
     fetchComputer();
     fetchAllDep()
     fetchCurrentUser();
+    fetchMaintenace();
   }, []);
 
   // useEffect(() => {
@@ -507,6 +533,40 @@ const Product = () => {
     window.location.reload();
   };
 
+
+  const handleRightClick = (event, computer) => {
+    console.log("Right-click triggered for ID:", computer.id); // Log the computer object
+    console.log("Right click triggered for maintenance ID :", maintenanceData.id);
+    event.preventDefault();
+    setContextMenu({
+      visible: true,
+      x: event.clientX,
+      y: event.clientY,
+    });
+    setSelectComputer(computer); // Ensure the full computer object is passed here
+    setMaintenanceId(computer);
+  };
+  
+  
+
+
+  const handleMenuClick = (modalType, computer) => {
+    console.log('Right-click triggered for computer ID:', computer.id); // Log the computer object
+    setActiveModal(modalType);
+    setSelectComputer(computer);  // Pass the full computer object to the modal
+    setContextMenu(null);  // Close the context menu after the click
+  };
+  
+  
+  
+  
+
+  const closeModal = () => {
+    setActiveModal(null);
+    setSelectComputer(null);
+  }
+
+
   return (
     <section className="mt-10 font-khmer">
       <h1 className="text-xl font-medium text-blue-800">តារាងកុំព្យូទ័រ</h1>
@@ -750,6 +810,9 @@ const Product = () => {
                   >
                     Supplier
                   </th>
+                  <th className="px-4 py-3 border-r">
+                    Details
+                  </th>
                   <th
                     scope="col"
                     className="px-4 py-3 border-r"
@@ -770,6 +833,7 @@ const Product = () => {
                 {currentComputer.map((computer, index) => (
                   <tr
                     key={computer.id}
+                    onContextMenu={(e) => handleRightClick(e, computer)}
                     className="transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50"
                   >
                     <td className="sticky left-0 w-full h-full px-4 py-3 bg-white border-r">
@@ -813,6 +877,7 @@ const Product = () => {
                     <td className="px-4 py-4 border-r">{computer.supply}</td>
                     <td className="px-4 py-4 border-r">{computer.lastBy}</td>
                     <td className="px-4 py-4 border-r">{computer.lastdate}</td>
+                    <td className="px-4 py-4 border-r"></td>
                   </tr>
                 ))}
               </tbody>
@@ -1533,7 +1598,8 @@ const Product = () => {
                   </label>
                   <input
                     id="storageSize"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    className="block w-full px-4 py-2 text-sm text-gray-
+                    border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                     value={formData.storageSize}
                     onChange={handleChange}
                     required
@@ -1805,8 +1871,1077 @@ const Product = () => {
           </div>
         </div>
       )}
+
+      {/* {selectMaintenance && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
+                  <div className="relative mx-auto transition-all transform bg-white shadow-2xl rounded-xl h-[500px] overflow-y-auto w-[700px]">
+                    <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
+                      <h2 className="text-xl font-bold text-white md:text-2xl">
+                        Details
+                      </h2>
+                      <button
+                        // onClick={closeAddModal}
+                        className="text-2xl text-white transition duration-200 hover:text-gray-300 md:text-3xl"
+                      >
+                        &times;
+                      </button>
+                    </header>
+
+                  </div>
+                </div>
+      )} */}
+
+{contextMenu && (
+  <div
+    className="absolute bg-white shadow-lg rounded-md border z-50"
+    style={{ top: contextMenu.y, left: contextMenu.x }}
+  >
+    <ul className="p-2 space-y-1 text-gray-700">
+      <li
+        className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+        onClick={() => handleMenuClick("addMaintenance", selectComputer)} // Pass the entire computer object
+      >
+        Add Maintenance
+      </li>
+      <li
+        className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+        onClick={() => handleMenuClick("modifyMaintenance", selectComputer)} // Pass the entire computer object
+      >
+        Modify Maintenance
+      </li>
+      <li
+        className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+        onClick={() => handleMenuClick("viewDetails", selectComputer)} // Pass the entire computer object
+      >
+        View Details
+      </li>
+    </ul>
+  </div>
+)}
+
+
+      {/* Modals */}
+      {activeModal === "addMaintenance" && selectComputer && (
+      <AddMaintenanceModal computer={selectComputer} closeModal={closeModal} />
+    )}
+    {activeModal === "modifyMaintenance" && selectComputer && (
+      <ModifyMaintenanceModal computer={selectComputer} closeModal={closeModal} />
+    )}
+    {activeModal === 'viewDetails' && selectComputer && (
+      <ViewDetailsModal
+        computer={selectComputer}
+        closeModal={() => setActiveModal(null)} // Function to close the modal
+      />
+    )}
+
     </section>
   );
 };
 
-export default Product;
+const AddMaintenanceModal = ({ computer, closeModal }) => {
+  const [activeTab, setActiveTab] = useState("Add Maintenance");
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [formData, setFormData] = useState({
+    productCode: '',
+    lastMaintenance: new Date().toISOString().split("T")[0],
+    technician: '',
+    users: '',
+    history: '',
+    activeDate: new Date().toISOString().split("T")[0],
+    maintenanceId: computer?.id || '',
+    // subCategoryId: 
+    description: '',
+    subcategoryId : ''
+  });
+  const [subCate, setSubCate] = useState([]);
+
+
+  useEffect(() => {
+    const fetchSubCategory = async () => {
+      try {
+        const response = await GetSubCategory(); // Call the API to get the subcategories
+        console.log("Fetched subcategories:", response.data); // Check the actual structure of the response
+        setSubCate(response.data.data); // Set the subcategories array (assuming it contains the necessary data)
+      } catch (error) {
+        console.error("Error fetching subcategory:", error);
+      }
+    };
+
+    fetchSubCategory();
+  }, [])
+
+  const optionSubCate = subCate?.map((sub) => ({
+    value: sub.id,
+    label: `${sub.id} - ${sub.subCategoryCode}`,
+  })) || [];
+
+  const handleSubCate = (selectedOption) => {
+    setFormData({
+      ...formData,
+      subcategoryId: selectedOption ? selectedOption.value : "", // Update subcategoryId correctly
+    });
+  };
+  
+
+  useEffect(() => {
+    setFormData((prev) => ({ ...prev, maintenanceId: computer?.id || '' }));
+  }, [computer]);
+
+  const handleFileChange = (event) => {
+    const files = Array.from(event.target.files);
+    setSelectedFiles(files.length > 0 ? files : []);
+  };
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const handleFileUpload = async () => {
+    if (!selectedFiles.length) {
+      Swal.fire({ title: "Error!", text: "Please select a valid file before uploading.", icon: "error" });
+      return;
+    }
+    
+    if (!formData.maintenanceId) {
+      Swal.fire({ title: "Error!", text: "Invalid maintenance ID.", icon: "error" });
+      return;
+    }
+
+    const formDataToSend = new FormData();
+    formDataToSend.append("maintenanceId", formData.maintenanceId);
+    formDataToSend.append("file", selectedFiles[0]);
+    formDataToSend.append("description", formData.description);
+
+    try {
+      const response = await axios.post("http://192.168.100.55:2223/Docs/uploadFilePdf", formDataToSend, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      if (response.status === 200) {
+        Swal.fire({ title: "Success!", text: "File uploaded successfully.", icon: "success" });
+        setSelectedFiles([]);
+      } else {
+        throw new Error(`Upload failed: ${response.statusText}`);
+      }
+    } catch (error) {
+      Swal.fire({ title: "Error!", text: error.response?.data?.message || "Failed to upload file.", icon: "error" });
+    }
+  };
+
+
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      background: "#fff",
+      borderColor: "#9e9e9e",
+      minHeight: "30px",
+      height: "37px",
+      boxShadow: state.isFocused ? null : null,
+    }),
+
+    valueContainer: (provided, state) => ({
+      ...provided,
+      height: "30px",
+      padding: "0 6px",
+    }),
+
+    input: (provided, state) => ({
+      ...provided,
+      margin: "0px",
+    }),
+    indicatorSeparator: (state) => ({
+      display: "none",
+    }),
+    indicatorsContainer: (provided, state) => ({
+      ...provided,
+      height: "30px",
+    }),
+  };
+
+  const handleSave = async () => {
+    // Prepare the data for submission
+    const updatedFormData = {
+      productId: computer.id,
+      subCategoryId: formData.subcategoryId,  // Assuming it's from Select component
+      users: formData.users,
+      technician: formData.technician,
+      lastMaintenance: formData.lastMaintenance,
+      history: formData.history
+    };
+  
+    try {
+      // Call your API to save the data
+      const response = await AddNewMaintenance(updatedFormData);
+  
+      // Show success alert
+      Swal.fire({
+        title: "Saved!",
+        text: "Maintenance has been saved successfully.",
+        icon: "success",
+        confirmButtonText: "Okay",
+      });
+  
+      console.log("API Response:", response);
+  
+      // Close modal and refresh maintenance data
+      closeModal();
+      fetchMaintenance(); // Assuming you have a function to fetch the latest maintenance data
+    } catch (error) {
+      console.error("Error saving data", error);
+  
+      // Show error alert if something goes wrong
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to save maintenance.",
+        icon: "error",
+        confirmButtonText: "Okay",
+      });
+    }
+  };
+  
+  
+  
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
+  <div className="relative mx-auto transition-all transform bg-white shadow-2xl rounded-xl w-[1000px] max-h-[1000px] flex flex-col">
+        <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
+          <h2 className="text-xl font-bold text-white md:text-2xl">Add Maintenance</h2>
+          <button onClick={closeModal} className="text-2xl text-white transition duration-200 hover:text-gray-300 md:text-3xl">&times;</button>
+        </header>
+        <div className="w-full p-4">
+          <div className="flex space-x-4 border-b">
+            <button className={`p-2 ${activeTab === "Add Maintenance" ? "border-b-2 border-blue-500" : ""}`} onClick={() => setActiveTab("Add Maintenance")}>បន្ថែម</button>
+            <button className={`p-2 ${activeTab === "ឯកសារយោង" ? "border-b-2 border-blue-500" : ""}`} onClick={() => setActiveTab("ឯកសារយោង")}>ឯកសារយោង</button>
+          </div>
+        </div>
+
+
+        {activeTab === "Add Maintenance" &&(
+          <div>
+            <div className="px-6 py-6 space-y-6">
+            <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+              <div className="w-full md:w-1/2">
+              <label className="block mb-2 text-sm font-semibold text-gray-700">Select Staff</label>
+                <Select
+                    options={optionSubCate}
+                    onChange={handleSubCate}
+                    placeholder="Select Company Code"
+                    value={optionSubCate.find(
+                      (option) => option.value === formData.subcategoryId
+                    )}
+                    isClearable
+                    className="basic-single"
+                    classNamePrefix="select"
+                    styles={customStyles}
+                  />
+              </div>
+
+              <div className="w-full md:w-1/2">
+                  <label
+                    htmlFor="user"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    User
+                  </label>
+                  <input
+                    id="users"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.users}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+            </div>
+
+            <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                <div className="w-full md:w-1/2">
+                  <label
+                    htmlFor="technician"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Technician
+                  </label>
+                  <input
+                    id="technician"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.technician}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+              <div className="w-full md:w-1/2">
+                  <label
+                    htmlFor="user"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Last Maintenance
+                  </label>
+                  <input
+                    id="lastMaintenance"
+                    type="date"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.lastMaintenance}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+            </div>
+            <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                <div className="w-full ">
+                  <label
+                    htmlFor="history"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    History
+                  </label>
+                  <textarea
+                    id="history"
+                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    value={formData.history}
+                    onChange={handleChange}
+                    required
+                    rows={5}
+                  />
+                </div>
+                
+              </div>
+          </div>
+          <footer className="flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">
+            <button
+              onClick={handleSave}
+              className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto"
+            >
+              Save
+            </button>
+
+            <button
+              onClick={closeModal}
+              className="w-full px-5 py-2 text-sm font-medium text-gray-700 transition duration-200 transform bg-gray-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105 md:w-auto"
+            >
+              Cancel
+            </button>
+          </footer>
+          </div>
+        )}
+ 
+        {activeTab === "ឯកសារយោង" && (
+          <div className="px-6 py-6 space-y-6">
+            <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+              <div className="w-full md:w-1/2">
+                <label htmlFor="file" className="block mb-2 text-sm font-semibold text-gray-700">ឯកសារយោង</label>
+                <input type="file" id="file" onChange={handleFileChange} accept=".pdf" className="block w-full text-sm border border-gray-300 rounded-lg shadow-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 focus:ring-1 disabled:opacity-50 disabled:pointer-events-none text-neutral-400 file:border-0 file:me-4 file:py-3 file:px-4 file:bg-blue-600 file:text-white" />
+                {selectedFiles.length > 0 && <p className="mt-2 text-sm text-gray-600">Selected file: {selectedFiles[0].name}</p>}
+              </div>
+              <div className="w-full md:w-1/2">
+                <label htmlFor="description" className="block mb-2 text-sm font-semibold text-gray-700">បរិយាយ</label>
+                <input id="description" type="text" onChange={handleChange} value={formData.description} className="block w-full py-3 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200 text-center" required />
+              </div>
+            </div>
+            <button onClick={handleFileUpload} className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600">Upload File</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+
+const ModifyMaintenanceModal = ({computer, closeModal}) =>{
+  const [activeTab, setActiveTab] = useState("Modify Maintenance");
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [formData, setFormData] = useState({
+    id: '',
+    productCode: '',
+    lastMaintenance: new Date().toISOString().split("T")[0],
+    technician: '',
+    users: '',
+    history: '',
+    activeDate: new Date().toISOString().split("T")[0],
+    maintenanceId: computer?.id || '',
+    // subCategoryId: 
+    description: '',
+    subcategoryId : ''
+  });
+  const [subCate, setSubCate] = useState([]);
+  const [isModifyModalOpen, setIsModifyModalOpen] = useState(false);
+  const [Maintenance, setMaintenance] = useState([]);
+
+  const openModifyModal = (selectedMaintenance) => {
+    setFormData({
+      subcategoryId: selectedMaintenance.subcategoryId || "",
+      users: selectedMaintenance.users || "",
+      technician: selectedMaintenance.technician || "",
+      lastMaintenance: selectedMaintenance.lastMaintenance || "",
+    });
+    setIsModifyModalOpen(true);
+  };
+
+
+  const fetchMaintenace = async () => {
+      try {
+        const response = await GetMaintenance();
+        console.log("Get Maintenance :", response.data.data);
+        setFormData(response.data.data);
+      } catch (err) {
+        // setError({ message: err.message || "An error occurred" });
+      }
+    };
+
+  useEffect(() => {
+    const fetchSubCategory = async () => {
+      try {
+        const response = await GetSubCategory(); // Call the API to get the subcategories
+        console.log("Fetched subcategories:", response.data); // Check the actual structure of the response
+        setSubCate(response.data.data); // Set the subcategories array (assuming it contains the necessary data)
+      } catch (error) {
+        console.error("Error fetching subcategory:", error);
+      }
+    };
+
+
+
+    fetchSubCategory();
+    fetchMaintenace();
+  }, [])
+
+  const optionSubCate = subCate?.map((sub) => ({
+    value: sub.id,
+    label: `${sub.id} - ${sub.subCategoryCode}`,
+  })) || [];
+
+  const handleSubCate = (selectedOption) => {
+    setFormData({
+      ...formData,
+      subcategoryId: selectedOption ? selectedOption.value : "", // Update subcategoryId correctly
+    });
+  };
+  
+
+  useEffect(() => {
+    setFormData((prev) => ({ ...prev, maintenanceId: computer?.id || '' }));
+  }, [computer]);
+
+  const handleFileChange = (event) => {
+    const files = Array.from(event.target.files);
+    setSelectedFiles(files.length > 0 ? files : []);
+  };
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const handleFileUpload = async () => {
+    if (!selectedFiles.length) {
+      Swal.fire({ title: "Error!", text: "Please select a valid file before uploading.", icon: "error" });
+      return;
+    }
+    
+    if (!formData.maintenanceId) {
+      Swal.fire({ title: "Error!", text: "Invalid maintenance ID.", icon: "error" });
+      return;
+    }
+
+    const formDataToSend = new FormData();
+    formDataToSend.append("maintenanceId", formData.maintenanceId);
+    formDataToSend.append("file", selectedFiles[0]);
+    formDataToSend.append("description", formData.description);
+
+    try {
+      const response = await axios.post("http://192.168.100.55:2223/Docs/uploadFilePdf", formDataToSend, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      if (response.status === 200) {
+        Swal.fire({ title: "Success!", text: "File uploaded successfully.", icon: "success" });
+        setSelectedFiles([]);
+      } else {
+        throw new Error(`Upload failed: ${response.statusText}`);
+      }
+    } catch (error) {
+      Swal.fire({ title: "Error!", text: error.response?.data?.message || "Failed to upload file.", icon: "error" });
+    }
+  };
+
+
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      background: "#fff",
+      borderColor: "#9e9e9e",
+      minHeight: "30px",
+      height: "37px",
+      boxShadow: state.isFocused ? null : null,
+    }),
+
+    valueContainer: (provided, state) => ({
+      ...provided,
+      height: "30px",
+      padding: "0 6px",
+    }),
+
+    input: (provided, state) => ({
+      ...provided,
+      margin: "0px",
+    }),
+    indicatorSeparator: (state) => ({
+      display: "none",
+    }),
+    indicatorsContainer: (provided, state) => ({
+      ...provided,
+      height: "30px",
+    }),
+  };
+
+  const handleSaveEdit = async () => {
+    if (!formData.maintenanceId) {
+      Swal.fire({
+        title: "Error!",
+        text: "Maintenance ID is missing.",
+        icon: "error",
+        confirmButtonText: "Okay",
+      });
+      return;
+    }
+  
+    // Prepare the data for submission
+    const updatedFormData = {
+      ...formData,
+      subcategoryId: formData.subcategoryId,
+      users: formData.users,
+      technician: formData.technician,
+      lastMaintenance: formData.lastMaintenance,
+      history: formData.history,
+    };
+  
+    try {
+      // Call your API to update the maintenance record
+      const response = await fetch(
+        `http://192.168.100.55:2223/Maintenance/updateMaintenanceById/${formData.maintenanceId}`,
+        {
+          method: "PUT", // Use PUT for updates
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedFormData),
+        }
+      );
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to update maintenance.");
+      }
+  
+      const responseData = await response.json();
+      console.log("API Response:", responseData);
+  
+      // Show success alert
+      Swal.fire({
+        title: "Updated!",
+        text: "Maintenance record has been updated successfully.",
+        icon: "success",
+        confirmButtonText: "Okay",
+      });
+  
+      closeModal(); // Close the modal on successful update
+      fetchMaintenace(); // Refresh maintenance data
+    } catch (error) {
+      console.error("Error updating data:", error.message);
+  
+      // Show error alert
+      Swal.fire({
+        title: "Error!",
+        text: error.message || "Failed to update maintenance.",
+        icon: "error",
+        confirmButtonText: "Okay",
+      });
+    }
+  };
+  
+    
+
+  
+  
+  return(
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
+  <div className="relative mx-auto transition-all transform bg-white shadow-2xl rounded-xl w-[1000px] max-h-[1000px] flex flex-col">
+        <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
+          <h2 className="text-xl font-bold text-white md:text-2xl">Add Maintenance</h2>
+          <button onClick={closeModal} className="text-2xl text-white transition duration-200 hover:text-gray-300 md:text-3xl">&times;</button>
+        </header>
+        <div className="w-full p-4">
+          <div className="flex space-x-4 border-b">
+            <button className={`p-2 ${activeTab === "Modify Maintenance" ? "border-b-2 border-blue-500" : ""}`} onClick={() => setActiveTab("Add Maintenance")}>បន្ថែម</button>
+            <button className={`p-2 ${activeTab === "ឯកសារយោង" ? "border-b-2 border-blue-500" : ""}`} onClick={() => setActiveTab("ឯកសារយោង")}>ឯកសារយោង</button>
+          </div>
+        </div>
+
+
+        {activeTab === "Modify Maintenance" && (
+  <div>
+    <div className="px-6 py-6 space-y-6">
+      <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+        {/* Select Staff */}
+        <div className="w-full md:w-1/2">
+          <label className="block mb-2 text-sm font-semibold text-gray-700">Select Staff</label>
+          <Select
+            options={optionSubCate}
+            onChange={handleSubCate}
+            placeholder="Select Subcategory"
+            value={optionSubCate.find(
+              (option) => option.value === formData.subcategoryId
+            )}
+            isClearable
+            className="basic-single"
+            classNamePrefix="select"
+            styles={customStyles}
+          />
+        </div>
+
+        {/* User */}
+        <div className="w-full md:w-1/2">
+          <label
+            htmlFor="users"
+            className="block mb-2 text-sm font-semibold text-gray-700"
+          >
+            User
+          </label>
+          <input
+            id="users"
+            className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+            value={formData.users}
+            onChange={handleChange}
+            required
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+        {/* Technician */}
+        <div className="w-full md:w-1/2">
+          <label
+            htmlFor="technician"
+            className="block mb-2 text-sm font-semibold text-gray-700"
+          >
+            Technician
+          </label>
+          <input
+            id="technician"
+            className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+            value={formData.technician}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        {/* Last Maintenance Date */}
+        <div className="w-full md:w-1/2">
+          <label
+            htmlFor="lastMaintenance"
+            className="block mb-2 text-sm font-semibold text-gray-700"
+          >
+            Last Maintenance
+          </label>
+          <input
+            id="lastMaintenance"
+            type="date"
+            className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+            value={formData.lastMaintenance}
+            onChange={handleChange}
+            required
+          />
+        </div>
+      </div>
+
+      {/* History */}
+      <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+        <div className="w-full">
+          <label
+            htmlFor="history"
+            className="block mb-2 text-sm font-semibold text-gray-700"
+          >
+            History
+          </label>
+          <textarea
+            id="history"
+            className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+            value={formData.history}
+            onChange={handleChange}
+            required
+            rows={5}
+          />
+        </div>
+      </div>
+    </div>
+
+    {/* Footer with buttons */}
+    <footer className="flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">
+      <button
+        onClick={handleSaveEdit} // This function handles updating the maintenance data
+        className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto"
+      >
+        Update
+      </button>
+
+      <button
+        onClick={closeModal}
+        className="w-full px-5 py-2 text-sm font-medium text-gray-700 transition duration-200 transform bg-gray-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105 md:w-auto"
+      >
+        Cancel
+      </button>
+    </footer>
+  </div>
+)}
+
+ 
+        {activeTab === "ឯកសារយោង" && (
+          <div className="px-6 py-6 space-y-6">
+            <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+              <div className="w-full md:w-1/2">
+                <label htmlFor="file" className="block mb-2 text-sm font-semibold text-gray-700">ឯកសារយោង</label>
+                <input type="file" id="file" onChange={handleFileChange} accept=".pdf" className="block w-full text-sm border border-gray-300 rounded-lg shadow-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 focus:ring-1 disabled:opacity-50 disabled:pointer-events-none text-neutral-400 file:border-0 file:me-4 file:py-3 file:px-4 file:bg-blue-600 file:text-white" />
+                {selectedFiles.length > 0 && <p className="mt-2 text-sm text-gray-600">Selected file: {selectedFiles[0].name}</p>}
+              </div>
+              <div className="w-full md:w-1/2">
+                <label htmlFor="description" className="block mb-2 text-sm font-semibold text-gray-700">បរិយាយ</label>
+                <input id="description" type="text" onChange={handleChange} value={formData.description} className="block w-full py-3 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200 text-center" required />
+              </div>
+            </div>
+            <button onClick={handleFileUpload} className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600">Upload File</button>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+const ViewDetailsModal = ({ computer, closeModal }) => {
+  const [activeTab, setActiveTab] = useState("details"); // Track active tab
+  const [details, setDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [files, setFiles] = useState([]);
+  const [isLoadingFiles, setIsLoadingFiles] = useState(true);
+  const [fileName, setFileName] = useState("");
+  const [fileData, setFileData] = useState("");
+
+  useEffect(() => {
+    const fetchMaintenanceDetails = async () => {
+      if (!computer?.id) {
+        console.error("Invalid computer object or ID");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await axios.get(
+          `http://192.168.100.55:2223/Maintenance/getMaintenancesByProductId/${computer.id}`
+        );
+
+        if (response.data?.data?.length > 0) {
+          setDetails(response.data.data[0]);
+        } else {
+          setDetails(null);
+        }
+      } catch (error) {
+        console.error("Error fetching maintenance details:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMaintenanceDetails();
+  }, [computer]);
+
+  useEffect(() => {
+    const fetchMaintenanceReport = async () => {
+        if (!details || !details.id) return; // Safe check
+
+        try {
+            console.log("Fetching report for ID:", details.id);
+            const response = await GetFile(details.id);
+            console.log("Response Data:", response.data.data);
+
+            setFiles(response.data.data || []);
+        } catch (error) {
+            console.error("Error fetching maintenance report:", error);
+        } finally {
+            setIsLoadingFiles(false);
+        }
+    };
+
+    fetchMaintenanceReport();
+}, [details]);
+
+  
+const handleFileClick = (selectedFileName) => {
+  // Find the file from the state
+  const file = files.find((file) => file.fileName === selectedFileName);
+
+  if (!file || !file.fileData) {
+    console.warn("File data not available.");
+    return;
+  }
+
+  // Update state with the selected file
+  setFileName(file.fileName);
+  setFileData(file.fileData);
+
+  // Convert Base64 to binary data
+  const byteCharacters = atob(file.fileData);
+  const byteNumbers = new Array(byteCharacters.length);
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteNumbers[i] = byteCharacters.charCodeAt(i);
+  }
+  const byteArray = new Uint8Array(byteNumbers);
+  const fileBlob = new Blob([byteArray], { type: "application/pdf" });
+
+  // Create a temporary URL for the file
+  const fileURL = URL.createObjectURL(fileBlob);
+
+  // Open the file in a new tab
+  window.open(fileURL, "_blank");
+};
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
+          <div className="relative mx-auto transition-all transform bg-white shadow-2xl rounded-xl h-[600px] overflow-y-auto w-[1000px]" data-aos="zoom-in">
+      <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
+              <h2 className="text-xl font-bold text-white md:text-2xl">
+                Maintenace View 
+              </h2>
+              <button
+                onClick={closeModal}
+                className="text-2xl text-white transition duration-200 hover:text-gray-300 md:text-3xl"
+              >
+                &times;
+              </button>
+            </header>
+
+        {/* Tabs */}
+        <div className="flex border-b mb-4">
+          <button
+            className={`px-4 py-2 ${
+              activeTab === "details" ? "border-b-2 border-blue-500 font-bold" : "text-gray-500"
+            }`}
+            onClick={() => setActiveTab("details")}
+          >
+            Maintenance Details
+          </button>
+          <button
+            className={`px-4 py-2 ${
+              activeTab === "report" ? "border-b-2 border-blue-500 font-bold" : "text-gray-500"
+            }`}
+            onClick={() => setActiveTab("report")}
+          >
+            Maintenance Report
+          </button>
+        </div>
+
+        {/* Tab Content */}
+        {activeTab === "details" && (
+  <div className="px-6 py-6 space-y-6">
+    <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+      <div className="w-full md:w-1/2">
+        <label className="block mb-2 text-sm font-semibold text-gray-700">Product Code</label>
+          <p className="text-gray-800">{computer.productCode}</p>
+      </div>
+
+      <div className="w-full md:w-1/2">
+        <label className="block mb-2 text-sm font-semibold text-gray-700">Technician</label>
+        <p className="text-gray-800">{details?.technician || "N/A"}</p>
+      </div>
+    </div>
+
+    <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+      <div className="w-full md:w-1/2">
+        <label className="block mb-2 text-sm font-semibold text-gray-700">Date</label>
+        <p className="text-gray-800">{details?.lastMaintenance || "N/A"}</p>
+      </div>
+
+      <div className="w-full md:w-1/2">
+        <p className="text-sm font-semibold text-gray-500">Description</p>
+        <p className="text-gray-800">{details?.description || "No description available"}</p>
+      </div>
+    </div>
+  </div>
+)}
+
+{activeTab === "report" && (
+  <div className="px-6 py-6 space-y-6">
+    {isLoadingFiles ? (
+      <p className="text-gray-500">Loading files...</p>
+    ) : files.length > 0 ? (
+      <ul>
+        {files.map((file, index) => (
+          <li key={index} className="p-2 bg-gray-100 rounded-md mb-2">
+            <button
+              className="text-blue-500 hover:underline"
+              onClick={() => handleFileClick(file.fileName)}
+            >
+              {file.fileName}
+            </button>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p className="text-gray-500">No files available.</p>
+    )}
+  </div>
+)}
+
+{activeTab === "បន្ថែម" && (
+  <div>
+    <div className="px-6 py-6 space-y-6">
+      <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+        <div className="w-full md:w-1/2">
+          <label className="block mb-2 text-sm font-semibold text-gray-700">Select Staff</label>
+          <Select
+            options={optionStaffCode}
+            onChange={handleStaffChange}
+            placeholder="Select Company Code"
+            value={optionStaffCode.find((option) => option.value === data.deviceName)}
+            isClearable
+            className="basic-single"
+            classNamePrefix="select"
+            styles={customStyles}
+          />
+        </div>
+        <div className="w-full md:w-1/2">
+          <label className="block mb-2 text-sm font-semibold text-gray-700">Computer Code</label>
+          <input
+            type="text"
+            value={selectComputer}
+            readOnly
+            className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+        <div className="w-full md:w-1/2">
+          <label htmlFor="lastMaintenance" className="block mb-2 text-sm font-semibold text-gray-700">
+            Last Maintenance
+          </label>
+          <input
+            type="date"
+            id="lastMaintenance"
+            className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+            value={formData.lastMaintenance}
+            onChange={handleChange}
+            required
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+        <div className="w-full md:w-1/2">
+          <label htmlFor="technician" className="block mb-2 text-sm font-semibold text-gray-700">
+            Technician
+          </label>
+          <input
+            id="technician"
+            className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+            value={formData.technician}
+            onChange={handleChange}
+            required
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+        <div className="w-full">
+          <label htmlFor="history" className="block mb-2 text-sm font-semibold text-gray-700">
+            History
+          </label>
+          <textarea
+            id="history"
+            className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+            value={formData.history}
+            onChange={handleChange}
+            required
+            rows={5}
+          />
+        </div>
+      </div>
+    </div>
+    <footer className="flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">
+      <button
+        onClick={handleSave}
+        className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto"
+      >
+        Save
+      </button>
+
+      <button
+        className="w-full px-5 py-2 text-sm font-medium text-gray-700 transition duration-200 transform bg-gray-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105 md:w-auto"
+      >
+        Cancel
+      </button>
+    </footer>
+  </div>
+)}
+
+{activeTab === "ឯកសារយោង" && (
+  <div className="px-6 py-6 space-y-6">
+    <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+      <div className="w-full md:w-1/2">
+        <label htmlFor="file" className="block mb-2 text-sm font-semibold text-gray-700">
+          ឯកសារយោង
+        </label>
+        <input
+          type="file"
+          id="file"
+          onChange={handleFileChange}
+          accept=".pdf"
+          className="block w-full text-sm border border-gray-300 rounded-lg shadow-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 focus:ring-1 disabled:opacity-50 disabled:pointer-events-none text-neutral-400 file:border-0 file:me-4 file:py-3 file:px-4 file:bg-blue-600 file:text-white"
+        />
+        {selectedFiles && selectedFiles.length > 0 && (
+          <p className="mt-2 text-sm text-gray-600">
+            Selected file: {selectedFiles[0].name}
+          </p>
+        )}
+      </div>
+
+      <div className="w-full md:w-1/2">
+        <label htmlFor="description" className="block mb-2 text-sm font-semibold text-gray-700">
+          បរិយាយ
+        </label>
+        <textarea
+          id="description"
+          type="text"
+          onChange={handleChange}
+          value={formData.description}
+          className="block w-full py-3 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200 text-center"
+          required
+        />
+      </div>
+    </div>
+    <button
+      onClick={handleFileUpload}
+      className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
+    >
+      Upload File
+    </button>
+  </div>
+)}
+
+
+        {/* Close Button */}
+        {/* <button
+          className="px-4 py-2 bg-red-500 text-white rounded-md mt-4"
+          onClick={closeModal}
+        >
+          Close
+        </button> */}
+      </div>
+    </div>
+  );
+};
+
+
+export default Product

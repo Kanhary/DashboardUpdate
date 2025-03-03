@@ -622,3 +622,11 @@ export function GetFile(id) {
     url: `/Docs/getByMaintenanceId/${id}`,
   });
 }
+
+export function GetMaintenanceByID(id) {
+  return request({
+    method: "POST",
+    url: "/Maintenance/getMaintenancesByProductId/id",
+    data: data,
+  });
+}

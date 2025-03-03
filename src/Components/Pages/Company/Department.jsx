@@ -145,7 +145,7 @@ const Department = () => {
       // Show success alert
       Swal.fire({
         title: "Saved!",
-        text: "Office has been saved successfully.",
+        text: "Department has been saved successfully.",
         icon: "success",
         confirmButtonText: "Okay",
       });
@@ -159,7 +159,7 @@ const Department = () => {
       // Show error alert if something goes wrong
       Swal.fire({
         title: "Error!",
-        text: "Failed to save office.",
+        text: "Failed to save department.",
         icon: "error",
         confirmButtonText: "Okay",
       });
@@ -168,12 +168,12 @@ const Department = () => {
 
   const handleUpdate = async () => {
     try {
-      console.log("Saving office data:", formData);
+      console.log("Saving department data:", formData);
       const id = formData.id; // Ensure this is valid
       if (!id) {
         Swal.fire({
           title: "Error",
-          text: "Office ID is missing",
+          text: "Department ID is missing",
           icon: "warning",
         });
         return;
@@ -182,10 +182,10 @@ const Department = () => {
       const response = await UpdateDep(id, formData);
 
       if (response.status === 200) {
-        console.log("Office updated successfully:", response.data);
+        console.log("Department updated successfully:", response.data);
         Swal.fire({
           title: "Successful",
-          text: "Office updated successfully",
+          text: "Department updated successfully",
           icon: "success",
         });
         setIsEditModalOpen(false); // Close the edit modal
@@ -258,7 +258,7 @@ const Department = () => {
         } else {
           Swal.fire({
             title: "Error!",
-            text: "Failed to delete spouse.",
+            text: "Failed to delete department.",
             icon: "error",
             confirmButtonText: "Okay",
           });

@@ -43,7 +43,7 @@ const GroupDetails = () => {
     if (roleId) {
       const fetchRolePermissions = async () => {
         try {
-          const apiUrl = `http://192.168.168.4:8888/RoleMenu/menuName/${roleId}`;
+          const apiUrl = `http://192.168.100.55:2223/RoleMenu/menuName/${roleId}`;
           const response = await axios.get(apiUrl);
   
           if (response.data.code === 200) {
@@ -111,7 +111,7 @@ const GroupDetails = () => {
         .map((permission) => permission.menuId);
 
       const payload = enabledMenuIds;
-      const apiUrl = `http://192.168.168.4:8888/RoleMenu/${roleId}/menus`;
+      const apiUrl = `http://192.168.100.55:2223/RoleMenu/${roleId}/menus`;
 
       await axios.post(apiUrl, payload, {
         headers: {

@@ -182,7 +182,7 @@ const LoginForm = () => {
       
             {/* Background Image */}
             <img
-              src="/login_bg.jpg"
+              src="/ppap-img.jpg"
               alt=""
               className="object-cover w-full h-full rounded-r-2xl"
             />
@@ -207,6 +207,7 @@ const LoginForm = () => {
                     គេហទំព័រ Facebook
                   </button>
                 </a>
+
               </div>
             </div>
           </div>

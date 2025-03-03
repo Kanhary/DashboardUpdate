@@ -79,7 +79,7 @@ const MaintenancePage = () => {
 
   const fetchFiles = async (maintenanceId) => {
     if (!maintenanceId) {
-      console.warn("⚠️ No maintenance ID found, skipping fetch.");
+      console.warn("No maintenance ID found, skipping fetch.");
       return;
     }
   
@@ -131,7 +131,7 @@ const MaintenancePage = () => {
 
     const fetchFile = async () => {
       try {
-        const response = await GetFile(); // Call the API to get the current user
+         // const response = await GetFile(); // Call the API to get the current user
         setCurrentUser(response.data.data); // Assuming the response contains a username field
         console.log("Fetched user:", response.data.data);
       } catch (error) {
@@ -268,7 +268,7 @@ const MaintenancePage = () => {
     try {
       // Call your API to update the maintenance record
       const response = await fetch(
-        `http://192.168.168.4:8888/Maintenance/updateMaintenanceById/${formData.id}`,
+        `http://192.168.100.55:2223/Maintenance/updateMaintenanceById/${formData.id}`,
         {
           method: "POST",
           headers: {
@@ -442,8 +442,9 @@ const MaintenancePage = () => {
 
   const filteredData = maintenanceData.filter(
     (computer) =>
-      computer.users?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
-      computer.productCode.includes(searchTerm)
+      computer.users?.toLowerCase().includes(searchTerm?.toLowerCase()) 
+    // ||
+      // computer.productCode.includes(searchTerm)
   );
   
 
@@ -509,7 +510,7 @@ const MaintenancePage = () => {
   
     try {
       const response = await axios.post(
-        "http://192.168.168.4:8888/Docs/uploadFilePdf",
+        "http://192.168.100.55:2223/Docs/uploadFilePdf",
         formDataToSend,
         {
           headers: {
@@ -961,22 +962,7 @@ const MaintenancePage = () => {
                     required
                   />
                 </div>
-                <div className="w-full md:w-1/2">
-                  <label
-                    htmlFor="activeDate"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
-                  >
-                    Active Date
-                  </label>
-                  <input
-                    type='date'
-                    id="activeDate"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.activeDate}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
+                
               </div>
 
               <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
@@ -1110,11 +1096,11 @@ const MaintenancePage = () => {
                     </div>
                   </div>
                   <button
-        onClick={handleFileUpload}
-        className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
-      >
-        Upload File
-      </button>
+                    onClick={handleFileUpload}
+                    className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
+                  >
+                    Upload File
+                  </button>
                 </div>
                 
               </div>
@@ -1216,7 +1202,7 @@ const MaintenancePage = () => {
                     required
                   />
                 </div>
-                <div className="w-full md:w-1/2">
+                {/* <div className="w-full md:w-1/2">
                   <label
                     htmlFor="activeDate"
                     className="block mb-2 text-sm font-semibold text-gray-700"
@@ -1231,7 +1217,7 @@ const MaintenancePage = () => {
                     onChange={handleChange}
                     required
                   />
-                </div>
+                </div> */}
               </div>
 
               <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">

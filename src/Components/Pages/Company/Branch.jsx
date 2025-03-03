@@ -216,7 +216,7 @@ const Branch = () => {
       if (!id) {
         Swal.fire({
           title: "Error",
-          text: "Office ID is missing",
+          text: "Branch ID is missing",
           icon: "warning",
         });
         return;
@@ -225,10 +225,10 @@ const Branch = () => {
       const response = await UpdateBranch(id, formData);
 
       if (response.status === 200) {
-        console.log("Office updated successfully:", response.data);
+        console.log("Branch updated successfully:", response.data);
         Swal.fire({
           title: "Successful",
-          text: "Office updated successfully",
+          text: "Branch updated successfully",
           icon: "success",
         });
         setIsEditModalOpen(false); // Close the edit modal
@@ -288,7 +288,7 @@ const Branch = () => {
         if (response.status === 200) {
           Swal.fire({
             title: "Deleted!",
-            text: "Office has been deleted.",
+            text: "Branch has been deleted.",
             icon: "success",
             confirmButtonText: "Okay",
           });
@@ -300,7 +300,7 @@ const Branch = () => {
         } else {
           Swal.fire({
             title: "Error!",
-            text: "Failed to delete office.",
+            text: "Failed to delete branch.",
             icon: "error",
             confirmButtonText: "Okay",
           });

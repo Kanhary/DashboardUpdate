@@ -141,7 +141,7 @@ const User = () => {
       const rolePromises = usersData.map(async (user) => {
         try {
           const roleResponse = await axios.get(
-            `http://192.168.168.4:8888/user/getRoleName/${user.username}`
+            `http://192.168.100.55:2223/user/getRoleName/${user.username}`
           );
           const roleName = roleResponse.data.data[0]?.roleName || "Unknown"; // Extract roleName
           return { ...user, roleName }; // Add roleName to user object
@@ -1319,7 +1319,7 @@ const User = () => {
 
                     {/* Right Side: Picture Upload */}
                     <form
-        action="http://192.168.168.4:8888/user/upload-image"
+        action="http://192.168.100.55:2223/user/upload-image"
         method="POST"
         encType="multipart/form-data"
         className="flex items-center w-full space-y-4 justify-evenly lg:justify-center lg:flex-col md:w-1/4"
