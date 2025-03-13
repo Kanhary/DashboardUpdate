@@ -5,7 +5,7 @@ import { FaLaptop, FaHdd, FaUser, FaClock } from "react-icons/fa";
 // import { FaHardDrive, FaUser, FaClock } from 'react-icons/fa'; 
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { GetAllComputer, GetProduct, GetMaintenance, AddNewMaintenance, UpdateMaintenance, DeleteMaintenance, GetFile } from '../../api/user';
+import { GetAllComputer, GetProduct, GetMaintenance, AddNewMaintenance, UpdateMaintenance, DeleteMaintenance, GetFile, GetSubCategory } from '../../api/user';
 import Select from "react-select";
 import Swal from "sweetalert2";
 import { FaPen, FaTrashAlt } from "react-icons/fa";
@@ -22,7 +22,7 @@ const MaintenancePage = () => {
   const [data, setData] = useState([]);
   const [selectStaff, setSelectStaff] = useState("");
   const [selectComputer, setSelectComputer] = useState("");
-  const [formData, setFormData] = useState({productCode: '', lastMaintenance: new Date().toISOString().split("T")[0], technician: '', users: '', history: '', activeDate: new Date().toISOString().split("T")[0], maintenanceId: '', description: ''})
+  const [formData, setFormData] = useState({productId: '', lastMaintenance: new Date().toISOString().split("T")[0],subCategoryId: '', technician: '', users: '', history: '', activeDate: new Date().toISOString().split("T")[0],})
   const [maintenanceData, setMaintenaceData] = useState([]);
   const openAddModal = () => setIsAddModalOpen(true);
   const closeAddModal = () => setIsAddModalOpen(false);
@@ -41,6 +41,7 @@ const MaintenancePage = () => {
   const [files, setFile] = useState([]);
   const [fileName, setFileName] = useState("");
   const [fileData, setFileData] = useState("");
+  const [subCate, setSubCate] = useState([]);
 
   const fetchMaintenace = async () => {
     try {
@@ -59,6 +60,18 @@ const MaintenancePage = () => {
     if (detailTab === "ឯកសារយោង" && selectedComputer?.id) {
       fetchFiles(selectedComputer.id);
     }
+
+    const fetchSubCategory = async () => {
+      try {
+        const response = await GetSubCategory(); // Call the API to get the subcategories
+        console.log("Fetched subcategories:", response.data); // Check the actual structure of the response
+        setSubCate(response.data.data); // Set the subcategories array (assuming it contains the necessary data)
+      } catch (error) {
+        console.error("Error fetching subcategory:", error);
+      }
+    };
+
+    fetchSubCategory();
   }, [detailTab, selectedComputer]);
   
 
@@ -206,15 +219,54 @@ const MaintenancePage = () => {
   };
   
   
+  // const handleSave = async () => {
+  //   // Prepare the data for submission
+  //   const updatedFormData = {
+  //     ...formData,
+      
+  //     productId: selectComputer || "", // Use plain string
+  //     createdby: currentUser,
+  //     createDate: new Date().toISOString(),
+  //     lastdate: new Date().toISOString(),
+  //   };
+  
+  //   try {
+  //     // Call your API to save the data
+  //     const response = await AddNewMaintenance(updatedFormData);
+  
+  //     // Show success alert
+  //     Swal.fire({
+  //       title: "Saved!",
+  //       text: "Maintenance has been saved successfully.",
+  //       icon: "success",
+  //       confirmButtonText: "Okay",
+  //     });
+  
+  //     console.log("API Response:", response);
+  //     closeAddModal(); // Close the modal on successful save
+  //     fetchMaintenace();
+  //   } catch (error) {
+  //     console.error("Error saving data", error);
+  
+  //     // Show error alert if something goes wrong
+  //     Swal.fire({
+  //       title: "Error!",
+  //       text: "Failed to save maintenance.",
+  //       icon: "error",
+  //       confirmButtonText: "Okay",
+  //     });
+  //   }
+  // };
+
   const handleSave = async () => {
     // Prepare the data for submission
     const updatedFormData = {
-      ...formData,
-      users: selectStaff || "", // Use plain string
-      productCode: selectComputer || "", // Use plain string
-      createdby: currentUser,
-      lastBy: currentUser,
-      lastdate: new Date().toISOString(),
+      productId: formData.productId,
+      subCategoryId: formData.subcategoryId,  // Assuming it's from Select component
+      users: formData.users,
+      technician: formData.technician,
+      lastMaintenance: formData.lastMaintenance,
+      history: formData.history
     };
   
     try {
@@ -230,8 +282,10 @@ const MaintenancePage = () => {
       });
   
       console.log("API Response:", response);
-      closeAddModal(); // Close the modal on successful save
-      fetchMaintenace();
+  
+      // Close modal and refresh maintenance data
+      closeModal();
+      // fetchMaintenance(); // Assuming you have a function to fetch the latest maintenance data
     } catch (error) {
       console.error("Error saving data", error);
   
@@ -259,16 +313,14 @@ const MaintenancePage = () => {
     // Prepare the data for submission
     const updatedFormData = {
       ...formData,
-      users: selectStaff || "", // Use plain string
-      productCode: selectComputer || "", // Use plain string
       lastBy: currentUser,
-      lastdate: new Date().toISOString(),
+      lastDate: new Date().toISOString(),
     };
   
     try {
       // Call your API to update the maintenance record
       const response = await fetch(
-        `http://192.168.100.55:2223/Maintenance/updateMaintenanceById/${formData.id}`,
+        `http://192.168.100.55:8759/Maintenance/updateMaintenanceById/${formData.id}`,
         {
           method: "POST",
           headers: {
@@ -320,7 +372,7 @@ const MaintenancePage = () => {
           });
     
           if (result.isConfirmed) {
-            const response = await DeleteMaintenance(id); // Pass the username here
+            const response = await DeleteMaintenance(id, currentUser); // Pass the username here
             console.log("Response:", response); // Log the response to confirm the deletion
     
             if (response.status === 200) {
@@ -510,7 +562,7 @@ const MaintenancePage = () => {
   
     try {
       const response = await axios.post(
-        "http://192.168.100.55:2223/Docs/uploadFilePdf",
+        "http://192.168.100.55:8759/Docs/uploadFilePdf",
         formDataToSend,
         {
           headers: {
@@ -577,6 +629,43 @@ const MaintenancePage = () => {
     setFormData(computer);
     setIsEditModalOpen(false);
   };
+
+  const optionSubCate = subCate?.map((sub) => ({
+    value: sub.id,
+    label: `${sub.id} - ${sub.subCategoryCode}`,
+  })) || [];
+
+  const optionTechnician = [
+    { value: "ICT", label: "ICT" },
+  ];
+  const optionProductID = data?.map((computer) => ({
+    value: computer.id,
+    label: `${computer.id} - ${computer.deviceName}`,
+  })) || [];
+
+
+  const handleProductID = (selectedOption) => {
+    setFormData({
+      ...formData,
+      productId: selectedOption ? selectedOption.value : "", // Update subcategoryId correctly
+    });
+  };
+
+  const handleTechnician = (selectedOption) => {
+    setFormData({
+      ...formData,
+      technician: selectedOption ? selectedOption.value : "", // Update subcategoryId correctly
+    });
+  };
+
+  const handleSubCate = (selectedOption) => {
+    setFormData({
+      ...formData,
+      subcategoryId: selectedOption ? selectedOption.value : "", // Update subcategoryId correctly
+    });
+  };
+
+
 
 
 
@@ -648,10 +737,10 @@ const MaintenancePage = () => {
                   >
                     Action
               </th>
-              <th className="p-4 py-3 border-r border-t">Computer Name</th>
-              <th className="p-4 py-3 border-r border-t">Last Maintenance</th>
+              <th className="p-4 py-3 border-r border-t">User</th>
+              <th className="p-4 py-3 border-r border-t">Note</th>
               <th className="p-4 py-3 border-r border-t">Technician</th>
-              <th className="p-4 py-3 border-r border-t">Active User</th>
+              <th className="p-4 py-3 border-r border-t">Last Maintenance</th>
               <th className="p-4 py-3 border-r border-t">Actions</th>
             </tr>
           </thead>
@@ -669,12 +758,12 @@ const MaintenancePage = () => {
                     onClick={() => handleDelete(computer.id)}
                   />
                 </td>
-                <td className="p-4 py-3 border-r font-semibold">{computer.productCode}</td>
+                <td className="p-4 py-3 border-r font-semibold">{computer.users}</td>
               
-                <td className="p-4 py-3 border-r">{computer.lastMaintenance}</td>
+                <td className="p-4 py-3 border-r">{computer.history}</td>
                 <td className="p-4 py-3 border-r">{computer.technician}</td>
                 <td className="p-4 py-3 border-r">
-                  <span className="font-semibold">{computer.users}</span>
+                  <span className="font-semibold">{computer.lastMaintenance}</span>
                 </td>
                 <td className="p-4 py-3">
                   <button
@@ -759,7 +848,7 @@ const MaintenancePage = () => {
                   <FaLaptop className="text-blue-500" size={32} />
                 </div>
                 <h3 className="text-3xl font-extrabold text-gray-900">
-                  {selectedComputer.productCode}
+                  {selectedComputer.productId}
                 </h3>
               </div>
               <button
@@ -824,12 +913,17 @@ const MaintenancePage = () => {
                 {/* Hardware History */}
                 <h4 className="mb-4 text-xl font-semibold text-gray-800">Hardware History</h4>
                 <ul className="mb-8 space-y-2 text-gray-700 list-disc list-inside">
-                  {selectedComputer.history.split("\r\n").map((historyItem, index) => (
-                    <li key={index} className="leading-relaxed transition-colors duration-200 hover:text-blue-500">
-                      <span>{historyItem}</span>
-                    </li>
-                  ))}
+                  {selectedComputer?.history ? (
+                    selectedComputer.history.split("\r\n").map((historyItem, index) => (
+                      <li key={index} className="leading-relaxed transition-colors duration-200 hover:text-blue-500">
+                        <span>{historyItem}</span>
+                      </li>
+                    ))
+                  ) : (
+                    <li className="text-gray-500">No history available</li>
+                  )}
                 </ul>
+
                 </div>
               )}
 
@@ -876,247 +970,241 @@ const MaintenancePage = () => {
 
       {isAddModalOpen &&(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
-          <div className="relative mx-auto transition-all transform bg-white shadow-2xl rounded-xl h-[600px] overflow-y-auto w-[1000px]" data-aos="zoom-in">
-          <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
-              <h2 className="text-xl font-bold text-white md:text-2xl">
-                បន្ថែមថ្មី
-              </h2>
-              <button
-                onClick={closeAddModal}
-                className="text-2xl text-white transition duration-200 hover:text-gray-300 md:text-3xl"
-              >
-                &times;
-              </button>
-            </header>
-
-            <div className="w-full p-4">
-              <div className="flex space-x-4 border-b">
-                <button
-                  className={`p-2 ${
-                    activeTab === "បន្ថែម"
-                      ? "border-b-2 border-blue-500"
-                      : ""
-                  }`}
-                  onClick={() => setActiveTab("បន្ថែម")}
-                >
-                  បន្ថែម
-                </button>
-                <button
-                  className={`p-2 ${
-                    activeTab === "ឯកសារយោង"
-                      ? "border-b-2 border-blue-500"
-                      : ""
-                  }`}
-                  onClick={() => setActiveTab("ឯកសារយោង")}
-                >
-                  ឯកសារយោង
-                </button>
+        <div className="relative mx-auto transition-all transform bg-white shadow-2xl rounded-xl w-[1000px] h-[550px] flex flex-col overflow-y-auto">
+              <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
+                <h2 className="text-xl font-bold text-white md:text-2xl">Add Maintenance</h2>
+                <button onClick={closeAddModal} className="text-2xl text-white transition duration-200 hover:text-gray-300 md:text-3xl">&times;</button>
+              </header>
+              <div className="w-full p-4">
+                <div className="flex space-x-4 border-b">
+                  <button className={`p-2 ${activeTab === "បន្ថែម" ? "border-b-2 border-blue-500" : ""}`} onClick={() => setActiveTab("បន្ថែម")}>បន្ថែម</button>
+                  <button className={`p-2 ${activeTab === "ឯកសារយោង" ? "border-b-2 border-blue-500" : ""}`} onClick={() => setActiveTab("ឯកសារយោង")}>ឯកសារយោង</button>
+                </div>
               </div>
-            </div>
-
-            <div>
-              {activeTab === "បន្ថែម" && (
+      
+      
+              {activeTab === "បន្ថែម" &&(
                 <div>
                   <div className="px-6 py-6 space-y-6">
-              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                <div className="w-full md:w-1/2">
-                <label className="block mb-2 text-sm font-semibold text-gray-700">Select Staff</label>
-                <Select
-                    options={optionStaffCode}
-                    onChange={handleStaffChange}
-                    placeholder="Select Company Code"
-                    value={optionStaffCode.find(
-                      (option) => option.value === data.deviceName
-                    )}
-                    isClearable
-                    className="basic-single"
-                    classNamePrefix="select"
-                    styles={customStyles}
-                  />
-                </div>
-                <div className="w-full md:w-1/2">
-                  <label className="block mb-2 text-sm font-semibold text-gray-700">Computer Code</label>
-                  <input
-                    type="text"
-                    value={selectComputer}
-                    readOnly
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                  />
-                </div>
-              </div>
-
-              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-              <div className="w-full md:w-1/2">
-                  <label
-                    htmlFor="lastMaintenance"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
-                  >
-                    Last Maintenance
-                  </label>
-                  <input
-                    type='date'
-                    id="lastMaintenance"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.lastMaintenance}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                
-              </div>
-
-              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                <div className="w-full md:w-1/2">
-                  <label
-                    htmlFor="technician"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
-                  >
-                    Technician
-                  </label>
-                  <input
-                    id="technician"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.technician}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                
-              </div>
-              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                <div className="w-full ">
-                  <label
-                    htmlFor="history"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
-                  >
-                    History
-                  </label>
-                  <textarea
-                    id="history"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.history}
-                    onChange={handleChange}
-                    required
-                    rows={5}
-                  />
-                </div>
-                
-              </div>
-            </div>
-            <footer className="flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">
-                    <button
-                      onClick={handleSave}
-                      className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto"
-                    >
-                      Save
-                    </button>
-
-                    <button
-                      // onClick={closeEditModal}
-                      className="w-full px-5 py-2 text-sm font-medium text-gray-700 transition duration-200 transform bg-gray-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105 md:w-auto"
-                    >
-                      Cancel
-                    </button>
-                  </footer>
-                </div>
-              )}
-
-              {activeTab === "ឯកសារយោង" && (
-                <div>
-                <div className="px-6 py-6 space-y-6">
-                  {/* Flexbox container for form fields */}
                   <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                    {/* File input field */}
                     <div className="w-full md:w-1/2">
-                      <label
-                        htmlFor="lastMaintenance"
-                        className="block mb-2 text-sm font-semibold text-gray-700"
-                      >
-                        ឯកសារយោង
-                      </label>
-                      <input
-                        type="file"
-                        id="file"
-                        onChange={handleFileChange}
-                        accept=".pdf"
-                        className="block w-full text-sm border border-gray-300 rounded-lg shadow-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 focus:ring-1 disabled:opacity-50 disabled:pointer-events-none text-neutral-400 file:border-0 file:me-4 file:py-3 file:px-4 file:bg-blue-600 file:text-white"
-                      />
-
-                      {selectedFiles && selectedFiles.length > 0 && (
-                        <p className="mt-2 text-sm text-gray-600">
-                          Selected file: {selectedFiles[0].name}
-                        </p>
-                      )}
-
-                    </div>
-          
-                    {/* Text input field */}
-                    <div className="w-full md:w-1/2">
-                      <label
-                        htmlFor="activeDate"
-                        className="block mb-2 text-sm font-semibold text-gray-700"
-                      >
-                        បរិយាយ
-                      </label>
+                    <label className="block mb-2 text-sm font-semibold text-gray-700">Select Sub Category</label>
                       <Select
-                        options={optionMaintenanceId}
-                        onChange={handlemaintenanceId}
-                        placeholder="Select Company Code"
-                        value={optionMaintenanceId.find(
-                          (option) => option.value === formData.maintenanceId // Ensure correct mapping
-                        )}
-                        isClearable
-                        className="basic-single"
-                        classNamePrefix="select"
-                        styles={customStyles}
-                      />
-
+                          options={optionSubCate}
+                          onChange={handleSubCate}
+                          placeholder="Select Company Code"
+                          value={optionSubCate.find(
+                            (option) => option.value === formData.subcategoryId
+                          )}
+                          isClearable
+                          className="basic-single"
+                          classNamePrefix="select"
+                          styles={customStyles}
+                        />
                     </div>
+                    <div className="w-full md:w-1/2">
+                    <label className="block mb-2 text-sm font-semibold text-gray-700">Product ID</label>
+                      <Select
+                          options={optionProductID}
+                          onChange={handleProductID}
+                          placeholder="Select Company Code"
+                          value={optionProductID.find(
+                            (option) => option.value === formData.productId
+                          )}
+                          isClearable
+                          className="basic-single"
+                          classNamePrefix="select"
+                          styles={customStyles}
+                        />
+                    </div>
+                    
+      
+                  </div>
+      
+                  <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                      <div className="w-full md:w-1/2">
+                        <label
+                          htmlFor="technician"
+                          className="block mb-2 text-sm font-semibold text-gray-700"
+                        >
+                          Technician
+                        </label>
+                        <Select
+                          options={optionTechnician}
+                          onChange={handleTechnician}
+                          placeholder="Select Company Code"
+                          value={optionTechnician.find(
+                            (option) => option.value === formData.technician
+                          )}
+                          isClearable
+                          className="basic-single"
+                          classNamePrefix="select"
+                          styles={customStyles}
+                        />
+                      </div>
+      
+                      <div className="w-full md:w-1/2">
+                        <label
+                          htmlFor="user"
+                          className="block mb-2 text-sm font-semibold text-gray-700"
+                        >
+                          User
+                        </label>
+                        <input
+                          id="users"
+                          className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                          value={formData.users}
+                          onChange={handleChange}
+                          required
+                        />
+                      </div>
+      
                   </div>
                   <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                    {/* File input field */}
-                    
-          
-                    {/* Text input field */}
-                    <div className="w-full">
-                      <label
-                        htmlFor="description"
-                        className="block mb-2 text-sm font-semibold text-gray-700"
-                      >
-                        បរិយាយ
-                      </label>
-                      <textarea
-                        id="description"
-                        type="text" 
-                        onChange={handleChange}
-                        value={formData.description}
-                        className="block w-full py-3 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200 text-center"
-                        required
-                      />
-                    </div>
+                  <div className="w-full">
+                        <label
+                          htmlFor="user"
+                          className="block mb-2 text-sm font-semibold text-gray-700"
+                        >
+                          Last Maintenance
+                        </label>
+                        <input
+                          id="lastMaintenance"
+                          type="date"
+                          className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                          value={formData.lastMaintenance}
+                          onChange={handleChange}
+                          required
+                        />
+                      </div>
                   </div>
-                  <button
-                    onClick={handleFileUpload}
-                    className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
-                  >
-                    Upload File
-                  </button>
+                  <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                      <div className="w-full ">
+                        <label
+                          htmlFor="history"
+                          className="block mb-2 text-sm font-semibold text-gray-700"
+                        >
+                          History
+                        </label>
+                        <textarea
+                          id="history"
+                          className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                          value={formData.history}
+                          onChange={handleChange}
+                          required
+                          rows={5}
+                        />
+                      </div>
+                      
+                    </div>
                 </div>
-                
+                <footer className="flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">
+                  <button
+                    onClick={handleSave}
+                    className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto"
+                  >
+                    Save
+                  </button>
+      
+                  <button
+                    onClick={closeAddModal}
+                    className="w-full px-5 py-2 text-sm font-medium text-gray-700 transition duration-200 transform bg-gray-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105 md:w-auto"
+                  >
+                    Cancel
+                  </button>
+                </footer>
+                </div>
+              )}
+       
+              {activeTab === "ឯកសារយោង" && (
+                <div className="px-6 py-6 space-y-6">
+                {/* Flexbox container for form fields */}
+                <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                  {/* File input field */}
+                  <div className="w-full md:w-1/2">
+                    <label
+                      htmlFor="lastMaintenance"
+                      className="block mb-2 text-sm font-semibold text-gray-700"
+                    >
+                      ឯកសារយោង
+                    </label>
+                    <input
+                      type="file"
+                      id="file"
+                      onChange={handleFileChange}
+                      accept=".pdf"
+                      className="block w-full text-sm border border-gray-300 rounded-lg shadow-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 focus:ring-1 disabled:opacity-50 disabled:pointer-events-none text-neutral-400 file:border-0 file:me-4 file:py-3 file:px-4 file:bg-blue-600 file:text-white"
+                    />
+
+                    {selectedFiles && selectedFiles.length > 0 && (
+                      <p className="mt-2 text-sm text-gray-600">
+                        Selected file: {selectedFiles[0].name}
+                      </p>
+                    )}
+
+                  </div>
+        
+                  {/* Text input field */}
+                  <div className="w-full md:w-1/2">
+                    <label
+                      htmlFor="activeDate"
+                      className="block mb-2 text-sm font-semibold text-gray-700"
+                    >
+                    maintenanceId
+                    </label>
+                    <Select
+                      options={optionMaintenanceId}
+                      onChange={handlemaintenanceId}
+                      placeholder="Select Company Code"
+                      value={optionMaintenanceId.find(
+                        (option) => option.value === formData.maintenanceId // Ensure correct mapping
+                      )}
+                      isClearable
+                      className="basic-single"
+                      classNamePrefix="select"
+                      styles={customStyles}
+                    />
+
+                  </div>
+                </div>
+                <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                  {/* File input field */}
+                  
+        
+                  {/* Text input field */}
+                  <div className="w-full">
+                    <label
+                      htmlFor="description"
+                      className="block mb-2 text-sm font-semibold text-gray-700"
+                    >
+                      បរិយាយ
+                    </label>
+                    <textarea
+                      id="description"
+                      type="text" 
+                      onChange={handleChange}
+                      value={formData.description}
+                      className="block w-full py-3 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200 text-center"
+                      required
+                    />
+                  </div>
+                </div>
+                <button
+                  onClick={handleFileUpload}
+                  className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
+                >
+                  Upload File
+                </button>
               </div>
               )}
-              
             </div>
-
-            
           </div>
-        </div>
       )}
 
 
       {isEditModalOpen &&(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
-          <div className="relative mx-auto transition-all transform bg-white shadow-2xl rounded-xl h-[600px] overflow-y-auto w-[1000px]" data-aos="zoom-in">
+          <div className="relative mx-auto transition-all transform bg-white shadow-2xl rounded-xl h-[550px] overflow-y-auto w-[1000px] overflow-y-auto" data-aos="zoom-in">
           <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
               <h2 className="text-xl font-bold text-white md:text-2xl">
                 បន្ថែមថ្មី
@@ -1157,107 +1245,119 @@ const MaintenancePage = () => {
             <div>
               {activeTab === "បន្ថែម" && (
                 <div>
-                  <div className="px-6 py-6 space-y-6">
-              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                <div className="w-full md:w-1/2">
-                <label className="block mb-2 text-sm font-semibold text-gray-700">Select Staff</label>
-                <Select
-                    options={optionStaffCode}
-                    onChange={handleStaffChange}
-                    placeholder="Select Company Code"
-                    value={optionStaffCode.find(
-                      (option) => option.value === data.deviceName
-                    )}
-                    isClearable
-                    className="basic-single"
-                    classNamePrefix="select"
-                    styles={customStyles}
-                  />
+                   <div className="px-6 py-6 space-y-6">
+                  <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                    <div className="w-full md:w-1/2">
+                    <label className="block mb-2 text-sm font-semibold text-gray-700">Select Sub Category</label>
+                      <Select
+                          options={optionSubCate}
+                          onChange={handleSubCate}
+                          placeholder="Select Sub Category ID"
+                          value={optionSubCate.find(
+                            (option) => option.value === formData.subCategoryId
+                          )}
+                          isClearable
+                          className="basic-single"
+                          classNamePrefix="select"
+                          styles={customStyles}
+                        />
+                    </div>
+                    <div className="w-full md:w-1/2">
+                    <label className="block mb-2 text-sm font-semibold text-gray-700">Product ID</label>
+                      <Select
+                          options={optionProductID}
+                          onChange={handleProductID}
+                          placeholder="Select Company Code"
+                          value={optionProductID.find(
+                            (option) => option.value === formData.productId
+                          )}
+                          isClearable
+                          className="basic-single"
+                          classNamePrefix="select"
+                          styles={customStyles}
+                        />
+                    </div>
+                    
+      
+                  </div>
+      
+                  <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                      <div className="w-full md:w-1/2">
+                        <label
+                          htmlFor="technician"
+                          className="block mb-2 text-sm font-semibold text-gray-700"
+                        >
+                          Technician
+                        </label>
+                        <Select
+                          options={optionTechnician}
+                          onChange={handleTechnician}
+                          placeholder="Select Company Code"
+                          value={optionTechnician.find(
+                            (option) => option.value === formData.technician
+                          )}
+                          isClearable
+                          className="basic-single"
+                          classNamePrefix="select"
+                          styles={customStyles}
+                        />
+                      </div>
+      
+                      <div className="w-full md:w-1/2">
+                        <label
+                          htmlFor="user"
+                          className="block mb-2 text-sm font-semibold text-gray-700"
+                        >
+                          User
+                        </label>
+                        <input
+                          id="users"
+                          className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                          value={formData.users}
+                          onChange={handleChange}
+                          required
+                        />
+                      </div>
+      
+                  </div>
+                  <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                  <div className="w-full">
+                        <label
+                          htmlFor="user"
+                          className="block mb-2 text-sm font-semibold text-gray-700"
+                        >
+                          Last Maintenance
+                        </label>
+                        <input
+                          id="lastMaintenance"
+                          type="date"
+                          className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                          value={formData.lastMaintenance}
+                          onChange={handleChange}
+                          required
+                        />
+                      </div>
+                  </div>
+                  <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+                      <div className="w-full ">
+                        <label
+                          htmlFor="history"
+                          className="block mb-2 text-sm font-semibold text-gray-700"
+                        >
+                          History
+                        </label>
+                        <textarea
+                          id="history"
+                          className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                          value={formData.history}
+                          onChange={handleChange}
+                          required
+                          rows={5}
+                        />
+                      </div>
+                      
+                    </div>
                 </div>
-                <div className="w-full md:w-1/2">
-                  <label className="block mb-2 text-sm font-semibold text-gray-700">Computer Code</label>
-                  <input
-                    type="text"
-                    value={selectComputer}
-                    readOnly
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                  />
-                </div>
-              </div>
-
-              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-              <div className="w-full md:w-1/2">
-                  <label
-                    htmlFor="lastMaintenance"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
-                  >
-                    Last Maintenance
-                  </label>
-                  <input
-                    type='date'
-                    id="lastMaintenance"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.lastMaintenance}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                {/* <div className="w-full md:w-1/2">
-                  <label
-                    htmlFor="activeDate"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
-                  >
-                    Active Date
-                  </label>
-                  <input
-                    type='date'
-                    id="activeDate"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.activeDate}
-                    onChange={handleChange}
-                    required
-                  />
-                </div> */}
-              </div>
-
-              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                <div className="w-full md:w-1/2">
-                  <label
-                    htmlFor="technician"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
-                  >
-                    Technician
-                  </label>
-                  <input
-                    id="technician"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.technician}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                
-              </div>
-              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                <div className="w-full ">
-                  <label
-                    htmlFor="history"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
-                  >
-                    History
-                  </label>
-                  <textarea
-                    id="history"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    value={formData.history}
-                    onChange={handleChange}
-                    required
-                    rows={5}
-                  />
-                </div>
-                
-              </div>
-            </div>
             <footer className="flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">
                     <button
                       onClick={handleSaveEdit}

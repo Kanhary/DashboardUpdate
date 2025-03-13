@@ -624,7 +624,7 @@ const ItemPermission = () => {
           <div className="relative w-1/2 mx-auto transition-all transform bg-white shadow-2xl rounded-xl">
             <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
               <h2 className="text-xl font-bold text-white md:text-2xl">
-                Add New Item Permission
+                Add New Menu
               </h2>
               <button
                 onClick={closeEditModal}
@@ -658,7 +658,7 @@ const ItemPermission = () => {
                     htmlFor="functionCode"
                     className="block mb-2 text-sm font-semibold text-gray-700"
                   >
-                    Function Code
+                    
                   </label>
                   <input
                     type="text"

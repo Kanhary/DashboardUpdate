@@ -280,7 +280,7 @@ const OfficeList = () => {
 
       if (result.isConfirmed) {
         // Call DeleteOffice function to send the API request
-        const response = await DeleteOffice(id); // Pass the office id here
+        const response = await DeleteOffice(id, currentUser); // Pass the office id here
         console.log("Response:", response); // Log the response to confirm deletion
 
         if (response.status === 200) {

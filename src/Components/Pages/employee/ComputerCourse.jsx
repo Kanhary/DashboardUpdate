@@ -139,8 +139,8 @@ const ComputerCourse = () => {
       ...formData, 
       createdby: currentUser,
       lastby: currentUser,
-      createTime: new Date().toISOString(),
-      updateTime: new Date().toISOString(),
+      createdDate: new Date().toISOString(),
+      lastDate: new Date().toISOString(),
     };
   
     try {
@@ -185,8 +185,15 @@ const ComputerCourse = () => {
         });
         return;
       }
+
+      const updatedFormData = {
+        ...formData, 
+        lastby: currentUser,
+        lastDate: new Date().toISOString(),
+
+      };
   
-      const response = await UpdateComputerCourse(id, formData);
+      const response = await UpdateComputerCourse(id, updatedFormData);
   
       if (response.status === 200) {
         console.log('Course updated successfully:', response.data);
@@ -246,7 +253,7 @@ const handleDeleteCourse = async (id) => {
 
       if (result.isConfirmed) {
           // Call DeleteOffice function to send the API request
-          const response = await DeleteComputerCourse(id); // Pass the office id here
+          const response = await DeleteComputerCourse(id, currentUser); // Pass the office id here
           console.log('Response:', response);  // Log the response to confirm deletion
 
           if (response.status === 200) {  // Check for successful response

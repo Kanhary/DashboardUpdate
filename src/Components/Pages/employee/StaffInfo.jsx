@@ -375,7 +375,7 @@ const StaffInfo = () => {
       });
 
       if (result.isConfirmed) {
-        const response = await DelStaff(id);
+        const response = await DelStaff(id, currentUser);
         console.log("Response:", response); // Log the response to debug
 
         if (response.status === 200) {
@@ -447,7 +447,7 @@ const StaffInfo = () => {
       resign: formData.resign || false, // Set resign if provided
       isHoldWork: formData.isHoldWork || false, // Set isholdwork if provided
       photo: formData.photo || null, // If there's a photo, include it; otherwise, null
-      createBy: currentUser, // Use the fetched username as creator
+      createdBy: currentUser, // Use the fetched username as creator
       lastBy: currentUser, // Use the fetched username as updater
       lastDate: new Date().toISOString(),
       updateTime: new Date().toISOString(),
@@ -464,7 +464,7 @@ const StaffInfo = () => {
           text: "Employee created successfully",
           icon: "success",
         });
-        // setIsAddModalOpen(false);
+        setIsAddModalOpen(false);
         fetchAllStaff();
       } else {
         // Handle errors based on status codes
@@ -530,7 +530,14 @@ const StaffInfo = () => {
         });
         return;
       }
-      const response = await UpdateStaff(id, formData);
+
+      const updatedFormData ={
+        ...formData,
+        lastby: currentUser,
+        lastDate: new Date().toISOString(),
+      }
+
+      const response = await UpdateStaff(id, updatedFormData);
 
       if (response.status === 200) {
         console.log("Employee updated successfully:", response.data);
@@ -539,7 +546,8 @@ const StaffInfo = () => {
           text: "Employee update successfully",
           icon: "success",
         });
-        setIsEditModalOpen(false); 
+        setIsEditModalOpen(false);
+        fetchAllStaff(); 
       } else {
         const errorMessage =
           response.data.message || "An unexpected error occurred.";
@@ -1139,9 +1147,9 @@ const StaffInfo = () => {
                   >
                     Action
                   </th>
-                  <th scope="col" className="px-4 py-3 border-t border-r">
+                  {/* <th scope="col" className="px-4 py-3 border-t border-r">
                     NO
-                  </th>
+                  </th> */}
                   <th
                     scope="col"
                     className="px-4 py-3 border-t border-r"
@@ -1250,7 +1258,7 @@ const StaffInfo = () => {
                         className="text-blue-500 cursor-pointer hover:text-blue-700"
                         onClick={() =>
                           openEditModal(
-                            employee.id,
+                            // employee.id,
                             employee.staffCode,
                             employee.engName,
                             employee.khName,
@@ -1296,7 +1304,7 @@ const StaffInfo = () => {
                       />
                     </td>
 
-                    <td className="px-4 py-1 border-r">{employee.id}</td>
+                    {/* <td className="px-4 py-1 border-r">{employee.id}</td> */}
                     <td className="px-4 py-1 border-r">{employee.staffCode}</td>
                     <td className="px-4 py-1 border-r">{employee.engName}</td>
                     <td className="px-4 py-1 border-r">{employee.khName}</td>

@@ -64,7 +64,7 @@ const User = () => {
   const [userId, setUserId] = useState(null);
   const [mergedData, setMergedData] = useState([]);
   const [roleName, setRoleName] = useState([]);
-  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState(null);
 
   const [Avatar, setAvatar] = useState(null);
   const recordsPerPage = 8;
@@ -141,7 +141,7 @@ const User = () => {
       const rolePromises = usersData.map(async (user) => {
         try {
           const roleResponse = await axios.get(
-            `http://192.168.100.55:2223/user/getRoleName/${user.username}`
+            `http://192.168.100.55:8759/user/getRoleName/${user.username}`
           );
           const roleName = roleResponse.data.data[0]?.roleName || "Unknown"; // Extract roleName
           return { ...user, roleName }; // Add roleName to user object
@@ -321,7 +321,7 @@ const User = () => {
       updater: currentUser,
       createTime: new Date().toISOString(),
       updateTime: new Date().toISOString(),
-      avatar: formData.avatar || null,
+      file: selectedFiles,
     };
   
     console.log("Payload being sent:", updatedFormData);
@@ -335,7 +335,7 @@ const User = () => {
       //   imageFormData.append("file", formData.avatar);
   
       //   const imageResponse = await axios.post(
-      //     "http://192.168.168.4:8888/user/upload-image",
+      //     "http://192.168.:8888/user/upload-image",
       //     imageFormData,
       //     { headers: { "Content-Type": "multipart/form-data" } }
       //   );
@@ -554,7 +554,7 @@ const User = () => {
       });
 
       if (result.isConfirmed) {
-        const response = await DeleteUser(id); // Pass the username here
+        const response = await DeleteUser(id, currentUser); // Pass the username here
         console.log("Response:", response); // Log the response to confirm the deletion
 
         if (response.status === 200) {
@@ -748,6 +748,12 @@ const User = () => {
   const handleRefresh = () => {
     window.location.reload();
   };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    setSelectedFiles(file);
+    // setPreview(URL.createObjectURL(file)); // Show preview
+};
 
   return (
     <section className="mt-16 font-khmer">
@@ -1144,6 +1150,7 @@ const User = () => {
                             onChange={handleChange}
                             className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                             autoComplete="usercode"
+                            placeholder="user-0001"
                           />
                           {errors.usercode && (
                             <p className="mt-1 text-xs text-red-500">
@@ -1318,49 +1325,7 @@ const User = () => {
                     </div>
 
                     {/* Right Side: Picture Upload */}
-                    <form
-        action="http://192.168.100.55:2223/user/upload-image"
-        method="POST"
-        encType="multipart/form-data"
-        className="flex items-center w-full space-y-4 justify-evenly lg:justify-center lg:flex-col md:w-1/4"
-      >
-        <div className="relative flex items-center justify-center w-40 h-40 overflow-hidden bg-gray-100 rounded-lg shadow-lg">
-          {formData.avatar ? (
-            <img
-              src={
-                typeof formData.avatar === "string"
-                  ? formData.avatar
-                  : URL.createObjectURL(formData.avatar)
-              }
-              alt="Profile"
-              className="object-cover w-full h-full"
-            />
-          ) : (
-            <svg
-              className="w-12 h-12 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
-          )}
-        </div>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) =>
-            setFormData({ ...formData, avatar: e.target.files[0] })
-          }
-          className="mt-2"
-        />
-      </form>
+                    <input type="file" accept="image/*" onChange={handleFileChange} />
                   </form>
 
                   <footer className="flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">

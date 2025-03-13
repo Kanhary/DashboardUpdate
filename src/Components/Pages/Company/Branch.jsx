@@ -27,6 +27,9 @@ const Branch = () => {
     bankAccNo: "",
     bankBranch: "",
     companyLogo: "",
+    createdBy: "",
+    lastby: "",
+    lastDate: ""
   };
 
   // const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -37,7 +40,7 @@ const Branch = () => {
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [editingBranch, setEditingBranch] = useState(null);
   const [branchList, setBranchList] = useState([]);
-  const [currentUser, setCurrentUser] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
   const [companies, setCompany] = useState([]);
 
   // const branchList = [
@@ -148,11 +151,19 @@ const Branch = () => {
   };
 
   const handleSave = async (event) => {
-    event.preventDefault();
-    console.log("Submitting form data:", formData);
+    // event.preventDefault();
+    // console.log("Submitting form data:", formData);
+
+    const updatedFormData = {
+      ...formData,
+      createdby: currentUser,
+      lastby: currentUser,
+      lastdate: new Date().toISOString(),
+      
+    }
 
     try {
-      const response = await AddNewBranch(formData);
+      const response = await AddNewBranch(updatedFormData);
 
       console.log(response);
 
@@ -222,7 +233,13 @@ const Branch = () => {
         return;
       }
 
-      const response = await UpdateBranch(id, formData);
+      const updatedFormData = {
+        ...formData,
+        lastBy: currentUser,
+        lastDate: new Date().toDateString(),
+      }
+
+      const response = await UpdateBranch(id, updatedFormData);
 
       if (response.status === 200) {
         console.log("Branch updated successfully:", response.data);
@@ -282,7 +299,7 @@ const Branch = () => {
       });
 
       if (result.isConfirmed) {
-        const response = await DeleteBranch(id);
+        const response = await DeleteBranch(id, currentUser);
         console.log("Response:", response);
 
         if (response.status === 200) {
@@ -719,7 +736,7 @@ const Branch = () => {
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
           <div
-            className="relative w-full max-w-xl sm:max-w-5xl md:max-w-4xl lg:max-w-2xl bg-white rounded-md shadow-lg overflow-auto max-h-[90vh] h-[73vh] sm:h-[550px] md:h-[450px] modal-scrollbar mt-14 sm:ml-52 md:ml-0"
+            className="relative w-full max-w-xl sm:max-w-5xl md:max-w-4xl lg:max-w-[1000px] bg-white rounded-md shadow-lg h-[550px] modal-scrollbar mt-14 sm:ml-52 md:ml-0 overflow-y-auto"
             data-aos="zoom-in"
           >
             <div className="sticky top-0 z-50 flex items-center justify-between w-full p-4 py-4 mb-6 bg-gray-100 border-b-2 border-gray-300 border-dashed">

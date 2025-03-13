@@ -19,12 +19,13 @@ const HeaderPage = ({ toggleSidebar }) => {
   const [id, setID] = useState("");
   const [avatar, setAvatar] = useState("");
   const [userEmail, setUserEmail] = useState("");
-  const [profileImage, setProfileImage] = useState("");
+  const [profileImage, setProfileImage] = useState();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [newProfileImage, setNewProfileImage] = useState(null);
   const navigate = useNavigate();
   const [currentProfileImage, setCurrentProfileImage] = useState(avatar); // Replace with actual image URL
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [formDataID, setFormData] = useState({});
 
   const notificationsRef = useRef(null);
 
@@ -32,19 +33,32 @@ const HeaderPage = ({ toggleSidebar }) => {
     GetUserLogin()
       .then((res) => {
         setUsername(res.data.data.username);
-        setID(res.data.data.id)
-        // Set the new avatar URL when the login is successful
-        setAvatar(`http://localhost:5173/public/img/${res.data.data.avatar}`);
-        
+        setID(res.data.data.id);
+        setAvatar(res.data.data.avatar);
+        localStorage.setItem('avatar', res.data.data.avatar);
       })
       .catch((error) => {
         console.error("Error fetching user data:", error);
+        alert("Failed to fetch user data. Please try again.");
       });
+
 
     const storedEmail = localStorage.getItem("userEmail");
     if (storedEmail) {
       setUserEmail(storedEmail);
     }
+
+     const fetchUserId = async () => {
+        try {
+          const response = await GetUserLogin();
+          console.log(response.data.data);
+          setFormData(response.data.data);
+        } catch (err) {
+          setError({ message: err.message || "An error occurred" });
+        }
+      };
+
+      fetchUserId();
   }, []);
 
   const handleRemoveProfileImage = () => {
@@ -68,63 +82,55 @@ const HeaderPage = ({ toggleSidebar }) => {
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0]; // Get the selected file
+    const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result); // Update profile image preview
-      };
-      reader.readAsDataURL(file); // Read the new image
-      setNewProfileImage(file); // Set the new profile image
+      // Create a temporary URL for the image
+      const imageUrl = URL.createObjectURL(file);
+      setProfileImage(imageUrl); // Store URL for preview
+      setNewProfileImage(file); // Store file for upload
     }
   };
-
   const handleSaveProfileImage = () => {
     if (newProfileImage) {
-      // Prepare form data with the actual file
       const formData = new FormData();
-      formData.append("avatar", newProfileImage); // Append the entire file, not just the file name
-  
-      // Get the token from local storage
+      formData.append("file", newProfileImage);
+
       const token = localStorage.getItem("token");
-  
-      // Make API call to upload the actual file
+
+      const imageUrl = URL.createObjectURL(newProfileImage);
+      setProfileImage(imageUrl);
+
       axios
-        .post(`http://192.168.100.55:2223/user/${id}/upload-image`, formData, {
+        .post(`http://192.168.100.55:8759/user/image/${formDataID.id}`, formData, {
           headers: {
-            Authorization: token,
-            "Content-Type": "multipart/form-data", // Set the correct content type for file uploads
+            Authorization: `${token}`,
+            "Content-Type": "multipart/form-data",
           },
         })
         .then((response) => {
-          console.log("Image uploaded successfully:", response.data);
-  
-          // Update the UI and close the modal
+          setAvatar(response.data.avatar);
           setIsEditModalOpen(false);
           setShowSuccessAlert(true);
+
           GetUserLogin();
-  
-          // Hide alert after 3 seconds
+
           setTimeout(() => setShowSuccessAlert(false), 3000);
         })
         .catch((error) => {
-          console.error(
-            "Error uploading image:",
-            error.response?.data || error.message
-          );
+          console.error("Error uploading image:", error.response?.data || error.message);
           alert("Failed to upload image. Please try again.");
         });
     } else {
-      // Handle case when the image is removed
       setProfileImage(null);
       localStorage.removeItem("profileImage");
       setIsEditModalOpen(false);
       setShowImageRemovalAlert(true);
-  
-      // Hide alert after 3 seconds
+
       setTimeout(() => setShowImageRemovalAlert(false), 3000);
     }
   };
+  
+  
   
 
   // const handleImageChange = (e) => {
@@ -241,7 +247,9 @@ const HeaderPage = ({ toggleSidebar }) => {
               >
                 <span className="sr-only">Open user menu</span>
                 <img
-                  src={avatar || "/blank-profile-picture.png"}
+                  src={
+                    // avatar || 
+                    "/blank-profile-picture.png"}
                   className="w-8 h-8 border border-blue-600 rounded-full sm:w-12 sm:h-10 md:w-8 md:h-8 lg:w-8 lg:h-8"
                   alt="User Photo"
                 />
@@ -258,7 +266,9 @@ const HeaderPage = ({ toggleSidebar }) => {
                     >
                       <span className="sr-only">Open user menu</span>
                       <img
-                        src={avatar || "/blank-profile-picture.png"}
+                        src={
+                          // avatar || 
+                          "/blank-profile-picture.png"}
                         className="w-8 h-8 border border-blue-600 rounded-full sm:w-12 sm:h-10 md:w-8 md:h-8 lg:w-8 lg:h-8"
                         alt="User Photo"
                       />

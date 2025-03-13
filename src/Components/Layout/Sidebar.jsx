@@ -130,7 +130,7 @@ const Sidebar = ({ isSidebarOpen }) => {
         data-aos="fade-right"
         data-aos-delay="200"
       >
-        <ul className="flex flex-col px-3 mt-20 space-y-1 font-khmer">
+        <ul className="flex flex-col px-3 mt-20 space-y-1 font-khmer text-xs">
           {menuItems.map((item) => (
             <div key={item.id}>
               <NavItem

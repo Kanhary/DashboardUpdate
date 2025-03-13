@@ -1,5 +1,6 @@
 // import request from '../utils/requst.js'
 import request from "@/utils/requst";
+import { data } from "autoprefixer";
 import axios from "axios";
 
 // export function GetUser() {
@@ -37,11 +38,12 @@ export function GetEmp(params) {
 // }
 
 // Modify DeleteUser to accept username as a parameter
-export function DeleteUser(id) {
+export function DeleteUser(id, deleteby) {
   return request({
     method: "DELETE", // Assuming the backend uses the DELETE HTTP method
     // url: `/user/deleteUser?username=${username}`, // Add the username to the query parameter
     url: `/user/deleteUser/${id}`,
+    data: {deleteby}
   });
 }
 
@@ -175,10 +177,11 @@ export function UpdateOffice(id, data) {
   });
 }
 
-export function DeleteOffice(id) {
+export function DeleteOffice(id, deleteby) {
   return request({
     method: "DELETE",
     url: `/Office/deleteOffice/${id}`,
+    data: {deleteby}
   });
 }
 
@@ -205,10 +208,11 @@ export function AddPosition(data) {
   });
 }
 
-export function DeletePosition(id) {
+export function DeletePosition(id, deleteby) {
   return request({
     method: "DELETE",
     url: `/position/deletePosition/${id}`,
+    data: {deleteby}
   });
 }
 
@@ -243,10 +247,11 @@ export function UpdateCategory(id, data) {
   });
 }
 
-export function DeleteCategory(id) {
+export function DeleteCategory(id, deleteby) {
   return request({
     method: "DELETE",
     url: `/Category/DeleteCategory/${id}`,
+    data: {deleteby},
   });
 }
 
@@ -273,10 +278,11 @@ export function UpdateSubCategory(id, data) {
   });
 }
 
-export function DeleteSubCategory(id) {
+export function DeleteSubCategory(id, deleteby) {
   return request({
     method: "DELETE",
     url: `/SubCategory/DeleteSubCate/${id}`,
+    data: {deleteby}
   });
 }
 
@@ -303,10 +309,11 @@ export function UpdateProduct(id, data) {
   });
 }
 
-export function DeleteProduct(id) {
+export function DeleteProduct(id, deleteby) {
   return request({
     method: "DELETE",
     url: `/Product/deletePro/${id}`,
+    data: { deleteby },
   });
 }
 
@@ -333,10 +340,11 @@ export function UpdateChild(id, data) {
   });
 }
 
-export function DeleteChild(id) {
+export function DeleteChild(id, deleteby) {
   return request({
     method: "DELETE",
     url: `/Children/deleteChildById/${id}`,
+    data: {deleteby}
   });
 }
 
@@ -363,10 +371,11 @@ export function UpdateWife(id, data) {
   });
 }
 
-export function DeleteWife(id) {
+export function DeleteWife(id, deleteby) {
   return request({
     method: "DELETE",
     url: `/Wife/DeleteWifeById/${id}`,
+    data: {deleteby}
   });
 }
 
@@ -400,25 +409,27 @@ export function UpdateComputerCourse(id, data) {
   });
 }
 
-export function DeleteComputerCourse(id) {
+export function DeleteComputerCourse(id, deleteby) {
   return request({
     method: "DELETE",
     url: `/ComputerCourse/deleteComCourseById/${id}`,
+    data: {deleteby}
   });
 }
 
 export function AddNewDep(data) {
   return request({
     method: "POST",
-    url: "/department/AddNewDepart",
+    url: "/department/addNewDepart",
     data: data,
   });
 }
 
-export function DeleteDep(id) {
+export function DeleteDep(id, deletedby) {
   return request({
     method: "DELETE",
     url: `/department/DeleteDepart/${id}`,
+    data: {deletedby}
   });
 }
 
@@ -453,10 +464,11 @@ export function UpdateBranch(id, data) {
   });
 }
 
-export function DeleteBranch(id) {
+export function DeleteBranch(id, deleteby) {
   return request({
     method: "DELETE",
     url: `/Branch/DeleteBranchById/${id}`,
+    data: {deleteby}
   });
 }
 
@@ -483,10 +495,11 @@ export function UpdateCompany(id, data) {
   });
 }
 
-export function DeleteCompany(id) {
+export function DeleteCompany(id, deleteby) {
   return request({
     method: "DELETE",
     url: `/Company/DeleteCompanyById/${id}`,
+    data: {deleteby}
   });
 }
 
@@ -513,10 +526,11 @@ export function UpdateRole(id, data) {
   });
 }
 
-export function DeleteRole(id) {
+export function DeleteRole(id, deleteby) {
   return request({
     method: "DELETE",
     url: `/Role/deleteRoleByRoleId/${id}`,
+    data: {deleteby}
   });
 }
 
@@ -600,10 +614,11 @@ export function UpdateMaintenance(id, data) {
   });
 }
 
-export function DeleteMaintenance(id) {
+export function DeleteMaintenance(id, deleteby) {
   return request({
     method: "DELETE",
     url: `/Maintenance/deleteMaintenanceById/${id}`,
+    data: {deleteby}
   });
 }
 

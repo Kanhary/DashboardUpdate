@@ -175,8 +175,8 @@ const StaffWifeInfo = () => {
       staffCode: formData.staffCode,
       createdby: currentUser,
       lastby: currentUser,
-      createTime: new Date().toISOString(),
-      updateTime: new Date().toISOString(),
+      createdDate: new Date().toISOString(),
+      lastDate: new Date().toISOString(),
     };
 
     try {
@@ -219,7 +219,14 @@ const StaffWifeInfo = () => {
         return;
       }
 
-      const response = await UpdateWife(id, formData);
+
+      const updatedFormData = {
+        ...formData, 
+        lastby: currentUser,
+        lastDate: new Date().toISOString(),
+
+      };
+      const response = await UpdateWife(id, updatedFormData);
 
       if (response.status === 200) {
         console.log("Spouse updated successfully:", response.data);
@@ -279,7 +286,7 @@ const StaffWifeInfo = () => {
 
       if (result.isConfirmed) {
         // Call DeleteOffice function to send the API request
-        const response = await DeleteWife(id); // Pass the office id here
+        const response = await DeleteWife(id, currentUser); // Pass the office id here
         console.log("Response:", response); // Log the response to confirm deletion
 
         if (response.status === 200) {

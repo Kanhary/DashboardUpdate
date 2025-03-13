@@ -264,7 +264,7 @@ const Company = () => {
 
       if (result.isConfirmed) {
         // Call DeleteOffice function to send the API request
-        const response = await DeleteCompany(id); // Pass the office id here
+        const response = await DeleteCompany(id, currentUser); // Pass the office id here
         console.log("Response:", response); // Log the response to confirm deletion
 
         if (response.status === 200) {
@@ -642,7 +642,7 @@ const Company = () => {
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
           <div
-            className="relative w-full max-w-2xl mx-auto transition-all transform bg-white shadow-2xl rounded-xl"
+            className="relative w-full max-w-[1000px] mx-auto transition-all transform bg-white shadow-2xl rounded-xl h-[650px] overflow-y-auto"
             data-aos="zoom-in"
           >
             <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
@@ -864,7 +864,7 @@ const Company = () => {
       {isEditModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
           <div
-            className="relative w-1/2 mx-auto transition-all transform bg-white shadow-2xl rounded-xl"
+            className="relative w-full max-w-[1000px] mx-auto transition-all transform bg-white shadow-2xl rounded-xl h-[650px] overflow-y-auto"
             data-aos="zoom-in"
           >
             <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">

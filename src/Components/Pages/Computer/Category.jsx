@@ -46,6 +46,7 @@ const Category = () => {
       }
     };
 
+
     fetchCurrentUser();
     fetchCategory();
   }, []);
@@ -139,8 +140,8 @@ const Category = () => {
       ...formData, // Spread the current formData state
       createdby: currentUser,
       lastby: currentUser,
-      createTime: new Date().toISOString(),
-      updateTime: new Date().toISOString(),
+      createdate: new Date().toISOString(),
+      lastdate: new Date().toISOString(),
     };
 
     try {
@@ -184,7 +185,13 @@ const Category = () => {
         return;
       }
 
-      const response = await UpdateCategory(id, formData);
+      const updatedFormData ={
+        ...formData,
+        lastBy: currentUser,
+        lastDate: new Date().toISOString(),
+      }
+
+      const response = await UpdateCategory(id, updatedFormData);
 
       if (response.status === 200) {
         console.log("Category updated successfully:", response.data);
@@ -243,9 +250,11 @@ const Category = () => {
         confirmButtonText: "Yes, delete it!",
       });
 
+      
+
       if (result.isConfirmed) {
         // Call DeleteOffice function to send the API request
-        const response = await DeleteCategory(id); // Pass the office id here
+        const response = await DeleteCategory(id, currentUser); // Pass the office id here
         console.log("Response:", response); // Log the response to confirm deletion
 
         if (response.status === 200) {
@@ -477,6 +486,13 @@ const Category = () => {
                   >
                     Last By
                   </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 border-t border-r"
+                    style={{ minWidth: "150px" }}
+                  >
+                    Last Date
+                  </th>
                   {/* <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Company Code</th> */}
                 </tr>
               </thead>
@@ -513,8 +529,9 @@ const Category = () => {
                     <td className="px-4 py-4 border-r">
                       {category.categoryName}
                     </td>
-                    <td className="px-4 py-4 border-r">{category.CreateBy}</td>
-                    <td className="px-4 py-4 border-r">{category.LastBy}</td>
+                    <td className="px-4 py-4 border-r">{category.createBy}</td>
+                    <td className="px-4 py-4 border-r">{category.lastBy}</td>
+                    <td className="px-4 py-4 border-r">{category.lastDate}</td>
                   </tr>
                 ))}
               </tbody>
@@ -618,7 +635,7 @@ const Category = () => {
           >
             <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
               <h2 className="text-xl font-bold text-white md:text-2xl">
-                បន្ថែមការិយាល័យថ្មី
+                Add Category
               </h2>
               <button
                 onClick={closeAddModal}
@@ -635,7 +652,7 @@ const Category = () => {
                     htmlFor="categoryCode"
                     className="block mb-2 text-sm font-semibold text-gray-700"
                   >
-                    Office Code
+                    Category Code
                   </label>
                   <input
                     id="categoryCode"
@@ -651,7 +668,7 @@ const Category = () => {
                     htmlFor="categoryName"
                     className="block mb-2 text-sm font-semibold text-gray-700"
                   >
-                    Khmer Name
+                    Category Name
                   </label>
                   <input
                     id="categoryName"
@@ -695,7 +712,7 @@ const Category = () => {
           >
             <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
               <h2 className="text-xl font-bold text-white md:text-2xl">
-                កែប្រែព័ត៌មានការិយាល័យ
+                Edit Category
               </h2>
               <button
                 onClick={closeEditModal}
@@ -712,7 +729,7 @@ const Category = () => {
                     htmlFor="categoryCode"
                     className="block mb-2 text-sm font-semibold text-gray-700"
                   >
-                    Office Code
+                    Category Code
                   </label>
                   <input
                     id="categoryCode"
@@ -728,7 +745,7 @@ const Category = () => {
                     htmlFor="categoryName"
                     className="block mb-2 text-sm font-semibold text-gray-700"
                   >
-                    Khmer Name
+                    Category Name
                   </label>
                   <input
                     id="categoryName"

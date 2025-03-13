@@ -21,6 +21,7 @@ const Department = () => {
   const [branch, setBranch] = useState([]);
   const [company, setCompany] = useState([]);
   const [DepList, setDepList] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
 
   // const DepList = [
   //   { CompanyCode: 'PPAP', DepartmentCode: 'Dep-admin', Department: 'នាយកដ្ឋាន រដ្ឋបាល',  BranchCode: 'TS3' },
@@ -37,7 +38,19 @@ const Department = () => {
     }
   };
   useEffect(() => {
+
+    const fetchCurrentUser = async () => {
+      try {
+        const response = await GetUserLogin(); // Call the API to get the current user
+        setCurrentUser(response.data.data.username); // Assuming the response contains a username field
+        console.log("Fetched user:", response.data.data.username);
+      } catch (error) {
+        console.error("Error fetching current user:", error);
+      }
+    };
+
     fetchAllDep();
+    fetchCurrentUser();
   }, []);
 
   // useEffect(() => {
@@ -132,10 +145,10 @@ const Department = () => {
     const updatedFormData = {
       ...formData, // Spread the current formData state
       branchCode: formData.branchCode || "", // Use formData.departCode instead of selectedOption
-      // createdby: currentUser,
-      // lastby: currentUser,
-      createTime: new Date().toISOString(),
-      updateTime: new Date().toISOString(),
+      createdby: currentUser,
+      lastby: currentUser,
+      createddate: new Date().toISOString(),
+      lastdate: new Date().toISOString(),
     };
 
     try {
@@ -240,7 +253,7 @@ const Department = () => {
 
       if (result.isConfirmed) {
         // Call DeleteOffice function to send the API request
-        const response = await DeleteDep(id); // Pass the office id here
+        const response = await DeleteDep(id, currentUser); // Pass the office id here
         console.log("Response:", response); // Log the response to confirm deletion
 
         if (response.status === 200) {
@@ -605,6 +618,7 @@ const Department = () => {
                     value={formData.departCode}
                     onChange={handleChange}
                     required
+                    placeholder="123-ICT"
                   />
                 </div>
 

@@ -153,8 +153,8 @@ const EmployeePositionList = () => {
 
       Createdby: currentUser,
       Lastby: currentUser,
-      createTime: new Date().toISOString(),
-      updateTime: new Date().toISOString(),
+      createDate: new Date().toISOString(),
+      lastDate: new Date().toISOString(),
     };
 
     try {
@@ -197,7 +197,14 @@ const EmployeePositionList = () => {
         return;
       }
 
-      const response = await UpdatePosition(Id, formData);
+      const updatedFormData = {
+        ...formData, 
+        lastby: currentUser,
+        lastDate: new Date().toISOString(),
+
+      };
+
+      const response = await UpdatePosition(Id, updatedFormData);
 
       if (response.status === 200) {
         console.log("Position updated successfully:", response.data);
@@ -257,7 +264,7 @@ const EmployeePositionList = () => {
 
       if (result.isConfirmed) {
         // Call DeleteOffice function to send the API request
-        const response = await DeletePosition(id); // Pass the office id here
+        const response = await DeletePosition(id, currentUser); // Pass the office id here
         console.log("Response:", response); // Log the response to confirm deletion
 
         if (response.status === 200) {

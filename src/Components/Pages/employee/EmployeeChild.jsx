@@ -181,8 +181,8 @@ const EmployeeChild = () => {
       genderCode: formData.genderCode,
       createdby: currentUser,
       lastby: currentUser,
-      createTime: new Date().toISOString(),
-      updateTime: new Date().toISOString(),
+      createdate: new Date().toISOString(),
+      lastDate: new Date().toISOString(),
     };
 
     try {
@@ -225,7 +225,14 @@ const EmployeeChild = () => {
         return;
       }
 
-      const response = await UpdateChild(id, formData);
+      const updatedFormData = {
+        ...formData, 
+        lastby: currentUser,
+        lastDate: new Date().toISOString(),
+
+      };
+
+      const response = await UpdateChild(id, updatedFormData);
 
       if (response.status === 200) {
         console.log("Staff's child updated successfully:", response.data);
@@ -285,7 +292,7 @@ const EmployeeChild = () => {
 
       if (result.isConfirmed) {
         // Call DeleteOffice function to send the API request
-        const response = await DeleteChild(id); // Pass the office id here
+        const response = await DeleteChild(id, currentUser); // Pass the office id here
         console.log("Response:", response); // Log the response to confirm deletion
 
         if (response.status === 200) {

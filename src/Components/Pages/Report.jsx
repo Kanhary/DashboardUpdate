@@ -111,7 +111,7 @@ const Report = () => {
               <td className="px-6 py-4 text-sm font-medium text-gray-700 border border-gray-300">User</td>
               <td className="px-6 py-4 text-sm border border-gray-300">
                 <button
-                  onClick={() => downloadExcel("http://:2223/user/export-users", "User_Report.xlsx", "users")}
+                  onClick={() => downloadExcel("http://:8759/user/export-users", "User_Report.xlsx", "users")}
                   disabled={loading.users}
                   className={`flex items-center px-4 py-2 text-white text-sm font-medium rounded-lg shadow-md ${loading.users ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"}`}
                 >
@@ -129,7 +129,7 @@ const Report = () => {
                     className="block w-full text-sm border border-gray-300 rounded-lg shadow-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 focus:ring-1 disabled:opacity-50 disabled:pointer-events-none text-neutral-400 file:border-0 file:me-4 file:py-3 file:px-4 file:bg-blue-600 file:text-white"
                   />
                   <button
-                    onClick={() => uploadFile("http://192.168.100.55:2223/staffImport/import-staff", "User")}
+                    onClick={() => uploadFile("http://192.168.100.55:8759/staffImport/import-staff", "User")}
                     disabled={loading.import}
                     className={`flex items-center px-4 py-2 text-white text-sm font-medium rounded-lg shadow-md ${loading.import ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`}
                   >
@@ -144,7 +144,7 @@ const Report = () => {
               <td className="px-6 py-4 text-sm font-medium text-gray-700 border border-gray-300">Staff</td>
               <td className="px-6 py-4 text-sm border border-gray-300">
                 <button
-                  onClick={() => downloadExcel("http://192.168.100.55:2223/staff/export-staffs", "Staff_Report.xlsx", "staff")}
+                  onClick={() => downloadExcel("http://192.168.100.55:8759/staff/export-staffs", "Staff_Report.xlsx", "staff")}
                   disabled={loading.staff}
                   className={`flex items-center px-4 py-2 text-white text-sm font-medium rounded-lg shadow-md ${loading.staff ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"}`}
                 >
@@ -162,7 +162,7 @@ const Report = () => {
                     className="block w-full text-sm border border-gray-300 rounded-lg shadow-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 focus:ring-1 disabled:opacity-50 disabled:pointer-events-none text-neutral-400 file:border-0 file:me-4 file:py-3 file:px-4 file:bg-blue-600 file:text-white"
                   />
                   <button
-                    onClick={() => uploadFile("http://192.168.100.55:2223/staffImport/import-staff", "Staff")}
+                    onClick={() => uploadFile("http://192.168.100.55:8759/staffImport/import-staff", "Staff")}
                     disabled={loading.import}
                     className={`flex items-center px-4 py-2 text-white text-sm font-medium rounded-lg shadow-md ${loading.import ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`}
                   >
@@ -176,7 +176,7 @@ const Report = () => {
               <td className="px-6 py-4 text-sm font-medium text-gray-700 border border-gray-300">Computer</td>
               <td className="px-6 py-4 text-sm border border-gray-300">
                 <button
-                  onClick={() => downloadExcel("http://192.168.100.55:2223/product/exportProduct", "Computer.xlsx", "staff")}
+                  onClick={() => downloadExcel("http://192.168.100.55:8759/product/exportProduct", "Computer.xlsx", "staff")}
                   disabled={loading.computer}
                   className={`flex items-center px-4 py-2 text-white text-sm font-medium rounded-lg shadow-md ${loading.computer ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"}`}
                 >
@@ -194,7 +194,7 @@ const Report = () => {
                     className="block w-full text-sm border border-gray-300 rounded-lg shadow-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 focus:ring-1 disabled:opacity-50 disabled:pointer-events-none text-neutral-400 file:border-0 file:me-4 file:py-3 file:px-4 file:bg-blue-600 file:text-white"
                   />
                   <button
-                    onClick={() => uploadFile("http://192.168.100.55:2223/product/importProduct", "product")}
+                    onClick={() => uploadFile("http://192.168.100.55:8759/product/importProduct", "product")}
                     disabled={loading.import}
                     className={`flex items-center px-4 py-2 text-white text-sm font-medium rounded-lg shadow-md ${loading.import ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`}
                   >

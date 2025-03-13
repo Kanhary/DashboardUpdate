@@ -138,8 +138,8 @@ const SubCategory = () => {
       ...formData, // Spread the current formData state
       createdby: currentUser,
       lastby: currentUser,
-      createTime: new Date().toISOString(),
-      updateTime: new Date().toISOString(),
+      createdate: new Date().toISOString(),
+      lastdate: new Date().toISOString(),
     };
 
     try {
@@ -183,7 +183,16 @@ const SubCategory = () => {
         return;
       }
 
-      const response = await UpdateSubCategory(id, formData);
+      const updatedFormData ={
+        ...formData,
+        lastBy: currentUser,
+        lastDate: new Date().toISOString(),
+      }
+
+
+
+
+      const response = await UpdateSubCategory(id, updatedFormData);
 
       if (response.status === 200) {
         console.log("Sub-Category updated successfully:", response.data);
@@ -244,7 +253,7 @@ const SubCategory = () => {
 
       if (result.isConfirmed) {
         // Call DeleteOffice function to send the API request
-        const response = await DeleteSubCategory(id); // Pass the office id here
+        const response = await DeleteSubCategory(id, currentUser); // Pass the office id here
         console.log("Response:", response); // Log the response to confirm deletion
 
         if (response.status === 200) {
@@ -512,10 +521,11 @@ const SubCategory = () => {
                     <td className="px-4 py-4 border-r">
                       {Subcategory.subCategoryName}
                     </td>
-                    <td className="px-4 py-4 border-r">
-                      {Subcategory.CreateBy}
-                    </td>
-                    <td className="px-4 py-4 border-r">{Subcategory.LastBy}</td>
+                    
+                    <td className="px-4 py-4 border-r">{Subcategory.createBy}</td>
+                    <td className="px-4 py-4 border-r">{Subcategory.createDate}</td>
+                    <td className="px-4 py-4 border-r">{Subcategory.lastBy}</td>
+                    <td className="px-4 py-4 border-r">{Subcategory.lastDate}</td>
                   </tr>
                 ))}
               </tbody>
@@ -619,7 +629,7 @@ const SubCategory = () => {
           >
             <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
               <h2 className="text-xl font-bold text-white md:text-2xl">
-                បន្ថែមការិយាល័យថ្មី
+                Add Sub-Category
               </h2>
               <button
                 onClick={closeAddModal}
@@ -636,7 +646,7 @@ const SubCategory = () => {
                     htmlFor="subCategoryCode"
                     className="block mb-2 text-sm font-semibold text-gray-700"
                   >
-                    Office Code
+                    Sub-Category Code
                   </label>
                   <input
                     id="subCategoryCode"
@@ -652,7 +662,7 @@ const SubCategory = () => {
                     htmlFor="subCategoryName"
                     className="block mb-2 text-sm font-semibold text-gray-700"
                   >
-                    Khmer Name
+                    Sub-Category Name
                   </label>
                   <input
                     id="subCategoryName"
@@ -696,7 +706,7 @@ const SubCategory = () => {
           >
             <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
               <h2 className="text-xl font-bold text-white md:text-2xl">
-                កែប្រែព័ត៌មានការិយាល័យ
+                Edit Sub-Category
               </h2>
               <button
                 onClick={closeEditModal}
@@ -713,7 +723,7 @@ const SubCategory = () => {
                     htmlFor="subCategoryCode"
                     className="block mb-2 text-sm font-semibold text-gray-700"
                   >
-                    Office Code
+                    Sub-Category Code
                   </label>
                   <input
                     id="subCategoryCode"
@@ -729,7 +739,7 @@ const SubCategory = () => {
                     htmlFor="subCategoryName"
                     className="block mb-2 text-sm font-semibold text-gray-700"
                   >
-                    Khmer Name
+                    Sub-Category Name
                   </label>
                   <input
                     id="subCategoryName"

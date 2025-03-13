@@ -352,7 +352,7 @@ const TabMenu = ({
               <div className="grid grid-cols-1 gap-6 px-8 py-2 mt-4 sm:grid-cols-2"
               data-aos='zoom-in'>
               {[
-        { id: 'staffCode', label: 'អត្ថលេខ', type: 'text', required: true },
+        { id: 'staffCode', label: 'អត្ថលេខ', type: 'text', required: true, placeholder: 'PPAP-001' },
         { id: 'engName', label: 'អក្សរឡាតាំង', type: 'text', required: true },
         { id: 'khName', label: 'គោត្តនាម/នាម', type: 'text', required: true },
         { id: 'height', label: 'កម្ពស់', type: 'text' },
@@ -363,7 +363,7 @@ const TabMenu = ({
         // { id: 'phoneNumber1', label: 'លេខទូរសព្ទ', type: 'text' },
         // { id: 'email', label: 'អ៊ីម៉ែល', type: 'email' },
         // { id: 'specailPhoneNumber', label: 'លេខទូរសព្ទក្រុមហ៊ុន', type: 'text' }
-      ].map(({ id, label, type, options }) => (
+      ].map(({ id, label, type, options, placeholder }) => (
         <div key={id} className="flex flex-col gap-2">
           <label htmlFor={id} className="flex gap-1 text-sm font-medium text-gray-700">
             {errors[id] && <p className="text-sm text-red-600">*</p>}
@@ -399,6 +399,7 @@ const TabMenu = ({
               value={formData[id]}
               onChange={handleChange}
               // disabled={disabled}
+              placeholder={placeholder}
               disabled={disabled ? true : undefined}
               className={`block w-full p-2 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1 ${errors[id] ? 'border-red-500' : ''}`}
             />
