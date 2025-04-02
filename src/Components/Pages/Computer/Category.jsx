@@ -447,96 +447,46 @@ const Category = () => {
             </div>
           </div>
 
-          <div className="w-full overflow-x-auto" data-aos="fade-right">
-            <table className="w-full text-sm text-left text-gray-500">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-100">
-                <tr>
-                  <th
-                    scope="col"
-                    className="sticky left-0 w-full h-full px-4 py-3 bg-white border-r"
-                    style={{ minWidth: "30px" }}
-                  >
-                    Action
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-t border-r"
-                    style={{ minWidth: "100px" }}
-                  >
-                    Category Code
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-t border-r"
-                    style={{ minWidth: "200px" }}
-                  >
-                    Category Name
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-t border-r"
-                    style={{ minWidth: "150px" }}
-                  >
-                    Create By
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-t border-r"
-                    style={{ minWidth: "150px" }}
-                  >
-                    Last By
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-t border-r"
-                    style={{ minWidth: "150px" }}
-                  >
-                    Last Date
-                  </th>
-                  {/* <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Company Code</th> */}
-                </tr>
-              </thead>
-              <tbody>
-                {currentCategory.map((category) => (
-                  <tr
-                    key={category.id}
-                    className="transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50"
-                  >
-                    <td className="sticky left-0 w-full h-full px-4 py-3 bg-white border-r">
-                      <div
-                        className="flex justify-start space-x-3"
-                        style={{ minWidth: "30px" }}
-                      >
-                        {/* <input type="checkbox" className="mr-1 action-checkbox"/> */}
-                        <button
-                          className="text-blue-600 hover:text-blue-800"
-                          onClick={() => openEditModal(category)}
-                        >
-                          <FaPen />
-                        </button>
-                        <button
-                          key={category.id}
-                          className="text-red-600 hover:text-red-800"
-                          onClick={() => handleDeleteCategory(category.id)}
-                        >
-                          <FaTrashAlt />
-                        </button>
-                      </div>
-                    </td>
-                    <td className="px-4 py-4 border-r">
-                      {category.categoryCode}
-                    </td>
-                    <td className="px-4 py-4 border-r">
-                      {category.categoryName}
-                    </td>
-                    <td className="px-4 py-4 border-r">{category.createBy}</td>
-                    <td className="px-4 py-4 border-r">{category.lastBy}</td>
-                    <td className="px-4 py-4 border-r">{category.lastDate}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <div className="w-full overflow-auto shadow-md rounded-lg">
+  <table className="w-full text-sm text-left text-gray-700 border-collapse">
+    <thead className="text-xs font-semibold text-gray-700 uppercase bg-gray-200 border-b">
+      <tr>
+        <th className="sticky left-0 px-4 py-3  border-r shadow-md">Action</th>
+        <th className="px-4 py-3 border-r">Category Code</th>
+        <th className="px-4 py-3 border-r">Category Name</th>
+        <th className="px-4 py-3 border-r">Create By</th>
+        <th className="px-4 py-3 border-r">Last By</th>
+        <th className="px-4 py-3 border-r">Last Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {currentCategory.map((category) => (
+        <tr key={category.id} className="border-b hover:bg-gray-100 transition">
+          {/* Action Column */}
+          <td className="sticky left-0 px-4 py-3 bg-white border-r shadow-md">
+            <div className="flex items-center space-x-3">
+              <FaPen
+                className="text-blue-500 cursor-pointer hover:text-blue-700"
+                onClick={() => openEditModal(category)}
+              />
+              <FaTrashAlt
+                className="text-red-500 cursor-pointer hover:text-red-700"
+                onClick={() => handleDeleteCategory(category.id)}
+              />
+            </div>
+          </td>
+          {/* Other Columns */}
+          <td className="px-4 py-3 border-r whitespace-nowrap">{category.categoryCode}</td>
+          <td className="px-4 py-3 border-r whitespace-nowrap">{category.categoryName}</td>
+          <td className="px-4 py-3 border-r whitespace-nowrap">{category.createBy}</td>
+          <td className="px-4 py-3 border-r whitespace-nowrap">{category.lastBy}</td>
+          <td className="px-4 py-3 border-r whitespace-nowrap">{category.lastDate}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
 
           <div className="flex flex-col items-center justify-between p-4 md:flex-row">
             <span className="mb-4 text-sm text-gray-600 md:mb-0">

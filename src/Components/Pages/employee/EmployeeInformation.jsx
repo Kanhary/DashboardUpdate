@@ -14,7 +14,7 @@ const EmployeeInformation = () => {
   };
 
   return (
-    <div className="p-6 mt-10 rounded-lg shadow-md">
+    <div className=" mt-10 rounded-lg">
       {/* Page Header */}
       <h1 className='text-xl font-medium text-blue-800'>Staff</h1>
       <div className='mt-3 border'></div>

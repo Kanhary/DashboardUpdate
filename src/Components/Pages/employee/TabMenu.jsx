@@ -239,6 +239,18 @@ const TabMenu = ({
   
   ];
 
+
+  const optionsOffice = [
+    { value: 'office1', label: 'Office 1' },
+    { value: 'office2', label: 'Office 2' },
+    { value: 'office3', label: 'Office 3' },
+  ];
+
+  // const handleOfficeChange = (selectedOption) => {
+  //   setFormData({ ...formData, officeCode: selectedOption.value });
+  // };
+  
+  
   
 
   
@@ -348,211 +360,224 @@ const TabMenu = ({
         return <div className="-mb-8">
 
           <div className='overflow-auto '>
-          <form>
-              <div className="grid grid-cols-1 gap-6 px-8 py-2 mt-4 sm:grid-cols-2"
-              data-aos='zoom-in'>
-              {[
-        { id: 'staffCode', label: 'អត្ថលេខ', type: 'text', required: true, placeholder: 'PPAP-001' },
-        { id: 'engName', label: 'អក្សរឡាតាំង', type: 'text', required: true },
-        { id: 'khName', label: 'គោត្តនាម/នាម', type: 'text', required: true },
-        { id: 'height', label: 'កម្ពស់', type: 'text' },
-        { id: 'weight', label: 'ទម្ងន់', type: 'text' },
-        { id: 'bod', label: 'ថ្ងៃខែឆ្នាំកំណើត', type: 'date' },
-        // { id: 'birthdateAddress', label: 'ទីកន្លែងកំណើត', type: 'text' },
-        { id: 'currentAddress', label: 'អាស័យដ្ឋានបច្ចុប្បន្ន', type: 'text' },
-        // { id: 'phoneNumber1', label: 'លេខទូរសព្ទ', type: 'text' },
-        // { id: 'email', label: 'អ៊ីម៉ែល', type: 'email' },
-        // { id: 'specailPhoneNumber', label: 'លេខទូរសព្ទក្រុមហ៊ុន', type: 'text' }
-      ].map(({ id, label, type, options, placeholder }) => (
-        <div key={id} className="flex flex-col gap-2">
-          <label htmlFor={id} className="flex gap-1 text-sm font-medium text-gray-700">
-            {errors[id] && <p className="text-sm text-red-600">*</p>}
-            {label}
-          </label>
-          {type === 'date' ? (
-            <DatePicker
-              id={id}
-              selected={bod}
-              onChange={handleDateChange}
-              className={`block w-full p-2 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1 ${errors[id] ? 'border-red-500' : ''}`}
-              dateFormat="dd/MM/yyyy"
-              placeholderText="Select date"
-              // disabled={disabled}
-              disabled={disabled ? true : undefined}
-            />
-          ) : type === 'select' ? (
-            <select
-              id={id}
-              value={formData[id] || ''}
-              onChange={handleChange}
-              className={`block w-full p-3 text-gray-500 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1 ${errors[id] ? 'border-red-500' : ''}`}
-            >
-              <option value="">Select {label}</option>
-              {options.map(option => (
-                <option key={option} value={option.toLowerCase()}>{option}</option>
-              ))}
-            </select>
-          ) : (
-            <input
-              type={type}
-              id={id}
-              value={formData[id]}
-              onChange={handleChange}
-              // disabled={disabled}
-              placeholder={placeholder}
-              disabled={disabled ? true : undefined}
-              className={`block w-full p-2 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1 ${errors[id] ? 'border-red-500' : ''}`}
-            />
-          )}
-          {errors[id] && <p className="mt-1 text-xs text-red-500">{errors[id]}</p>}
-        </div>
-      ))}
-                  
-                <div className="flex flex-col gap-2">
-                  <label htmlFor="genderCode" className="flex gap-1 text-sm font-medium text-gray-70">
-                    {/* {!formData.genderCode && <p className="text-sm text-red-600">*</p>} */}
-                    ភេទ</label>
-                  <select
-                    id="genderCode"
-                    value={formData.genderCode}
-                    onChange={handleChange}
-                    required
-                    disabled={disabled ? true : undefined}
-                    className="block w-full p-3 text-sm text-gray-500 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1"
-                  >
-                    <option value="" disabled hidden>Select the Gender</option>
-                    <option value="M">ប្រុស</option>
-                    <option value="F">ស្រី</option>
-                  </select>
-                  {/* {!formData.gender && <p className="text-sm text-red-600">This field is required</p>} */}
-                </div>
+            <form >
+                <div className="grid grid-cols-1 gap-6 px-8 py-2 mt-4 sm:grid-cols-2"
+                data-aos='zoom-in'>
+                {[
+          { id: 'staffCode', label: 'អត្ថលេខ', type: 'text', required: true, placeholder: 'PPAP-001' },
+          { id: 'engName', label: 'អក្សរឡាតាំង', type: 'text', required: true },
+          { id: 'khName', label: 'គោត្តនាម/នាម', type: 'text', required: true },
+          { id: 'height', label: 'កម្ពស់', type: 'text' },
+          { id: 'weight', label: 'ទម្ងន់', type: 'text' },
+          { id: 'bod', label: 'ថ្ងៃខែឆ្នាំកំណើត', type: 'date' },
+          // { id: 'birthdateAddress', label: 'ទីកន្លែងកំណើត', type: 'text' },
+          { id: 'currentAddress', label: 'អាស័យដ្ឋានបច្ចុប្បន្ន', type: 'text' },
+          // { id: 'phoneNumber1', label: 'លេខទូរសព្ទ', type: 'text' },
+          // { id: 'email', label: 'អ៊ីម៉ែល', type: 'email' },
+          // { id: 'specailPhoneNumber', label: 'លេខទូរសព្ទក្រុមហ៊ុន', type: 'text' }
+        ].map(({ id, label, type, options, placeholder }) => (
+          <div key={id} className="flex flex-col gap-2">
+            <label htmlFor={id} className="flex gap-1 text-sm font-medium text-gray-700">
+              {errors[id] && <p className="text-sm text-red-600">*</p>}
+              {label}
+            </label>
+            {type === 'date' ? (
+              <DatePicker
+                id={id}
+                selected={bod}
+                onChange={handleDateChange}
+                className={`block w-full p-2 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1 ${errors[id] ? 'border-red-500' : ''}`}
+                dateFormat="dd/MM/yyyy"
+                placeholderText="Select date"
+                // disabled={disabled}
+                disabled={disabled ? true : undefined}
+              />
+            ) : type === 'select' ? (
+              <select
+                id={id}
+                value={formData[id-1] || ''}
+                onChange={handleChange}
+                className={`block w-full p-3 text-gray-500 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1 ${errors[id] ? 'border-red-500' : ''}`}
+              >
+                <option value="">Select {label}</option>
+                {options.map(option => (
+                  <option key={option} value={option.toLowerCase()}>{option}</option>
+                ))}
+              </select>
+            ) : (
+              <input
+                type={type}
+                id={id}
+                value={formData[id]}
+                onChange={handleChange}
+                // disabled={disabled}
+                placeholder={placeholder}
+                disabled={disabled ? true : undefined}
+                className={`block w-full p-2 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1 ${errors[id] ? 'border-red-500' : ''}`}
+              />
+            )}
+            {errors[id] && <p className="mt-1 text-xs text-red-500">{errors[id]}</p>}
+          </div>
+        ))}
+                    
+                  <div className="flex flex-col gap-2">
+                    <label htmlFor="genderCode" className="flex gap-1 text-sm font-medium text-gray-70">
+                      {/* {!formData.genderCode && <p className="text-sm text-red-600">*</p>} */}
+                      ភេទ</label>
+                    <select
+                      id="genderCode"
+                      value={formData.genderCode}
+                      onChange={handleChange}
+                      required
+                      disabled={disabled ? true : undefined}
+                      className="block w-full p-3 text-sm text-gray-500 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1"
+                    >
+                      <option value="" disabled hidden>Select the Gender</option>
+                      <option value="M">ប្រុស</option>
+                      <option value="F">ស្រី</option>
+                    </select>
+                    {/* {!formData.gender && <p className="text-sm text-red-600">This field is required</p>} */}
+                  </div>
 
-                <div className="flex flex-col gap-2">
-        <label htmlFor="department" className="text-sm font-medium text-gray-700">
-          នាយកដ្ឋាន
-        </label>
-       
-
-        <Select
-                      options={optionsDepartment}
-                      onChange={handleDepartmentChange}  // Ensure handleStaffCode is passed correctly here
-                      value={optionsDepartment.find(option => option.value === formData.departCode)}
+                  <div className="flex flex-col gap-2">
+                    <label htmlFor="department" className="text-sm font-medium text-gray-700">
+                    ការិយាល័យ
+                    </label>
+                      <Select
+                        options={optionsDepartment}
+                        onChange={handleDepartmentChange}  // Ensure handleStaffCode is passed correctly here
+                        value={optionsDepartment.find(option => option.value === formData.departCode)}
+                        placeholder="Select or type to search"
+                        className="basic-single"
+                        classNamePrefix="select"
+                        isDisabled={disabled}
+                        styles={customStyles}
+                      />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label htmlFor="officeCode" className="text-sm font-medium text-gray-700">
+                      ការិយាល័យ (Office)
+                    </label>
+                    <Select
+                      options={optionsOffice}
+                      onChange={handleOfficeChange}
+                      value={optionsOffice.find(option => option.value === formData.officeCode)}
                       placeholder="Select or type to search"
                       className="basic-single"
                       classNamePrefix="select"
                       isDisabled={disabled}
                       styles={customStyles}
-                    />
-      </div>
-
-
-                
-                 {[
-                  { id: 'branchCode', label: 'សាខា', type: 'text' },
-                  // { id: 'position', label: 'តួនាទី', type: 'text' }
-                ].map(({ id, label, type }) => (
-                  <div key={id} className="flex flex-col gap-2">
-                    <label htmlFor={id} className="flex gap-1 text-sm font-medium text-gray-700">
-                      {/* {!formData.companyBranchCode && <p className="text-sm text-red-600">*</p>} */}
-                    
-                    {label}</label>
-                    
-                    <input
-                      type={type}
-                      id={id}
-                      value={formData[id]}
-                      onChange={handleChange}
-                      disabled={disabled ? true : undefined}
-                      className="block w-full p-2 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1"
                     />
                   </div>
-                ))}
-                {
-                  [
-                    { id: 'positionCode', label: 'តួនាទី', type: 'select', options }
+
+                  
+                  {[
+                    { id: 'branchCode', label: 'សាខា', type: 'text' },
+                    // { id: 'position', label: 'តួនាទី', type: 'text' }
                   ].map(({ id, label, type }) => (
                     <div key={id} className="flex flex-col gap-2">
-                      {/* Label with red asterisk if positionCode is not selected */}
                       <label htmlFor={id} className="flex gap-1 text-sm font-medium text-gray-700">
-                        {/* {!formData.positionCode && <p className="text-sm text-red-600">*</p>} */}
-                        {label}
-                      </label>
-
-                      {/* Conditionally rendering select or input based on type */}
-                      {type === 'select' ? (
-        
-                    <Select
-                      options={optionsPosiotn}
-                      onChange={handlePositionChange}  // Ensure handleStaffCode is passed correctly here
-                      value={optionsPosiotn.find(option => option.value === formData.positionCode)}
-                      placeholder="Select or type to search"
-                      className="basic-single"
-                      classNamePrefix="select"
-                      isDisabled={disabled}
-                      styles={customStyles}
-                    />
-                    ) : (
+                        {/* {!formData.companyBranchCode && <p className="text-sm text-red-600">*</p>} */}
+                      
+                      {label}</label>
+                      
                       <input
                         type={type}
                         id={id}
-                        value={formData[id] || ''}
+                        value={formData[id]}
                         onChange={handleChange}
                         disabled={disabled ? true : undefined}
-                        className="block w-full p-2 border border-gray-300 shadow-sm outline-none rounded-xl focus:ring-primary-500 focus:border-primary-500"
+                        className="block w-full p-2 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1"
                       />
-                    )}
-                  </div>
-                ))
-              }
-              <div className="flex flex-col gap-2">
-                  <label htmlFor="fileUpload" className="flex gap-1 text-sm font-medium text-gray-700">
-                    រូបភាព
-                  </label>
-                  <input
-                    type="file"
-                    id="fileUpload"
-                    onChange={handleChange}
-                    disabled={disabled ? true : undefined}
-                    className="block w-full text-sm border border-gray-300 rounded-lg shadow-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 focus:ring-1 disabled:opacity-50 disabled:pointer-events-none text-neutral-400 file:border-0 file:me-4 file:py-3 file:px-4 file:bg-blue-600 file:text-white"
-                  />
-                  {errors.fileUpload && <p className="mt-1 text-xs text-red-500">{errors.fileUpload}</p>}
-              </div>
-            </div>
+                    </div>
+                  ))}
+                  {
+                    [
+                      { id: 'positionCode', label: 'តួនាទី', type: 'select', options },
+                      // { id: 'officeCode', label: 'ការិយាល័យ', type: 'select', options}
+                    ].map(({ id, label, type }) => (
+                      <div key={id} className="flex flex-col gap-2">
+                        {/* Label with red asterisk if positionCode is not selected */}
+                        <label htmlFor={id} className="flex gap-1 text-sm font-medium text-gray-700">
+                          {/* {!formData.positionCode && <p className="text-sm text-red-600">*</p>} */}
+                          {label}
+                        </label>
 
-            <div className="flex justify-center gap-5 p-6 mt-12">
-                <button
-                  type="submit"
-                  onClick={saveAllModal}
-                  className="px-8 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 focus:ring-4 focus:ring-blue-300"
-                >
-                  <p className='text-base font-normal'>រក្សាទុក</p>
-                </button>
-                <button
-                  type="button"
-                  onClick={closeAllModals}
-                  className="px-6 py-4 text-sm font-medium text-gray-700 bg-white border border-gray-300 border-dashed rounded-lg shadow-sm hover:bg-gray-100"
-                >
-                  <p className='text-base font-normal'>ចាកចេញ</p>
-                </button>
+                        {/* Conditionally rendering select or input based on type */}
+                        {type === 'select' ? (
+          
+                      <Select
+                        options={optionsPosiotn}
+                        onChange={handlePositionChange}  // Ensure handleStaffCode is passed correctly here
+                        value={optionsPosiotn.find(option => option.value === formData.positionCode)}
+                        placeholder="Select or type to search"
+                        className="basic-single"
+                        classNamePrefix="select"
+                        isDisabled={disabled}
+                        styles={customStyles}
+                      />
+                      ) : (
+                        <input
+                          type={type}
+                          id={id}
+                          value={formData[id] || ''}
+                          onChange={handleChange}
+                          disabled={disabled ? true : undefined}
+                          className="block w-full p-2 border border-gray-300 shadow-sm outline-none rounded-xl focus:ring-primary-500 focus:border-primary-500"
+                        />
+                      )}
+                    </div>
+                  ))
+                }
+                <div className="flex flex-col gap-2">
+                    <label htmlFor="fileUpload" className="flex gap-1 text-sm font-medium text-gray-700">
+                      រូបភាព
+                    </label>
+                    <input
+                      type="file"
+                      id="fileUpload"
+                      onChange={handleChange}
+                      disabled={disabled ? true : undefined}
+                      className="block w-full text-sm border border-gray-300 rounded-lg shadow-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 focus:ring-1 disabled:opacity-50 disabled:pointer-events-none text-neutral-400 file:border-0 file:me-4 file:py-3 file:px-4 file:bg-blue-600 file:text-white"
+                    />
+                    {errors.fileUpload && <p className="mt-1 text-xs text-red-500">{errors.fileUpload}</p>}
+                </div>
               </div>
 
-              {/* <div className="flex justify-center gap-5 p-6 mt-4">
-                <button
-                  type="submit"
-                  onClick={handleSaveEmployee}
-                  className="px-8 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 focus:ring-4 focus:ring-blue-300"
-                >
-                  <p className='text-base font-normal'>រក្សាទុក</p>
-                </button>
-                <button
-                  type="button"
-                  onClick={closeEmployeeModal}
-                  className="px-6 py-4 text-sm font-medium text-gray-700 bg-white border border-gray-300 border-dashed rounded-lg shadow-sm hover:bg-gray-100"
-                >
-                  <p className='text-base font-normal'>ចាកចេញ</p>
-                </button>
-              </div> */}
-            </form>
+              <div className="flex justify-center gap-5 p-6 mt-12">
+                  <button
+                    type="submit"
+                    onClick={saveAllModal}
+                    className="px-8 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 focus:ring-4 focus:ring-blue-300"
+                  >
+                    <p className='text-base font-normal'>រក្សាទុក</p>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={closeAllModals}
+                    className="px-6 py-4 text-sm font-medium text-gray-700 bg-white border border-gray-300 border-dashed rounded-lg shadow-sm hover:bg-gray-100"
+                  >
+                    <p className='text-base font-normal'>ចាកចេញ</p>
+                  </button>
+                </div>
+
+                {/* <div className="flex justify-center gap-5 p-6 mt-4">
+                  <button
+                    type="submit"
+                    onClick={handleSaveEmployee}
+                    className="px-8 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 focus:ring-4 focus:ring-blue-300"
+                  >
+                    <p className='text-base font-normal'>រក្សាទុក</p>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={closeEmployeeModal}
+                    className="px-6 py-4 text-sm font-medium text-gray-700 bg-white border border-gray-300 border-dashed rounded-lg shadow-sm hover:bg-gray-100"
+                  >
+                    <p className='text-base font-normal'>ចាកចេញ</p>
+                  </button>
+                </div> */}
+              </form>
           </div>
         </div>;
 

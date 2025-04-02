@@ -117,7 +117,7 @@ const SubCategory = () => {
   };
 
   const closeEditModal = () => {
-    setEditingOffice(null);
+    setEditingSubCategory(null);
     setFormData({ CategoryCode: "", CategoryName: "" });
     setIsEditModalOpen(false);
   };
@@ -460,7 +460,7 @@ const SubCategory = () => {
                   <th
                     scope="col"
                     className="px-4 py-3 border-t border-r"
-                    style={{ minWidth: "100px" }}
+                    style={{ minWidth: "200px" }}
                   >
                     Sub-Category Code
                   </th>
@@ -483,7 +483,21 @@ const SubCategory = () => {
                     className="px-4 py-3 border-t border-r"
                     style={{ minWidth: "150px" }}
                   >
+                    Create Date
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 border-t border-r"
+                    style={{ minWidth: "150px" }}
+                  >
                     Last By
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 border-t border-r"
+                    style={{ minWidth: "150px" }}
+                  >
+                    last Date
                   </th>
                   {/* <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Company Code</th> */}
                 </tr>
@@ -525,7 +539,7 @@ const SubCategory = () => {
                     <td className="px-4 py-4 border-r">{Subcategory.createBy}</td>
                     <td className="px-4 py-4 border-r">{Subcategory.createDate}</td>
                     <td className="px-4 py-4 border-r">{Subcategory.lastBy}</td>
-                    <td className="px-4 py-4 border-r">{Subcategory.lastDate}</td>
+                    <td className="px-4 py-3 border-r whitespace-nowrap text-ellipsis overflow-hidden max-w-[150px]">{Subcategory.lastDate}</td>
                   </tr>
                 ))}
               </tbody>

@@ -715,10 +715,22 @@ const User = () => {
     }));
   };
 
-  // const optionsStaffCode = [
-  //   {value: 'staff-005', label: 'staff-005'}
-  // ]
+  const optionGender = [
+    {value: '0', label: 'ប្រុស'},
+    {value: '1', label: 'ស្រី'},
+  ]
 
+  const handleGender = (option) => {
+    console.log("Selected option:", option); // Check if selectedOption has the correct value
+    setSelectedOption(option);
+    setFormData((prevData) => ({
+      ...prevData,
+      sex: option ? option.value : "",
+    }));
+  };
+
+
+  
   // Format options for react-select
   const optionsStaffCode = employees.map((employee) => ({
     value: employee.staffCode,
@@ -827,12 +839,12 @@ const User = () => {
           </div>
 
           <div className="w-full overflow-x-auto" data-aos="fade-right">
-            <table className="w-full text-sm text-left text-gray-500">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-100 ">
+            <table className="w-full text-sm text-left text-gray-700 border-collapse">
+              <thead className="text-xs font-semibold text-gray-700 uppercase bg-gray-200 border-b">
                 <tr>
                   <th
                     scope="col"
-                    className="sticky left-0 px-4 py-3 bg-gray-100 border-t border-r"
+                    className="sticky left-0 px-4 py-3 bg-gray-200 border-t border-r"
                   >
                     Action
                   </th>
@@ -893,13 +905,13 @@ const User = () => {
                   >
                     Staff Code
                   </th>
-                  <th
+                  {/* <th
                     scope="col"
                     className="px-4 py-3 border-t border-r"
                     style={{ minWidth: "150px " }}
                   >
                     Avatar
-                  </th>
+                  </th> */}
                   <th
                     scope="col"
                     className="px-4 py-3 border-t border-r"
@@ -969,13 +981,13 @@ const User = () => {
                     {/* <td className='px-4 border-rpy-3'>{user.password}</td> */}
                     <td className="px-4 py-3 border-r">{user.sex}</td>
                     <td className="px-4 py-3 border-r">{user.staffcode}</td>
-                    <td className="px-4 py-3 border-r">
+                    {/* <td className="px-4 py-3 border-r">
                       <img
                         src={user.avatar}
                         alt="User Avatar"
                         className="object-cover w-10 h-10 rounded-full"
                       />
-                    </td>
+                    </td> */}
                     <td className="px-4 py-3 border-r">{user.status}</td>
                     <td className="px-4 py-3 border-r">{user.creator}</td>
                     <td className="px-4 py-3 border-r">
@@ -1220,14 +1232,16 @@ const User = () => {
                           >
                             Gender
                           </label>
-                          <input
-                            type="text"
-                            id="sex"
-                            value={formData.sex}
-                            onChange={handleChange}
-                            className={`block w-full px-4 py-2 text-sm text-gray-800 border ${
-                              errors.sex ? "border-red-500" : "border-gray-300"
-                            } rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
+                          <Select
+                            options={optionGender}
+                            onChange={handleGender} // Ensure handleStaffCode is passed correctly here
+                            value={optionGender.find(
+                              (option) => option.value === formData.sex
+                            )}
+                            placeholder="Select or type to search"
+                            className="basic-single"
+                            classNamePrefix="select"
+                            styles={customStyles}
                           />
                           {errors.sex && (
                             <p className="mt-1 text-xs text-red-500">

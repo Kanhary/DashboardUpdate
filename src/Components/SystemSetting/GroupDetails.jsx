@@ -198,11 +198,14 @@ const GroupDetails = () => {
       </div>
 
       <div className="pt-5 mt-5 border-t">
-        <table className="w-full text-left border-collapse table-auto">
-          <thead>
-            <tr className="text-sm text-gray-600 bg-gray-200">
+        <table className="w-full text-sm text-left text-gray-700 border-collapse">
+          <thead className="text-xs font-semibold text-gray-700 uppercase bg-gray-200 border-b">
+            <tr>
               <th className="px-4 py-2 border">Menu</th>
-              <th className="px-4 py-2 text-center border">Enable</th>
+              <th className="px-4 py-2 text-center border">View</th>
+              <th className="px-4 py-2 text-center border">Add</th>
+              <th className="px-4 py-2 text-center border">Update</th>
+              <th className="px-4 py-2 text-center border">Delete</th>
             </tr>
           </thead>
           <tbody>
@@ -213,6 +216,45 @@ const GroupDetails = () => {
               >
                 <td className={`px-4 py-2 border ${menu.isChild ? "pl-8" : ""}`}>
                   {menu.menuName}
+                </td>
+                <td className="px-4 py-2 text-center border">
+                <input
+                  type="checkbox"
+                  className="w-4 h-4 text-blue-600"
+                  checked={
+                    roleMenuPermissions.find((permission) => permission.menuName === menu.menuName)?.enabled || false
+                  }
+                  onChange={() => (isEditing ? handleCheckboxChange(menu.menuName) : null)} // Change to menuName
+                  disabled={!isEditing}
+                />
+
+
+                </td>
+                <td className="px-4 py-2 text-center border">
+                <input
+                  type="checkbox"
+                  className="w-4 h-4 text-blue-600"
+                  checked={
+                    roleMenuPermissions.find((permission) => permission.menuName === menu.menuName)?.enabled || false
+                  }
+                  onChange={() => (isEditing ? handleCheckboxChange(menu.menuName) : null)} // Change to menuName
+                  disabled={!isEditing}
+                />
+
+
+                </td>
+                <td className="px-4 py-2 text-center border">
+                <input
+                  type="checkbox"
+                  className="w-4 h-4 text-blue-600"
+                  checked={
+                    roleMenuPermissions.find((permission) => permission.menuName === menu.menuName)?.enabled || false
+                  }
+                  onChange={() => (isEditing ? handleCheckboxChange(menu.menuName) : null)} // Change to menuName
+                  disabled={!isEditing}
+                />
+
+
                 </td>
                 <td className="px-4 py-2 text-center border">
                 <input

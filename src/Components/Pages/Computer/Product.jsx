@@ -65,6 +65,7 @@ const Product = () => {
   const [maintenanceData, setMaintenaceData] = useState({});
   const [maintenanceId, setMaintenanceId] = useState({});
   const [selectedComputer, setSelectedComputer] = useState(null);
+  const [userId, setUserId] = useState(null);
   
 
   // const DepList = [
@@ -104,6 +105,7 @@ const Product = () => {
       try {
         const response = await GetUserLogin(); // Call the API to get the current user
         setCurrentUser(response.data.data.username); // Assuming the response contains a username field
+        setUserId(response.data.data.id);
         console.log("Fetched user:", response.data.data.username);
       } catch (error) {
         console.error("Error fetching current user:", error);
@@ -160,7 +162,7 @@ const Product = () => {
   // }, []);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const recordsPerPage = 8;
+  const recordsPerPage = 7;
   const filteredComputer = Computers.filter(
     (computer) =>
       computer.engName?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
@@ -277,7 +279,7 @@ const Product = () => {
     }
   };
 
-  const handleUpdate = async () => {
+  const handleUpdate = async (id) => {
     try {
       console.log("Saving product data:", formData);
       const id = formData.id; // Ensure this is valid
@@ -292,11 +294,11 @@ const Product = () => {
 
       const updatedFormData = {
         ...formData,
-        lastby: currentUser,
-        lastdate: new Date().toISOString(),
+        lastBy: currentUser,
+        lastDate: new Date().toISOString(),
       }
 
-      const response = await UpdateProduct(id, updatedFormData);
+      const response = await UpdateProduct(id, updatedFormData, userId);
 
       if (response.status === 200) {
         console.log("product updated successfully:", response.data);
@@ -367,7 +369,7 @@ const Product = () => {
         }
   
         // Call DeleteProduct function with id and deleteby
-        const response = await DeleteProduct(id, currentUser);
+        const response = await DeleteProduct(id, currentUser, userId);
   
         if (response.status === 200) {
           Swal.fire({
@@ -661,261 +663,105 @@ const Product = () => {
             </div>
           </div>
 
-          <div className="w-full overflow-x-auto" data-aos="fade-right">
-            <table className="w-full text-sm text-left text-gray-500">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-100 border">
+          <div className="w-full overflow-auto shadow-md rounded-lg">
+            <table className="w-full text-sm text-left text-gray-700 border-collapse">
+              <thead className="text-xs font-semibold text-gray-700 uppercase bg-gray-200 border-b">
                 <tr>
-                  <th
-                    scope="col"
-                    className="sticky left-0 w-full h-full px-4 py-3 bg-white border-r"
-                  >
-                    Action
-                  </th>
-                  <th className="px-4 py-3 border-r">
-                    Details
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-r"
-                    style={{ minWidth: "180px" }}
-                  >
-                    Product Code
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-r"
-                    style={{ minWidth: "180px" }}
-                  >
-                    Device Name
-                  </th>
-                  
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-r"
-                    style={{ minWidth: "250px" }}
-                  >
-                    Staff Code
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-r"
-                    style={{ minWidth: "150px" }}
-                  >
-                    Department
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-r"
-                    style={{ minWidth: "150px" }}
-                  >
-                    Category
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-r"
-                    style={{ minWidth: "150px" }}
-                  >
-                    Model
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-r"
-                    style={{ minWidth: "150px" }}
-                  >
-                    Brand
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-r"
-                    style={{ minWidth: "150px" }}
-                  >
-                    Processor
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-r"
-                    style={{ minWidth: "150px" }}
-                  >
-                    RAM Size
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-r"
-                    style={{ minWidth: "150px" }}
-                  >
-                    Storage Size
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-r"
-                    style={{ minWidth: "150px" }}
-                  >
-                    Storage Type
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-r"
-                    style={{ minWidth: "150px" }}
-                  >
-                    Serial Number
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-r"
-                    style={{ minWidth: "150px" }}
-                  >
-                    Purchase Date
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-r"
-                    style={{ minWidth: "150px" }}
-                  >
-                    Warranty EXP
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-r"
-                    style={{ minWidth: "150px" }}
-                  >
-                    Location
-                  </th>
-                  {/* <th
-                    scope="col"
-                    className="px-4 py-3 border-r"
-                    style={{ minWidth: "150px" }}
-                  >
-                    Quantity
-                  </th> */}
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-r"
-                    style={{ minWidth: "150px" }}
-                  >
-                    Unit Or Set
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-r"
-                    style={{ minWidth: "150px" }}
-                  >
-                    Price
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-r"
-                    style={{ minWidth: "150px" }}
-                  >
-                    IP Address
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-r"
-                    style={{ minWidth: "150px" }}
-                  >
-                    MAC Address
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-r"
-                    style={{ minWidth: "150px" }}
-                  >
-                    Status
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-r"
-                    style={{ minWidth: "150px" }}
-                  >
-                    Note
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-r"
-                    style={{ minWidth: "150px" }}
-                  >
-                    Supplier
-                  </th>
-                 
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-r"
-                    style={{ minWidth: "150px" }}
-                  >
-                    Last By
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 border-r"
-                    style={{ minWidth: "150px" }}
-                  >
-                    Last Date
-                  </th>
+                  <th className="sticky left-0 px-4 py-3  border-r shadow-md">Action</th>
+                  <th className="px-4 py-3 border-r">Details</th>
+                  {[
+                    "Product Code",
+                    "Device Name",
+                    "Staff Code",
+                    "Department",
+                    "Category",
+                    "Model",
+                    "Brand",
+                    "Processor",
+                    "RAM Size",
+                    "Storage Size",
+                    "Storage Type",
+                    "Serial Number",
+                    "Purchase Date",
+                    "Warranty EXP",
+                    "Location",
+                    "Unit Or Set",
+                    "Price",
+                    "IP Address",
+                    "MAC Address",
+                    "Status",
+                    "Note",
+                    "Supplier",
+                    "Last By",
+                    "Last Date",
+                  ].map((header) => (
+                    <th key={header} className="px-4 py-3 border-r whitespace-nowrap">{header}</th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
                 {currentComputer.map((computer, index) => (
-                  <tr
-                    key={computer.id}
-                    onContextMenu={(e) => handleRightClick(e, computer)}
-                    className="transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50"
-                  >
-                    <td className="sticky left-0 w-full h-full px-4 py-3 bg-white border-r">
-                      <div className="flex items-center justify-center space-x-3">
-                        <input
-                          type="checkbox"
-                          className="mr-1 action-checkbox"
-                        />
+                  <tr key={computer.id} className="border-b hover:bg-gray-100 transition">
+                    {/* Action Column */}
+                    <td className="sticky left-0 px-4 py-3 bg-white border-r shadow-md">
+                      <div className="flex items-center space-x-3">
+                        <input type="checkbox" className="mr-1 action-checkbox" />
                         <FaPen
-                          className="ml-2 text-blue-500 cursor-pointer hover:text-blue-700"
+                          className="text-blue-500 cursor-pointer hover:text-blue-700"
                           onClick={() => openEditModal(computer)}
                         />
                         <FaTrashAlt
-                          className="ml-2 text-red-500 cursor-pointer hover:text-red-700"
+                          className="text-red-500 cursor-pointer hover:text-red-700"
                           onClick={() => deleteProduct(computer.id)}
                         />
                       </div>
                     </td>
-                    <td className="px-4 py-4 border-r">
+                    {/* Details Button */}
+                    <td className="px-4 py-3 border-r">
                       <button
-                        className="px-3 py-1 text-blue-500 transition hover:text-blue-600"
+                        className="px-3 py-1 text-blue-500 hover:text-blue-600 transition"
                         onClick={() => setSelectedComputer(computer)}
                       >
                         Details
                       </button>
                     </td>
-                    <td className="px-4 py-4 border-r">{computer.productCode}</td>
-                    <td className="px-4 py-4 border-r">{computer.deviceName}</td>
-                    <td className="px-4 py-4 border-r">{computer.staffCode}</td>
-                    <td className="px-4 py-4 border-r">{computer.departCode}</td>
-                    <td className="px-4 py-4 border-r">{computer.categoryCode}</td>
-                    <td className="px-4 py-4 border-r">{computer.modelName}</td>
-                    <td className="px-4 py-4 border-r">{computer.brand}</td>
-                    <td className="px-4 py-4 border-r">{computer.processor}</td>
-                    <td className="px-4 py-4 border-r">{computer.ramSize}</td>
-                    <td className="px-4 py-4 border-r">{computer.storageSize}</td>
-                    <td className="px-4 py-4 border-r">{computer.storageType }</td>
-                    <td className="px-4 py-4 border-r">{computer.serialNumber}</td>
-                    <td className="px-4 py-4 border-r">{computer.purchaseDate}</td>
-                    <td className="px-4 py-4 border-r">{computer.warrantyExpiration}</td>
-                    <td className="px-4 py-4 border-r">{computer.location}</td>
-                    {/* <td className="px-4 py-4 border-r">{computer.storageSize}</td> */}
-                    <td className="px-4 py-4 border-r">{computer.unitOrSet}</td>
-                    <td className="px-4 py-4 border-r">{computer.price}</td>
-                    <td className="px-4 py-4 border-r">{computer.ipaddress}</td>
-                    <td className="px-4 py-4 border-r">{computer.macAddress}</td>
-                    <td className="px-4 py-4 border-r">{computer.status}</td>
-                    <td className="px-4 py-4 border-r">{computer.note}</td>
-                    <td className="px-4 py-4 border-r">{computer.supply}</td>
-                    
-                    <td className="px-4 py-4 border-r">{computer.lastBy}</td>
-                    <td className="px-4 py-4 border-r">{computer.lastDate}</td>
-                    
+                    {/* Other Columns */}
+                    {[
+                      "productCode",
+                      "deviceName",
+                      "staffCode",
+                      "departCode",
+                      "categoryCode",
+                      "modelName",
+                      "brand",
+                      "processor",
+                      "ramSize",
+                      "storageSize",
+                      "storageType",
+                      "serialNumber",
+                      "purchaseDate",
+                      "warrantyExpiration",
+                      "location",
+                      "unitOrSet",
+                      "price",
+                      "ipAddress",
+                      "macAddress",
+                      "status",
+                      "note",
+                      "supply",
+                      "lastBy",
+                      "lastDate",
+                    ].map((key) => (
+                      <td key={key} className="px-4 py-3 border-r whitespace-nowrap text-ellipsis overflow-hidden max-w-[150px]">
+                        {computer[key]}
+                      </td>
+                    ))}
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+
 
           <div className="flex flex-col items-center justify-between p-4 md:flex-row">
             <span className="mb-4 text-sm text-gray-600 md:mb-0">

@@ -27,7 +27,17 @@ const HeaderPage = ({ toggleSidebar }) => {
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [formDataID, setFormData] = useState({});
 
+  const [notifications, setNotifications] = useState([]);
   const notificationsRef = useRef(null);
+  const [selectedNotification, setSelectedNotification] = useState(null);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+
+  const handleNotificationClick = (notification) => {
+    setSelectedNotification(notification);
+  };
+
+
 
   useEffect(() => {
     GetUserLogin()
@@ -58,7 +68,21 @@ const HeaderPage = ({ toggleSidebar }) => {
         }
       };
 
+      const fetchNotifications = async () => {
+        try {
+          const response = await axios.get("http://192.168.100.55:8759/helpRequest/getAllRequest"); // Replace with your API endpoint
+          setNotifications(response.data.data);
+          const unread = response.data.data.filter((notif) => notif.status !== "approved").length;
+          setUnreadCount(unread);
+          console.log("Unread : ", unread);
+        } catch (error) {
+          console.error("Error fetching notifications:", error);
+        }
+      };
+  
+
       fetchUserId();
+      fetchNotifications()
   }, []);
 
   const handleRemoveProfileImage = () => {
@@ -144,6 +168,17 @@ const HeaderPage = ({ toggleSidebar }) => {
     navigate("/");
   };
 
+  const handleApprove = async () => {
+    try {
+      await axios.put(`http://192.168.100.55:8759/helpRequest/requestApprove/${selectedNotification.id}`);
+      setNotifications(notifications.filter((n) => n.id !== selectedNotification.id));
+      setSelectedNotification(null); // Close modal after approval
+    } catch (error) {
+      console.error("Error approving notification:", error);
+    }
+  };
+
+
   return (
     <div>
       <nav className="fixed top-0 z-50 w-full bg-white border border-b-gray-200">
@@ -194,13 +229,15 @@ const HeaderPage = ({ toggleSidebar }) => {
                 ref={notificationsRef}
               >
                 <BiBell size={24} />
-                <span className="absolute top-0 right-0 inline-flex items-center justify-center w-4 h-4 text-xs text-white bg-red-500 rounded-full">
-                  3
-                </span>
+                {unreadCount > 0 && (
+                  <span className="absolute top-0 right-0 inline-flex items-center justify-center w-4 h-4 text-xs text-white bg-red-500 rounded-full">
+                    {unreadCount}
+                  </span>
+                )}
               </button>
 
               {isNotificationsOpen && (
-                <div className="absolute z-50 mt-2 overflow-hidden bg-white border border-gray-200 rounded-lg shadow-lg w-72 right-16 top-full font-khmer">
+                <div className="absolute z-50 mt-2 overflow-hidden bg-white border border-gray-200 rounded-lg shadow-lg right-16 top-full font-khmer w-96">
                   <div className="px-5 py-3 bg-gray-100 border-b border-gray-200">
                     <p className="flex items-center font-medium text-gray-900">
                       <BiBell size={20} className="mr-2 text-indigo-500" />
@@ -208,33 +245,38 @@ const HeaderPage = ({ toggleSidebar }) => {
                     </p>
                   </div>
 
-                  <ul className="divide-y divide-gray-200">
-                    <li className="flex items-center px-4 py-3 transition-colors hover:bg-gray-50">
-                      <div className="flex-shrink-0 w-2.5 h-2.5 bg-indigo-500 rounded-full"></div>
-                      <div className="ml-3 text-sm text-gray-700">
-                        New employee added
-                        <p className="text-xs text-gray-500 mt-0.5">Just now</p>
-                      </div>
-                    </li>
-                    <li className="flex items-center px-4 py-3 transition-colors hover:bg-gray-50">
-                      <div className="flex-shrink-0 w-2.5 h-2.5 bg-yellow-500 rounded-full"></div>
-                      <div className="ml-3 text-sm text-gray-700">
-                        System update available
-                        <p className="text-xs text-gray-500 mt-0.5">
-                          5 minutes ago
-                        </p>
-                      </div>
-                    </li>
-                    <li className="flex items-center px-4 py-3 transition-colors hover:bg-gray-50">
-                      <div className="flex-shrink-0 w-2.5 h-2.5 bg-green-500 rounded-full"></div>
-                      <div className="ml-3 text-sm text-gray-700">
-                        Server backup completed
-                        <p className="text-xs text-gray-500 mt-0.5">
-                          1 hour ago
-                        </p>
-                      </div>
-                    </li>
-                  </ul>
+                  <ul className="divide-y divide-gray-200 h-[300px] overflow-y-auto">
+            {notifications.length > 0 ? (
+              notifications.map((notification, index) => (
+                <li
+                  key={index}
+                  className="flex items-center px-4 py-3 transition-colors hover:bg-gray-50 cursor-pointer"
+                  onClick={() => handleNotificationClick(notification)}
+                >
+                  <div
+                    className={`flex-shrink-0 w-2.5 h-2.5 rounded-full ${
+                      notification.status === "Pending"
+                        ? "bg-yellow-500"
+                        : notification.status === "Approved"
+                        ? "bg-green-500"
+                        : "bg-green-500"
+                    }`}
+                  ></div>
+                  <div className="ml-3 text-sm text-gray-700">
+                    {notification.departmentId}-{notification.description}
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      {notification.status}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      {notification.createdAt}
+                    </p>
+                  </div>
+                </li>
+              ))
+            ) : (
+              <li className="p-4 text-sm text-gray-500">No new notifications</li>
+            )}
+          </ul>
                 </div>
               )}
 
@@ -425,6 +467,40 @@ const HeaderPage = ({ toggleSidebar }) => {
           </div>
         </div>
       )}
+
+
+{selectedNotification && (
+  <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+    <div className="bg-white p-6 rounded-lg shadow-lg w-96 h-[200px]">
+      <h2 className="text-lg font-semibold text-gray-900">Notification</h2>
+      <p className="mt-2 text-gray-700">{selectedNotification.description}</p>
+      <p className="mt-1 text-sm text-gray-500">{selectedNotification.createdAt}</p>
+
+      <div className="mt-4 flex justify-end space-x-3">
+        {/* Debugging: Display the status */}
+        {/* <p className="text-xs text-gray-500">Status: {selectedNotification.status}</p> */}
+
+        {/* Ensure status is checked correctly */}
+        {selectedNotification.status !== "approved" && selectedNotification.status !== "Approved" && (
+          <button
+            className="px-4 py-2 text-sm font-medium text-white bg-indigo-500 rounded hover:bg-indigo-600"
+            onClick={handleApprove}
+          >
+            Approve
+          </button>
+        )}
+        
+        <button
+          className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-200 rounded hover:bg-gray-300"
+          onClick={() => setSelectedNotification(null)}
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };

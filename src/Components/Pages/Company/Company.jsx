@@ -445,7 +445,7 @@ const Company = () => {
                   <th
                     scope="col"
                     className="px-4 py-3 border-t border-r"
-                    style={{ minWidth: "150px" }}
+                    style={{ minWidth: "250px" }}
                   >
                     Address
                   </th>

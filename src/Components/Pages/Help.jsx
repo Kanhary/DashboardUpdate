@@ -1,32 +1,177 @@
+import { useState, useEffect } from 'react';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { GetAllUser, GetDep, HelpRequest } from '../../api/user';
+import Select from "react-select";
 
 const Help = () => {
-  const handleSubmit = (e) => {
-    e.preventDefault();
 
-    // Get the input values
-    const name = e.target.elements.name.value;
-    const email = e.target.elements.email.value;
-    const message = e.target.elements.message.value;
 
-    // Debugging
-    console.log("Name:", name);
-    console.log("Email:", email);
-    console.log("Message:", message);
+  const [formData, setFormData] = useState({
+    user_id: '',
+    department_id: '',
+    description: '',
+  })
+  const [departId, setdepartId] =useState([]);
+  const [userId, setUserId] = useState([]);
+  const [error, setError] = useState(null);
 
-    // Create the email body
-    const emailBody = `Name: ${name}\nEmail: ${email}\nMessage: ${message}`;
+    useEffect(() => {
+      const fetchAllDep = async () => {
+        try {
+          const response = await GetDep();
+          console.log(response.data.data);
+          setdepartId(response.data.data);
+        } catch (err) {
+          setError({ message: err.message || "An error occurred" });
+        }
+      };
 
-    // Create a mailto link with the email address and body
-    const mailtoLink = `mailto:sempheakdey417@gmail.com?subject=Contact Form Submission&body=${encodeURIComponent(emailBody)}`;
+      const fetchUser = async () => {
+        try {
+          const response = await GetAllUser();
+          console.log(response.data.data);
+          setUserId(response.data.data);
+        } catch (err) {
+          setError({ message: err.message || "An error occurred" });
+        }
+      };
+  
+      fetchUser();
+      fetchAllDep();
+    }, []);
 
-    // Open the mail client
-    window.location.href = mailtoLink;
 
-    // Clear the form inputs
-    e.target.reset();
-};
+    const optionsDepartment = departId.map((dep) => ({
+      value: dep.id,
+      label: `${dep.id} - ${dep.departKhName}`,
+    }));
+
+    const optionUser = userId.map((user) => ({
+      value: user.id,
+      label: `${user.id} - ${user.username}`,
+    }));
+
+    const handleUserChange = (selectedOption) => {
+      console.log("Selected department option:", selectedOption);
+  
+      setFormData((prevData) => {
+        const updatedData = {
+          ...prevData,
+          user_id: selectedOption ? selectedOption.value : "",
+        };
+        console.log("Updated formData:", updatedData); // Check if the updated data is correct
+        return updatedData;
+      });
+    };
+
+    const handleDepartmentChange = (selectedOption) => {
+      console.log("Selected department option:", selectedOption);
+  
+      setFormData((prevData) => {
+        const updatedData = {
+          ...prevData,
+          department_id: selectedOption ? selectedOption.value : "",
+        };
+        console.log("Updated formData:", updatedData); // Check if the updated data is correct
+        return updatedData;
+      });
+    };
+
+    const customStyles = {
+      control: (provided, state) => ({
+        ...provided,
+        background: "#fff",
+        borderColor: "#9e9e9e",
+        minHeight: "30px",
+        height: "50px",
+        boxShadow: state.isFocused ? null : null,
+      }),
+  
+      valueContainer: (provided, state) => ({
+        ...provided,
+        height: "30px",
+        padding: "0 6px",
+      }),
+  
+      input: (provided, state) => ({
+        ...provided,
+        margin: "0px",
+      }),
+      indicatorSeparator: (state) => ({
+        display: "none",
+      }),
+      indicatorsContainer: (provided, state) => ({
+        ...provided,
+        height: "30px",
+      }),
+      placeholder: (state) =>({
+        display: "none"
+      })
+    };
+
+    const handleSave = async (e) => {
+      e.preventDefault(); // Prevents form from reloading the page
+    
+      const updatedFormData = {
+        userId: formData.user_id,
+        departmentId: formData.department_id,
+        description: formData.description,
+        createAt: new Date().toISOString(),
+      };
+    
+      try {
+        const response = await HelpRequest(updatedFormData);
+        Swal.fire({
+          title: "Saved!",
+          text: "Request has been submitted successfully.",
+          icon: "success",
+          confirmButtonText: "Okay",
+        });
+    
+        console.log("API Response:", response);
+      } catch (error) {
+        console.error("Error saving data", error);
+        Swal.fire({
+          title: "Error!",
+          text: "Failed to send request.",
+          icon: "error",
+          confirmButtonText: "Okay",
+        });
+      }
+    };
+    
+
+
+    const handleChange = (e) => {
+      const { id, value } = e.target;
+      setFormData((prev) => ({ ...prev, [id]: value }));
+    };
+//   const handleSubmit = (e) => {
+//     e.preventDefault();
+
+//     // Get the input values
+//     const name = e.target.elements.name.value;
+//     const email = e.target.elements.email.value;
+//     const message = e.target.elements.message.value;
+
+//     // Debugging
+//     console.log("Name:", name);
+//     console.log("Email:", email);
+//     console.log("Message:", message);
+
+//     // Create the email body
+//     const emailBody = `Name: ${name}\nEmail: ${email}\nMessage: ${message}`;
+
+//     // Create a mailto link with the email address and body
+//     const mailtoLink = `mailto:sempheakdey417@gmail.com?subject=Contact Form Submission&body=${encodeURIComponent(emailBody)}`;
+
+//     // Open the mail client
+//     window.location.href = mailtoLink;
+
+//     // Clear the form inputs
+//     e.target.reset();
+// };
 
   return (
     <div className="min-h-screen mt-10 font-khmer" data-aos='fade-right'>
@@ -68,8 +213,8 @@ const Help = () => {
         
         <section>
           <div className='sm:px-6 lg:px-8'>
-            <div className='grid grid-cols-1 lg:grid-cols-2'>
-              <div className='mb-10 lgmb-10'>
+            <div className='grid grid-cols-1 '>
+              {/* <div className='mb-10 lgmb-10'>
                 <div className='w-full h-full group'>
                   <div className='relative h-full'>
                     <img src="/login_bg.jpg" alt="" className='w-full h-full bg-indigo-700 rounded-2xl lg:rounded-l-2xl bg-blend-multiply' />
@@ -99,71 +244,132 @@ const Help = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
               <div>
-              <form action="#" 
-                className='p-5 lg:p-11 lg:rounded-r-2xl rounded-2xl​' 
-                onSubmit={handleSubmit}>
-                   <h2 className='text-4xl font-semibold leading-10 text-indigo-900 font-manrope mb-11'>Send Us A Messange If You Need Help</h2>
-                  <div className="relative mb-6">
-                    <input
-                      type="text"
-                      id="name"
-                      // value={name}
-                      //onChange={(e) => setUsername(e.target.value)}
-                      name="name"
-                      required
-                      className="peer w-full px-3 py-4 text-[16px] md:text-[18px] text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-                      placeholder=" "
-                    />
-                    <label
-                      htmlFor="name"
-                      className="absolute text-gray-500 duration-300 transform -translate-y-6 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8 left-3 mt-2 peer-focus:text-blue-500"
-                    >
-                      ឈ្មោះរបស់អ្នក
-                    </label>
-                  </div>
-                  <div className="relative mb-6">
-                    <input
-                      type="email"
-                      id="email"
-                      // value={password}
-                      //onChange={(e) => setEmail(e.target.value)}
-                      name="email"
-                      required
-                      className="peer w-full px-3 py-4 pr-10 text-[16px] md:text-[18px] text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-                      placeholder=" "
-                    />
-                    <label
-                      htmlFor="email"
-                      className="absolute text-gray-500 duration-300 transform -translate-y-6 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8 left-3 mt-2 peer-focus:text-blue-500"
-                    >
-                      អ៊ីម៉ែលរបស់អ្នក
-                    </label>
-                  </div>
-                  <div className="relative mb-6">
-                    <textarea
-                      // type="email"
-                      id="message"
-                      rows={4}
-                      // value={password}
-                      //onChange={(e) => setEmail(e.target.value)}
-                      name="message"
-                      required
-                      className="peer w-full px-3 py-4 pr-10 text-[16px] md:text-[18px] text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-                      placeholder=" "
-                    />
-                    <label
-                      htmlFor="message"
-                      className="absolute text-gray-500 duration-300 transform -translate-y-6 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8 left-3 mt-2 peer-focus:text-blue-500"
-                    >
-                      សារ
-                    </label>
-                  </div>
-                  <div className="flex items-center justify-center">
-                  <button className="w-full h-12 mt-2 text-base font-semibold leading-6 text-white transition-all duration-700 bg-indigo-900 rounded-full shadow-sm hover:bg-indigo-800">ផ្ញើ</button>
-                  </div>
-                </form>
+              <form 
+  action="#" 
+  className="p-5 lg:p-11 lg:rounded-r-2xl rounded-2xl"
+  onSubmit={handleSave}
+>
+  <h2 className="text-4xl font-semibold leading-10 text-indigo-900 font-manrope mb-11">
+    Send Us A Message If You Need Help
+  </h2>
+
+  {/* Two-Column Layout for Input Fields */}
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {/* Name Field */}
+    <div className="relative">
+    <Select
+                  options={optionUser}
+                  onChange={handleUserChange}
+                  // placeholder="Select Department"
+                  value={optionUser.find(
+                    (option) => option.value === formData.user_id
+                  )}
+                  isClearable
+                  className="basic-single"
+                  classNamePrefix="select"
+                  styles={customStyles}
+                />
+      <label
+        htmlFor="name"
+        className="absolute text-gray-500 duration-300 transform -translate-y-6 scale-75 top-2 z-10 bg-white px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8 left-3 mt-2 peer-focus:text-blue-500"
+      >
+        ឈ្មោះរបស់អ្នក
+      </label>
+    </div>
+
+    {/* Email Field */}
+    {/* <div className="relative">
+      <input
+        type="email"
+        id="email"
+        name="email"
+        required
+        className="peer w-full px-3 py-4 pr-10 text-[16px] md:text-[18px] text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+        placeholder=" "
+      />
+      <label
+        htmlFor="email"
+        className="absolute text-gray-500 duration-300 transform -translate-y-6 scale-75 top-2 z-10 bg-white px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8 left-3 mt-2 peer-focus:text-blue-500"
+      >
+        អ៊ីម៉ែលរបស់អ្នក
+      </label>
+    </div> */}
+
+    {/* Department Field */}
+    <div className="relative">
+    <Select
+                  options={optionsDepartment}
+                  onChange={handleDepartmentChange}
+                  // placeholder="Select Department"
+                  value={optionsDepartment.find(
+                    (option) => option.value === formData.department_id
+                  )}
+                  isClearable
+                  className="basic-single"
+                  classNamePrefix="select"
+                  styles={customStyles}
+                />
+      <label
+        htmlFor="department"
+        className="absolute text-gray-500 duration-300 transform -translate-y-6 scale-75 top-2 z-10 bg-white px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8 left-3 mt-2 peer-focus:text-blue-500"
+      >
+        នាយកដ្ឋាន
+      </label>
+    </div>
+
+    {/* Office Field */}
+    {/* <div className="relative">
+      <input
+        type="text"
+        id="office"
+        name="office"
+        required
+        className="peer w-full px-3 py-4 pr-10 text-[16px] md:text-[18px] text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+        placeholder=" "
+      />
+      <label
+        htmlFor="office"
+        className="absolute text-gray-500 duration-300 transform -translate-y-6 scale-75 top-2 z-10 bg-white px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8 left-3 mt-2 peer-focus:text-blue-500"
+      >
+        ការិយាល័យ
+      </label>
+    </div> */}
+  </div>
+
+  {/* Message Field (Full Width) */}
+  <div className="relative mt-6">
+    <textarea
+      id="description"
+      rows={4}
+      name="message"
+      value={formData.description}
+      onChange={handleChange}
+      required
+      className="peer w-full px-3 py-4 text-[16px] md:text-[18px] text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+      placeholder=" "
+    />
+    <label
+      htmlFor="message"
+      className="absolute text-gray-500 duration-300 transform -translate-y-6 scale-75 top-2 z-10 bg-white px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8 left-3 mt-2 peer-focus:text-blue-500"
+    >
+      សារ
+    </label>
+  </div>
+
+  {/* Submit Button */}
+  <div className="flex items-center justify-center mt-6">
+    <button
+      type="submit"
+      // onClick={handleSave}
+      className="w-full h-12 text-base font-semibold leading-6 text-white transition-all duration-700 bg-indigo-900 rounded-full shadow-sm hover:bg-indigo-800"
+    >
+      ផ្ញើ
+    </button>
+  </div>
+</form>
+
               </div>
             </div>
           </div>

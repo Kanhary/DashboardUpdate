@@ -718,7 +718,14 @@ const OfficeList = () => {
                 </div>
 
                 {/* Input for Department */}
-                <Select
+                <div>
+                  <label
+                    htmlFor="officeEngName"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Department Code
+                  </label>
+                  <Select
                   options={optionsDepartment}
                   onChange={handleDepartmentChange}
                   placeholder="Select Department"
@@ -730,6 +737,7 @@ const OfficeList = () => {
                   classNamePrefix="select"
                   styles={customStyles}
                 />
+                </div>
 
                 {/* <div>
             <label htmlFor="BranchCode" className="block mb-2 text-sm font-semibold text-gray-700">Branch Code</label>
@@ -853,7 +861,14 @@ const OfficeList = () => {
                 </div>
 
                 {/* Input for Department */}
-                <Select
+                <div>
+                  <label
+                    htmlFor="officeEngName"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
+                  >
+                    Department Code
+                  </label>
+                  <Select
                   options={optionsDepartment}
                   onChange={handleDepartmentChange}
                   placeholder="Select Department"
@@ -865,6 +880,7 @@ const OfficeList = () => {
                   classNamePrefix="select"
                   styles={customStyles}
                 />
+                </div>
 
                 {/* <div>
             <label htmlFor="BranchCode" className="block mb-2 text-sm font-semibold text-gray-700">Branch Code</label>

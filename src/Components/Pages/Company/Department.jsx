@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaPen, FaTrashAlt } from "react-icons/fa";
 import Select from "react-select";
-import { GetDep, AddNewDep, DeleteDep, UpdateDep } from "../../../api/user";
+import { GetDep, AddNewDep, DeleteDep, UpdateDep, GetUserLogin } from "../../../api/user";
 import { IoMdRefresh } from "react-icons/io";
 import Swal from "sweetalert2";
 
@@ -440,21 +440,21 @@ const Department = () => {
                     className="px-4 py-3 border-r"
                     style={{ minWidth: "180px" }}
                   >
-                    Company Code
+                    Department Code
                   </th>
                   <th
                     scope="col"
                     className="px-4 py-3 border-r"
-                    style={{ minWidth: "180px" }}
+                    style={{ minWidth: "200px" }}
                   >
-                    Department Code
+                    English Name
                   </th>
                   <th
                     scope="col"
                     className="px-4 py-3 border-r"
                     style={{ minWidth: "250px" }}
                   >
-                    Department Name
+                    Khmer Name
                   </th>
                   <th
                     scope="col"

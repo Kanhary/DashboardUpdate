@@ -17,12 +17,12 @@ export function GetUserLogin() {
   });
 }
 
-export function GetEmp(params) {
-  console.log(params);
+export function GetEmp() {
+  // console.log(params);
   return request({
     method: "GET",
     url: "/staffs/getSelectEpm",
-    params: params,
+    // params: params,
   });
 }
 
@@ -130,12 +130,12 @@ export function uploadPicture(userId, imageFile) {
   });
 }
 
-export function GetAllStaff(params) {
-  console.log(params);
+export function GetAllStaff() {
+  // console.log(params);
   return request({
     method: "GET",
     url: "/staff/getAllStaff",
-    params: params,
+    // params: params,
   });
 }
 
@@ -301,18 +301,18 @@ export function AddProduct(data) {
   });
 }
 
-export function UpdateProduct(id, data) {
+export function UpdateProduct(id, data, userId) {
   return request({
     method: "POST", // Assuming a POST request is required
-    url: `/Product/updatePro/${id}`, // Use query parameter for the office ID
+    url: `/Product/updatePro/${id}/${userId}`, // Use query parameter for the office ID
     data: data,
   });
 }
 
-export function DeleteProduct(id, deleteby) {
+export function DeleteProduct(id, deleteby, userId) {
   return request({
     method: "DELETE",
-    url: `/Product/deletePro/${id}`,
+    url: `/Product/productDel/${id}/${userId}`,
     data: { deleteby },
   });
 }
@@ -645,3 +645,37 @@ export function GetMaintenanceByID(id) {
     data: data,
   });
 }
+
+
+export function GetOfficeByDep(id) {
+  return request({
+    method: "GET",
+    url: `/Office/selectOfficeFromDepartmentByDepartCode/${id}`,
+  });
+}
+
+export function ChangePwd(data) {
+  return request({
+    method: "POST",
+    url: "/user/change-password",
+    data: data,
+  });
+}
+
+
+export function HelpRequest(data) {
+  return request({
+    method: "POST",
+    url: "/helpRequest/request-help",
+    data: data,
+  });
+}
+
+
+// export function GetOfficeByDep() {
+//   return request({
+//     method: "GET",
+//     url: `/helpRequest/getAllRequest`,
+//   });
+// }
+

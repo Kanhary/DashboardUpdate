@@ -29,6 +29,7 @@ const StaffInfo = () => {
   const { scrollYProgress } = useScroll();
 
   const [department, setDepartment] = useState([]);
+  const [allOfficeOptions , setallOfficeOptions ] = useState([]);
   const [position, setPosition] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -40,6 +41,8 @@ const StaffInfo = () => {
   const [selectedDate, setSelectedDate] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
   const [selectedOption, setSelectedOption] = useState("");
+  const [filteredOfficeOptions, setFilteredOfficeOptions] = useState([]);
+  const [editingStaff, setEditingStaff] = useState(null);
 
   const [errors, setErrors] = useState({});
 
@@ -84,6 +87,7 @@ const StaffInfo = () => {
     currentAddress: "",
     genderCode: "",
     departCode: "",
+    officeCode: "",
     branchCode: "",
     positionCode: "",
     fileUpload: null,
@@ -111,23 +115,20 @@ const StaffInfo = () => {
   const fetchAllStaff = async () => {
     try {
       const response = await GetAllStaff();
-      console.log("Response data:", response.data);
-
-      const employeesData = response.data?.data || response.data;
-      if (Array.isArray(employeesData)) {
-        setEmployees(employeesData);
+      console.log("Full API Response:", response);
+  
+      if (Array.isArray(response.data?.data)) {
+        setEmployees(response.data.data); // Update state only
       } else {
-        console.error("Unexpected data format:", employeesData);
-        setErrors({ message: "Unexpected API response format" });
+        console.error("Unexpected data format:", response.data);
+        setEmployees([]); // Prevent old data from appearing
       }
     } catch (err) {
-      // Log and capture more details about the error
-      console.error("Error details:", err.response || err);
-      const errorMessage =
-        err.response?.data?.message || "An unknown error occurred";
-      setErrors({ message: errorMessage });
+      console.error("Error fetching employees:", err);
+      setEmployees([]);
     }
   };
+  
   useEffect(() => {
     
 
@@ -140,6 +141,18 @@ const StaffInfo = () => {
         setErrors({ message: err.message || "An error occurred" });
       }
     };
+
+    // const fetchFormData = async () => {
+    //   try {
+    //     const response = await GetAllStaff();
+    //     console.log(response.data.data);
+    //     setFormData(response.data.data);
+    //     console.log("Form Data : ", formData)
+    //   } catch (err) {
+    //     setErrors({ message: err.message || "An error occurred" });
+    //   }
+    // };
+
     const fetchCurrentUser = async () => {
       try {
         const response = await GetUserLogin();
@@ -154,7 +167,7 @@ const StaffInfo = () => {
       try {
         const response = await GetPosition();
         console.log(response.data.data);
-        setEmployees(response.data.data);
+        setPosition(response.data.data);
       } catch (err) {
         setErrors({ message: err.message || "An error occurred" });
       }
@@ -175,19 +188,33 @@ const StaffInfo = () => {
     fetchCurrentUser();
     fetchAllPostition();
     fetchAllComputerCourse();
+    // fetchFormData();
   }, []);
 
   const handleDepartmentChange = (selectedOption) => {
     console.log("Selected department option:", selectedOption);
 
-    setFormData((prevData) => {
-      const updatedData = {
-        ...prevData,
-        departCode: selectedOption ? selectedOption.value : "",
-      };
-      console.log("Updated formData:", updatedData); // Check if the updated data is correct
-      return updatedData;
-    });
+    setFormData((prevData) => ({
+      ...prevData,
+      departCode: selectedOption ? selectedOption.value : "",
+      officeCode: "", // Clear office selection when department changes
+    }));
+
+    if (selectedOption) {
+      const filteredOffices = allOfficeOptions.filter(
+        (office) => office.departmentId === selectedOption.value
+      );
+      setFilteredOfficeOptions(filteredOffices);
+    } else {
+      setFilteredOfficeOptions([]);
+    }
+  };
+
+  const handleOfficeChange = (selectedOption) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      officeCode: selectedOption ? selectedOption.value : "",
+    }));
   };
 
   // const handleCourseChange = (selectedOption) => {
@@ -247,24 +274,7 @@ const StaffInfo = () => {
     label: `${pos.positionCode} - ${pos.positionName}`,
   }));
 
-  //   const [employees, setEmployees] = useState([
-
-  //     { id: '1', staffCode: '001', fullName: 'សែម ភក្តី', latanName: 'Sem Pheakdey', gender: 'Male', height: '185cm', weight: '75kg', birthDate: '1990-01-01', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់ស្រះចក, ខណ្ឌឬស្សីកែវ, រាជធានីភ្នំពេញ', address: 'សង្កាត់ស្រះចក, ខណ្ឌឬស្សីកែវ, រាជធានីភ្នំពេញ', phoneNumber1: '0123456789', email: 'sem.pheakdey@example.com', specailPhoneNumber: '010 444 152', familyStatus: 'Single', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS3', departmentCode: 'Administration', officeCode: 'IT Department', positionCode: 'Manager', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
-  //     { id: '2', staffCode: '002', fullName: 'សុជឿន ជ័យនេត', latanName: 'Sokhoeun Chhaynet', gender: 'Female', height: '160cm', weight: '55kg', birthDate: '1985-05-15', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់ដេក, ខណ្ឌភ្នំពេញ, រាជធានីភ្នំពេញ', address: 'សង្កាត់ដេក, ខណ្ឌភ្នំពេញ, រាជធានីភ្នំពេញ', phoneNumber1: '0987654321', email: 'sokhoeun.chhaynet@example.com', specailPhoneNumber: '010 555 123', familyStatus: 'Married', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS4', departmentCode: 'Finance', officeCode: 'Engineering Office', positionCode: 'Senior Analyst', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
-  //     { id: '3', staffCode: '003', fullName: 'អ៊ុំ ម៉េង', latanName: 'Um Meng', gender: 'Male', height: '175cm', weight: '68kg', birthDate: '1988-07-22', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់ទន្លេបត, ខណ្ឌសៀមរាប, រាជធានីសៀមរាប', address: 'សង្កាត់ទន្លេបត, ខណ្ឌសៀមរាប, រាជធានីសៀមរាប', phoneNumber1: '0976543210', email: 'um.meng@example.com', specailPhoneNumber: '010 666 789', familyStatus: 'Single', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS5', departmentCode: 'Technology', officeCode: 'Research Department', positionCode: 'IT Specialist', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
-  //     { id: '4', staffCode: '004', fullName: 'ចន ឃឿន', latanName: 'Chan Khuon', gender: 'Female', height: '170cm', weight: '60kg', birthDate: '1992-03-10', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់ផែន, ខណ្ឌព្រះសីហនុ, រាជធានីព្រះសីហនុ', address: 'សង្កាត់ផែន, ខណ្ឌព្រះសីហនុ, រាជធានីព្រះសីហនុ', phonphoneNumber1e_number: '0934567890', email: 'chan.khuon@example.com', specailPhoneNumber: '010 777 888', familyStatus: 'Divorced', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS6', departmentCode: 'Human Resources', officeCode: 'Administrative Office', positionCode: 'HR Coordinator', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
-  //     { id: '5', staffCode: '005', fullName: 'ម៉ៅ សំរៀន', latanName: 'Mao Somrien', gender: 'Male', height: '180cm', weight: '70kg', birthDate: '1980-11-30', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់បឹងកេងកង, ខណ្ឌចំការមន, រាជធានីភ្នំពេញ', address: 'សង្កាត់បឹងកេងកង, ខណ្ឌចំការមន, រាជធានីភ្នំពេញ', phoneNumber1: '0923456789', email: 'mao.somrien@example.com', specailPhoneNumber: '010 888 999', familyStatus: 'Widowed', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS7', departmentCode: 'Research', officeCode: 'Data Office', positionCode: 'Research Analyst', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
-  //     { id: '6', staffCode: '006', fullName: 'សុខ សុជា', latanName: 'Sok Sochea', gender: 'Male', height: '170cm', weight: '65kg', birthDate: '1995-09-25', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់ឬស្សីកែវ, ខណ្ឌសែនសុខ, រាជធានីភ្នំពេញ', address: 'សង្កាត់ឬស្សីកែវ, ខណ្ឌសែនសុខ, រាជធានីភ្នំពេញ', phoneNumber1: '0956789012', email: 'sok.sochea@example.com', specailPhoneNumber: '010 999 000', familyStatus: 'Single', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS8', departmentCode: 'Logistics', officeCode: 'Administrative Office', positionCode: 'Logistics Manager', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
-  //     { id: '7', staffCode: '007', fullName: 'ម៉ាត់ សុខសម', latanName: 'Mat Soksam', gender: 'Female', height: '162cm', weight: '58kg', birthDate: '1993-12-12', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់បឹងត្របែក, ខណ្ឌកណ្តាល, រាជធានីភ្នំពេញ', address: 'សង្កាត់បឹងត្របែក, ខណ្ឌកណ្តាល, រាជធានីភ្នំពេញ', phoneNumber1: '0965432101', email: 'mat.soksam@example.com', specailPhoneNumber: '010 333 444', familyStatus: 'Married', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS9', departmentCode: 'Customer Service', officeCode: 'Support Office', positionCode: 'Customer Service Representative', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
-  //     { id: '8', staffCode: '008', fullName: 'ឃីម សុវណ្ណ', latanName: 'Kim Sovann', gender: 'Male', height: '178cm', weight: '72kg', birthDate: '1987-06-20', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់បឹងទំពូង, ខណ្ឌពោធិ៍សែនជ័យ, រាជធានីភ្នំពេញ', address: 'សង្កាត់បឹងទំពូង, ខណ្ឌពោធិ៍សែនជ័យ, រាជធានីភ្នំពេញ', phoneNumber1: '0978765432', email: 'kim.sovann@example.com', specailPhoneNumber: '010 222 333', familyStatus: 'Separated', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS10', departmentCode: 'Marketing', officeCode: 'Strategy Office', positionCode: 'Marketing Specialist', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
-  //     { id: '9', staffCode: '009', fullName: 'ទូច ស្រេង', latanName: 'Touch Sreang', gender: 'Female', height: '168cm', weight: '63kg', birthDate: '1991-08-14', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់ជ័យជូរ, ខណ្ឌសែនសុខ, រាជធានីភ្នំពេញ', address: 'សង្កាត់ជ័យជូរ, ខណ្ឌសែនសុខ, រាជធានីភ្នំពេញ', phoneNumber1: '0938765432', email: 'touch.sreang@example.com', specailPhoneNumber: '010 444 555', familyStatus: 'Single', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS11', departmentCode: 'Accounting', officeCode: 'Finance Office', positionCode: 'Accountant', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
-  //     { id: '10', staffCode: '010', fullName: 'គង់ សេង', latanName: 'Kong Seng', gender: 'Male', height: '177cm', weight: '70kg', birthDate: '1982-04-05', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់កំពង់ឃុំ, ខណ្ឌឬស្សីកែវ, រាជធានីភ្នំពេញ', address: 'សង្កាត់កំពង់ឃុំ, ខណ្ឌឬស្សីកែវ, រាជធានីភ្នំពេញ', phoneNumber1: '0945678901', email: 'kong.seng@example.com', specailPhoneNumber: '010 666 000', familyStatus: 'Married', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS12', departmentCode: 'Legal', officeCode: 'Legal Affairs Office', positionCode: 'Legal Advisor', last_modified_by: 'Admin', last_modified_date: '2024-08-21' },
-  //     { id: '11', staffCode: '011', fullName: 'អៀង សុផល', latanName: 'Ieang Sophal', gender: 'Female', height: '155cm', weight: '50kg', birthDate: '1990-11-22', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់ជ័យជោគ, ខណ្ឌសែនសុខ, រាជធានីភ្នំពេញ', address: 'សង្កាត់ជ័យជោគ, ខណ្ឌសែនសុខ, រាជធានីភ្នំពេញ', phoneNumber1: '0955432101', email: 'ieang.sophal@example.com', specailPhoneNumber: '010 777 888', familyStatus: 'Single', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS13', departmentCode: 'HR', officeCode: 'Human Resources Office', positionCode: 'HR Coordinator', last_modified_by: 'Admin', last_modified_date: '2024-08-22' },
-  //     { id: '12', staffCode: '012', fullName: 'យ៉ែត សំអាង', latanName: 'Yet Somang', gender: 'Male', height: '180cm', weight: '75kg', birthDate: '1984-01-19', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់បឹងកេងកង, ខណ្ឌទួលគោក, រាជធានីភ្នំពេញ', address: 'សង្កាត់បឹងកេងកង, ខណ្ឌទួលគោក, រាជធានីភ្នំពេញ', phoneNumber1: '0967891234', email: 'yet.somang@example.com', specailPhoneNumber: '010 999 000', familyStatus: 'Married', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS14', departmentCode: 'IT', officeCode: 'IT Support Office', positionCode: 'IT Specialist', last_modified_by: 'Admin', last_modified_date: '2024-08-22' },
-  //     { id: '13', staffCode: '013', fullName: 'ទេព សុភាព', latanName: 'Teap Sophap', gender: 'Female', height: '160cm', weight: '57kg', birthDate: '1992-07-09', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់ឫស្សីកែវ, ខណ្ឌឫស្សីកែវ, រាជធានីភ្នំពេញ', address: 'សង្កាត់ឫស្សីកែវ, ខណ្ឌឫស្សីកែវ, រាជធានីភ្នំពេញ', phoneNumber1: '0976543210', email: 'teap.sophap@example.com', specailPhoneNumber: '010 888 999', familyStatus: 'Single', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS15', departmentCode: 'R&D', officeCode: 'Research Office', positionCode: 'Research Analyst', last_modified_by: 'Admin', last_modified_date: '2024-08-22' },
-  //     { id: '14', staffCode: '014', fullName: 'សេក ប៉ូលី', latanName: 'Sek Polley', gender: 'Male', height: '172cm', weight: '68kg', birthDate: '1986-03-25', nationality: 'Khmer', region: 'Cambodia', birthdateAddress: 'សង្កាត់ស្វាយដល់, ខណ្ឌដង្កោ, រាជធានីភ្នំពេញ', address: 'សង្កាត់ស្វាយដល់, ខណ្ឌដង្កោ, រាជធានីភ្នំពេញ', phoneNumber1: '0939876543', email: 'sek.polley@example.com', specailPhoneNumber: '010 555 666', familyStatus: 'Married', companyCode: 'Phnom Penh Autonomous Port', companyBranchCode: 'TS16', departmentCode: 'Operations', officeCode: 'Operations Office', positionCode: 'Operations Manager', last_modified_by: 'Admin', last_modified_date: '2024-08-22' },
-
-  // ]);
+  
 
   const viewDetails = (employeeId) => {
     // Fetch or set employee data based on employeeId
@@ -282,6 +292,8 @@ const StaffInfo = () => {
 
   const handleChange = (e) => {
     const { id, value, files } = e.target;
+
+    setFormData({ ...formData, [e.target.id]: e.target.value });
 
     // Handle file input
     if (files && files[0]) {
@@ -427,171 +439,130 @@ const StaffInfo = () => {
     return date.toLocaleString();
   };
   const handleSaveEmployee = async (e) => {
-    e.preventDefault();
-    // Ensure formData has the correct structure with all fields
+    e.preventDefault(); // Fix: Prevent form submission
+  
     const updatedFormData = {
-      ...formData, // Spread existing form data
-      departCode: formData.departCode || "", // Ensure departcode is properly populated
-      staffCode: formData.staffCode || "", // Ensure staffcode is set
-      engName: formData.engName || "", // Ensure engname is set
-      khName: formData.khName || "", // Ensure khname is set
-      branchCode: formData.branchCode || "", // Ensure branchCode is set
-      positionCode: formData.positionCode || "", // Ensure positioncode is set
-      genderCode: formData.genderCode || "", // Ensure gendercode is set
-      height: formData.height || null, // Set height if provided
-      weight: formData.weight || null, // Set weight if provided
-      bod: formData.bod || null, // Set bod (birthday) if provided
-      currentAddress: formData.currentAddress || "", // Ensure address is set
-      // courseCode: formData.courseCode?.map(course => course.value) || [],
-      isRetire: formData.isRetire || false, // Set isretire if provided
-      resign: formData.resign || false, // Set resign if provided
-      isHoldWork: formData.isHoldWork || false, // Set isholdwork if provided
-      photo: formData.photo || null, // If there's a photo, include it; otherwise, null
-      createdBy: currentUser, // Use the fetched username as creator
-      lastBy: currentUser, // Use the fetched username as updater
+      // ...formData, 
+      // formData,
+      staffCode: formData.staffCode,
+      engName: formData.engName,
+      khName: formData.khName,
+      branchCode: formData.branchCode,
+      departCode: formData.departCode,
+      createdBy: currentUser,
+      lastBy: currentUser,
       lastDate: new Date().toISOString(),
       updateTime: new Date().toISOString(),
     };
-
+  
     try {
       console.log("Saving employee data:", updatedFormData);
       const response = await AddStaff(updatedFormData);
-
-      if (response.status === 200) {
-        console.log("Employee saved successfully:", response);
-        Swal.fire({
-          title: "Successful",
-          text: "Employee created successfully",
-          icon: "success",
-        });
-        setIsAddModalOpen(false);
-        fetchAllStaff();
-      } else {
-        // Handle errors based on status codes
-        const errorMessage =
-          response.data.message || "An unexpected error occurred.";
-        if (response.status === 409) {
-          // Conflict error
-          Swal.fire({
-            title: "Error",
-            text: "Staff already exists: " + errorMessage,
-            icon: "warning",
-          });
-        } else {
-          Swal.fire({
-            title: "Error",
-            text: "Error: " + errorMessage,
-            icon: "warning",
-          });
-        }
-      }
+  
+      console.log("Employee add response:", response);
+  
+      Swal.fire({
+        title: "Success!",
+        text: "User created successfully.",
+        icon: "success",
+      });
+  
+      isAddModalOpen(false); // Fix: should be `setIsAddModalOpen(false)`
+      fetchAllStaff();
     } catch (error) {
+      console.error("Error during user creation:", error);
+  
       if (error.response) {
-        console.error("Error response data:", error.response.data);
-        console.error("Error response status:", error.response.status);
-        console.error("Error response headers:", error.response.headers);
-
-        Swal.fire({
-          title: "Error",
-          text: `Error: ${
-            error.response.data.message || "An unexpected error occurred."
-          }`,
-          icon: "warning",
-        });
-      } else if (error.request) {
-        console.error("Error request:", error.request);
-
-        Swal.fire({
-          title: "Error",
-          text: "No response received from the server.",
-          icon: "warning",
+        const errorMessage = error.response.data.message || "Error during user creation";
+        setErrors({
+          general: errorMessage.includes("User already exists")
+            ? "This user already exists. Please use a different username or email."
+            : errorMessage,
         });
       } else {
-        console.error("Error message:", error.message);
-
-        Swal.fire({
-          title: "Error",
-          text: "An error occurred while setting up the request.",
-          icon: "warning",
-        });
+        setErrors({ general: "Network error" });
       }
+  
+      Swal.fire({
+        title: "Error!",
+        text: errors.general || "There was an error creating the user. Please try again.",
+        icon: "error",
+      });
     }
   };
-
-  const handleSaveEdit = async () => {
+  
+  const handleSaveEdit = async (e) => {
+    e.preventDefault(); // Fix: Prevent form submission
+  
     try {
       console.log("Saving employee data:", formData);
-      const id = formData.id; // Ensure this is valid
-      if (!id) {
-        Swal.fire({
-          title: "Error",
-          text: "ID are missing",
-          icon: "warning",
-        });
-        return;
-      }
-
-      const updatedFormData ={
+      const id = editingStaff.id;
+  
+      // if (!id) {
+      //   Swal.fire({
+      //     title: "Error",
+      //     text: "ID is missing",
+      //     icon: "warning",
+      //   });
+      //   return;
+      // }
+  
+      const updatedFormData = {
         ...formData,
-        lastby: currentUser,
+        lastBy: currentUser, // Fix: match casing with `lastBy`
         lastDate: new Date().toISOString(),
-      }
-
+      };
+  
       const response = await UpdateStaff(id, updatedFormData);
-
+  
       if (response.status === 200) {
         console.log("Employee updated successfully:", response.data);
         Swal.fire({
-          title: "Successful",
-          text: "Employee update successfully",
+          title: "Success!",
+          text: "Employee updated successfully",
           icon: "success",
         });
+  
         setIsEditModalOpen(false);
-        fetchAllStaff(); 
+        fetchAllStaff();
       } else {
-        const errorMessage =
-          response.data.message || "An unexpected error occurred.";
-        // alert('Error: ' + errorMessage);
         Swal.fire({
-          title: "Successful",
-          text: "Error :" + errorMessage,
+          title: "Error",
+          text: "Error: " + (response.data.message || "An unexpected error occurred."),
           icon: "warning",
         });
       }
     } catch (error) {
       if (error.response) {
-        // Server responded with a status other than 2xx
         console.error("Error response data:", error.response.data);
-        alert(
-          `Error: ${
-            error.response.data.message || "An unexpected error occurred."
-          }`
-        );
+        alert(`Error: ${error.response.data.message || "An unexpected error occurred."}`);
       } else if (error.request) {
-        // Request was made but no response received
         console.error("Error request:", error.request);
         alert("No response received from the server.");
       } else {
-        // Error setting up the request
         console.error("Error message:", error.message);
         alert("An error occurred while setting up the request.");
       }
     }
   };
+  
 
   const handleViewSave = () => {
     setIsViewModalOpen(false);
   };
 
-  const saveAllModal = async () => {
+  const saveAllModal = async (e) => {
+    e?.preventDefault(); // Prevent default behavior if an event is provided
+  
     if (isAddModalOpen) {
-      await handleSaveEmployee();
+      await handleSaveEmployee(e); // Pass event
     } else if (isEditModalOpen) {
-      await handleSaveEdit();
+      await handleSaveEdit(e); // Pass event
     } else if (isViewModalOpen) {
-      await handleViewSave();
+      await handleViewSave(e); // Pass event
     }
   };
+  
 
   const handleSaveCourse = async () => {
     // Ensure formData has the correct structure with all fields
@@ -733,7 +704,6 @@ const StaffInfo = () => {
   const recordsPerPage = 8;
   //open edit modal
   const openEditModal = (
-    id,
     staffCode,
     engName,
     khName,
@@ -744,6 +714,7 @@ const StaffInfo = () => {
     currentAddress,
     branchCode,
     departCode,
+    officeCode,
     positionCode,
     coursename,
     courseCode,
@@ -754,7 +725,6 @@ const StaffInfo = () => {
     outcountry
   ) => {
     console.log({
-      id,
       staffCode,
       engName,
       khName,
@@ -765,6 +735,7 @@ const StaffInfo = () => {
       currentAddress,
       branchCode,
       departCode,
+      officeCode,
       positionCode,
       coursename,
       courseCode,
@@ -776,7 +747,6 @@ const StaffInfo = () => {
     });
 
     setEditingEmployees({
-      id,
       staffCode,
       engName,
       khName,
@@ -787,11 +757,11 @@ const StaffInfo = () => {
       currentAddress,
       branchCode,
       departCode,
+      officeCode,
       positionCode,
     });
 
     setFormData({
-      id,
       staffCode,
       engName,
       khName,
@@ -802,6 +772,7 @@ const StaffInfo = () => {
       currentAddress,
       branchCode,
       departCode,
+      officeCode,
       positionCode,
       fileUpload: null, // Retaining fileUpload initialization
     });
@@ -965,37 +936,37 @@ const StaffInfo = () => {
       }
     });
   };
-  const handleSearch = () => {
-    let filteredUsers;
-    if (searchTerm === "username") {
-      filteredUsers = users.filter((user) =>
-        user.username.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    } else if (searchTerm === "id") {
-      filteredUsers = users.filter((user) =>
-        user.id.toString().includes(searchTerm)
-      );
-    }
-    // Handle the display or processing of `filteredUsers`
-    console.log(filteredUsers);
-  };
+  // const handleSearch = () => {
+  //   let filteredUsers;
+  //   if (searchTerm === "username") {
+  //     filteredUsers = users.filter((user) =>
+  //       user.username.toLowerCase().includes(searchTerm.toLowerCase())
+  //     );
+  //   } else if (searchTerm === "id") {
+  //     filteredUsers = users.filter((user) =>
+  //       user.id.toString().includes(searchTerm)
+  //     );
+  //   }
+  //   // Handle the display or processing of `filteredUsers`
+  //   console.log(filteredUsers);
+  // };
 
   useEffect(() => {
-    setFilteredEmployees(
-      employees.filter(
-        (employee) =>
-          (employee.engname || "")
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
-          (employee.staffcode || "")
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
-          (employee.khname || "")
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase())
-      )
-    );
+    console.log("Filtering employees:", employees); // Debugging
+    if (employees.length === 0) {
+      setFilteredEmployees([]); // Prevent old/stale data
+    } else {
+      setFilteredEmployees(
+        employees.filter(
+          (employee) =>
+            (employee.engname || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (employee.staffcode || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (employee.khname || "").toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    }
   }, [employees, searchTerm]);
+  
   const totalPages = Math.ceil(filteredEmployees.length / recordsPerPage);
 
   const handlePageChange = (pageNumber) => {
@@ -1089,7 +1060,7 @@ const StaffInfo = () => {
             </div>
 
             {/* Date Filter with Label and Clear Button */}
-            <div className="flex flex-wrap items-center justify-end w-full mr-3 space-x-3 md:w-full md:justify-end ">
+            {/* <div className="flex flex-wrap items-center justify-end w-full mr-3 space-x-3 md:w-full md:justify-end ">
               <label
                 htmlFor="date-filter"
                 className="text-sm font-medium text-gray-700"
@@ -1110,7 +1081,7 @@ const StaffInfo = () => {
               >
                 សម្អាត
               </button>
-            </div>
+            </div> */}
 
             {/* Add Information Button */}
             <div className="flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3">
@@ -1138,12 +1109,12 @@ const StaffInfo = () => {
           </div>
 
           <div className="w-full overflow-x-auto" data-aos="fade-right">
-            <table className="w-full text-sm text-left text-gray-500">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-100 border-t-2">
+            <table className="w-full text-sm text-left text-gray-700 border-collapse">
+              <thead className="text-xs font-semibold text-gray-700 uppercase bg-gray-200 border-b">
                 <tr>
                   <th
                     scope="col"
-                    className="sticky left-0 px-4 py-3 mr-3 bg-gray-100 border-t border-r"
+                    className="sticky left-0 px-4 py-3 mr-3 border-t border-r bg-gray-200"
                   >
                     Action
                   </th>
@@ -1183,7 +1154,7 @@ const StaffInfo = () => {
                   <th
                     scope="col"
                     className="px-4 py-3 border-t border-r"
-                    style={{ minWidth: "120px" }}
+                    style={{ minWidth: "170px" }}
                   >
                     Birthdate
                   </th>
@@ -1214,6 +1185,13 @@ const StaffInfo = () => {
                     style={{ minWidth: "150px" }}
                   >
                     Department
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 border-t border-r"
+                    style={{ minWidth: "150px" }}
+                  >
+                    Office
                   </th>
                   {/* <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '250px' }}>Office</th> */}
                   <th
@@ -1250,7 +1228,7 @@ const StaffInfo = () => {
                 {currentEmployees.map((employee) => (
                   <tr
                     key={employee.id}
-                    className="transition duration-200 ease-in-out transform border border-b-gray-200 hover:bg-indigo-50 "
+                    className="border-b hover:bg-gray-100 transition"
                   >
                     <td className="sticky left-0 z-10 flex items-center px-4 py-5 bg-white border-r">
                       <input type="checkbox" className="mr-3 action-checkbox" />
@@ -1291,6 +1269,7 @@ const StaffInfo = () => {
                             employee.currentAddress,
                             employee.branchCode,
                             employee.departCode,
+                            employee.officeCode,
                             employee.positionCode,
                             employee.lastBy,
                             employee.lastDate,
@@ -1305,10 +1284,10 @@ const StaffInfo = () => {
                     </td>
 
                     {/* <td className="px-4 py-1 border-r">{employee.id}</td> */}
-                    <td className="px-4 py-1 border-r">{employee.staffCode}</td>
-                    <td className="px-4 py-1 border-r">{employee.engName}</td>
-                    <td className="px-4 py-1 border-r">{employee.khName}</td>
-                    <td className="px-4 py-1 border-r">
+                    <td className="px-4 py-3 border-r whitespace-nowrap text-ellipsis overflow-hidden max-w-[150px">{employee.staffCode}</td>
+                    <td className="px-4 py-3 border-r whitespace-nowrap text-ellipsis overflow-hidden max-w-[150px">{employee.engName}</td>
+                    <td className="px-4 py-3 border-r whitespace-nowrap text-ellipsis overflow-hidden max-w-[150px">{employee.khName}</td>
+                    <td className="px-4 py-3 border-r whitespace-nowrap text-ellipsis overflow-hidden max-w-[150px">
                       {employee.genderCode}
                     </td>
                     <td className="px-4 py-1 border-r">{employee.height}</td>
@@ -1337,6 +1316,9 @@ const StaffInfo = () => {
                     </td>
                     <td className="px-4 py-1 border-r">
                       {employee.departCode}
+                    </td>
+                    <td className="px-4 py-1 border-r">
+                      {employee.officeCode}
                     </td>
                     {/* <td className='px-4 py-1 border-r'>{employee.officeCode}</td> */}
                     <td className="px-4 py-1 border-r">
@@ -1477,6 +1459,7 @@ const StaffInfo = () => {
             <div className="px-4">
               <MenuTab
                 formData={formData}
+                setFormData={setFormData}
                 errors={errors}
                 handleChange={handleChange}
                 handleSaveEmployee={handleSaveEmployee}
@@ -1496,6 +1479,8 @@ const StaffInfo = () => {
                 handleCourseTypeChange={handleCourseTypeChange}
                 handleChangeCourse={handleChangeCourse}
                 handleStaffName={handleStaffName}
+                handleOfficeChange={handleOfficeChange}
+                filteredOfficeOptions={filteredOfficeOptions}
                 // disabled={isDisabled}
               />
             </div>
@@ -1549,8 +1534,9 @@ const StaffInfo = () => {
               </button>
             </div>
             <div>
-              <TabMenu
+              <MenuTab
                 formData={formData}
+                setFormData={setFormData}
                 errors={errors}
                 handleChange={handleChange}
                 handleSaveEmployee={handleSaveEmployee}
@@ -1605,7 +1591,7 @@ const StaffInfo = () => {
               </button>
             </div>
             <div>
-              <TabMenu
+              <MenuTab
                 formData={formData}
                 errors={errors}
                 handleChange={handleChange}

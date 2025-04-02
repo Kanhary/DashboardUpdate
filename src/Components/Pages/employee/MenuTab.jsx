@@ -4,6 +4,7 @@ import Select from "react-select";
 import { motion, useScroll } from "framer-motion";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import axios from "axios";
 import {
   GetDep,
   GetPosition,
@@ -25,7 +26,7 @@ const MenuTab = ({
   disabled,
   offices,
   // department,
-  handleDepartmentChange,
+  // handleDepartmentChange,
   handlePositionChange,
   handleCourseChange,
   handleStaffCode,
@@ -35,6 +36,9 @@ const MenuTab = ({
   handleLocationChange,
   handleChangeCourse,
   handleStaffName,
+  filteredOfficeOptions,
+  setFormData
+  // handleOfficeChange
 }) => {
   const [activeTab, setActiveTab] = useState("បញ្ចូលព័ត៌មានបុគ្គលិក"); // Track the active tab
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -48,17 +52,19 @@ const MenuTab = ({
   const [filteredOffices, setFilteredOffices] = useState([]);
   const [department, setDepartment] = useState([]);
   const [position, setPosition] = useState([]);
-  const [office, setOffice] = [];
+  const [office, setOffice] = useState([]);
   const [ComputerCourse, setComputerCourse] = useState([]);
   const [employees, setEmployees] = useState([]);
-
+  const [optionsDepartment, setOptionsDepartment] = useState([]);
+  const [optionsOffice, setOptionsOffice] = useState([]);
+  const [loadingOffices, setLoadingOffices] = useState(false);
   // const [formData, setFormData] = useState({
-  //   department: '',
-  //   office: '',
+  //   departCode: '',
+  //   officeCode: '',
   // });
   // const [formData, setFormData] = useState({
   //   id: '',
-  //   code: '',
+  //   staffCodeode: '',
   //   fullname: '',
   //   lastname: '',
   //   gender: '',
@@ -96,12 +102,21 @@ const MenuTab = ({
     const fetchAllDep = async () => {
       try {
         const response = await GetDep();
-        console.log(response.data.data);
-        setDepartment(response.data.data);
+        console.log("Dep:",response.data.data); // Debugging log
+    
+        // Convert API response to react-select format
+        const departmentOptions = response.data.data.map((dept) => ({
+          value: dept.departCode,  // Assuming "departCode" is the unique ID
+          label: dept.departEngName,  // Assuming "departName" is the display name
+        }));
+    
+        setDepartment(departmentOptions);
+        console.log("Dep option" , departmentOptions);
       } catch (err) {
         setErrors({ message: err.message || "An error occurred" });
       }
     };
+    
 
     const fetchAllPostition = async () => {
       try {
@@ -113,15 +128,15 @@ const MenuTab = ({
       }
     };
 
-    const fetchAllOffice = async () => {
-      try {
-        const response = await GetOffice();
-        console.log(response.data.data);
-        setOffice(response.data.data);
-      } catch (err) {
-        setErrors({ message: err.message || "An error occurred" });
-      }
-    };
+    // const fetchAllOffice = async () => {
+    //   try {
+    //     const response = await GetOffice();
+    //     console.log("Office: ",response.data.data);
+    //     setOffice(response.data.data);
+    //   } catch (err) {
+    //     setErrors({ message: err.message || "An error occurred" });
+    //   }
+    // };
 
     const fetchAllComputerCourse = async () => {
       try {
@@ -153,9 +168,61 @@ const MenuTab = ({
     fetchAllComputerCourse();
     fetchAllDep();
     fetchAllPostition();
-    fetchAllOffice();
+    // fetchAllOffice();
     fetchEmployees();
   }, []);
+
+
+  // useEffect(() => {
+  //   axios.get("http://192.168.100.55:8759/department/findAllDepartmen")
+  //     .then((response) => {
+  //       const departmentOptions = response.data.map((dept) => ({
+  //         value: dept.departCode,
+  //         label: dept.departName,
+  //       }));
+  //       setOptionsDepartment(departmentOptions);
+  //       console.log("Department  : ", departmentOptions);
+  //     })
+  //     .catch((error) => console.error("Error fetching departments:", error));
+  // }, []);
+
+  const handleDepartmentChange = async (selectedOption) => {
+    console.log("Selected department:", selectedOption);
+
+    setFormData((prevData) => ({
+      ...prevData,
+      departCode: selectedOption ? selectedOption.value : "",
+      officeCode: "", // Reset office selection
+    }));
+
+    if (!selectedOption) {
+      setOptionsOffice([]); // Clear office options if no department is selected
+      return;
+    }
+
+    // Fetch offices based on department ID
+    setLoadingOffices(true);
+    try {
+      const response = await axios.get(`http://192.168.100.55:8759/Office/selectOfficeFromDepartmentByDepartCode/${selectedOption.value}`);
+      const officeOptions = response.data.data.map((office) => ({
+        value: office.officeCode,
+        label: office.officeEngName,
+      }));
+      setOptionsOffice(officeOptions);
+      console.log("Office : " ,optionsOffice)
+    } catch (error) {
+      console.error("Error fetching offices:", error);
+      setOptionsOffice([]);
+    }
+    setLoadingOffices(false);
+  };
+
+  const handleOfficeChange = (selectedOption) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      officeCode: selectedOption ? selectedOption.value : "",
+    }));
+  };
 
   const optionsStaffCode = employees.map((employee) => ({
     value: employee.staffCode, // Use a plain string
@@ -179,10 +246,10 @@ const MenuTab = ({
   //     return updatedData;
   //   });
   // };
-  const optionsDepartment = department.map((dep) => ({
-    value: dep.departCode,
-    label: `${dep.departCode} - ${dep.departEngName}`,
-  }));
+  // const optionsDepartment = department.map((dep) => ({
+  //   value: dep.departCode,
+  //   label: `${dep.departCode} - ${dep.departEngName}`,
+  // }));
 
   const optionsPosiotn = position.map((pos) => ({
     value: pos.positionCode,
@@ -218,15 +285,15 @@ const MenuTab = ({
   // };
 
   // Handle office change
-  const handleOfficeChange = (e) => {
-    const selectedOffice = e.target.value;
+  // const handleOfficeChange = (e) => {
+  //   const selectedOffice = e.target.value;
 
-    // Update form data
-    setFormData((prev) => ({
-      ...prev,
-      office: selectedOffice,
-    }));
-  };
+  //   // Update form data
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     office: selectedOffice,
+  //   }));
+  // };
 
   const options = [
     // { value: 'manager', label: 'Manager' },
@@ -316,9 +383,21 @@ const MenuTab = ({
   const [bod, setBod] = useState(null);
 
   const handleDateChange = (date) => {
-    setBod(date);
-    handleChange({ target: { id: "bod", value: date } });
+    if (!date) return;
+  
+    const formattedDateTime = new Date(date).toLocaleString(); // Convert to local date-time
+    setBod(formattedDateTime);
+    handleChange({ target: { id: "bod", value: formattedDateTime } });
   };
+  
+
+  
+
+  // const optionsOffice = office.map((off) => ({
+  //   value: off.officeCode,
+  //   label: `${off.officeCode} - ${off.officeEngName}`,
+  // }));
+  
 
   return (
     <div className="relative" data-aos="zoom-in-up duration-1000">
@@ -348,7 +427,7 @@ const MenuTab = ({
       <div className="mt-4">
         {activeTab === "បញ្ចូលព័ត៌មានបុគ្គលិក" && (
           <div className="overflow-auto ">
-            <form>
+            <form >
               <div
                 className="grid grid-cols-1 gap-6 px-8 py-2 mt-4 sm:grid-cols-2"
                 data-aos="zoom-in"
@@ -475,18 +554,29 @@ const MenuTab = ({
                   </label>
 
                   <Select
-                    options={optionsDepartment}
-                    onChange={handleDepartmentChange} // Ensure handleStaffCode is passed correctly here
-                    value={optionsDepartment.find(
-                      (option) => option.value === formData.departCode
-                    )}
-                    placeholder="Select or type to search"
+                    options={department}
+                    onChange={handleDepartmentChange}
+                    value={department.find((option) => option.value === formData.departCode)}
+                    placeholder="Select Department"
                     className="basic-single"
                     classNamePrefix="select"
-                    isDisabled={disabled}
-                    styles={customStyles}
                   />
                 </div>
+                <div className="flex flex-col gap-2">
+                    <label htmlFor="officeCode" className="text-sm font-medium text-gray-700">
+                      ការិយាល័យ
+                    </label>
+                    <Select
+                      options={optionsOffice}
+                      onChange={handleOfficeChange}
+                      value={optionsOffice.find((option) => option.value === formData.officeCode)}
+                      placeholder={loadingOffices ? "Loading..." : "Select Office"}
+                      className="basic-single"
+                      classNamePrefix="select"
+                      isDisabled={optionsOffice.length === 0 || loadingOffices} // Disable if no offices
+                    />
+                  </div>
+
 
                 {[
                   { id: "branchCode", label: "សាខា", type: "text" },
