@@ -293,10 +293,10 @@ export function GetProduct() {
   });
 }
 
-export function AddProduct(data) {
+export function AddProduct(data, userId) {
   return request({
     method: "POST",
-    url: "/Product/addNewPro",
+    url: `/Product/addNewPro/${userId}`,
     data: data,
   });
 }
@@ -420,7 +420,7 @@ export function DeleteComputerCourse(id, deleteby) {
 export function AddNewDep(data) {
   return request({
     method: "POST",
-    url: "/department/addNewDepart",
+    url: `/department/addNewDepart`,
     data: data,
   });
 }
@@ -448,26 +448,26 @@ export function GetAllBranch() {
   });
 }
 
-export function AddNewBranch(data) {
+export function AddNewBranch(data, userId) {
   return request({
     method: "POST",
-    url: "/Branch/addNewBranch",
+    url: `/Branch/addNewBranch/${userId}`,
     data: data,
   });
 }
 
-export function UpdateBranch(id, data) {
+export function UpdateBranch(id,userId , data) {
   return request({
     method: "POST",
-    url: `/Branch/UpdateBranchById/${id}`,
+    url: `/Branch/UpdateBranchById/${id}/${userId}`,
     data: data,
   });
 }
 
-export function DeleteBranch(id, deleteby) {
+export function DeleteBranch(id, userId,deleteby) {
   return request({
     method: "DELETE",
-    url: `/Branch/DeleteBranchById/${id}`,
+    url: `/Branch/DeleteBranchById/${id}/${userId}`,
     data: {deleteby}
   });
 }

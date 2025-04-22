@@ -9,6 +9,7 @@ import {
   AddNewBranch,
   UpdateBranch,
   DeleteBranch,
+  GetUserLogin
 } from "../../../api/user";
 
 const Branch = () => {
@@ -42,6 +43,7 @@ const Branch = () => {
   const [branchList, setBranchList] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [companies, setCompany] = useState([]);
+  const [userId, setUserId] = useState(null);
 
   // const branchList = [
   //   {
@@ -77,7 +79,9 @@ const Branch = () => {
       try {
         const response = await GetUserLogin(); // Call the API to get the current user
         setCurrentUser(response.data.data.username); // Assuming the response contains a username field
+        setUserId(response.data.data.id);
         console.log("Fetched user:", response.data.data.username);
+        console.log("Fetched user:", userId);
       } catch (error) {
         console.error("Error fetching current user:", error);
       }
@@ -163,7 +167,7 @@ const Branch = () => {
     }
 
     try {
-      const response = await AddNewBranch(updatedFormData);
+      const response = await AddNewBranch(updatedFormData, userId);
 
       console.log(response);
 
@@ -239,7 +243,7 @@ const Branch = () => {
         lastDate: new Date().toDateString(),
       }
 
-      const response = await UpdateBranch(id, updatedFormData);
+      const response = await UpdateBranch(id,userId , updatedFormData);
 
       if (response.status === 200) {
         console.log("Branch updated successfully:", response.data);
@@ -299,7 +303,7 @@ const Branch = () => {
       });
 
       if (result.isConfirmed) {
-        const response = await DeleteBranch(id, currentUser);
+        const response = await DeleteBranch(id, userId, currentUser);
         console.log("Response:", response);
 
         if (response.status === 200) {

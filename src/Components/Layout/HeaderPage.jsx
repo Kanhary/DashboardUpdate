@@ -26,6 +26,7 @@ const HeaderPage = ({ toggleSidebar }) => {
   const [currentProfileImage, setCurrentProfileImage] = useState(avatar); // Replace with actual image URL
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [formDataID, setFormData] = useState({});
+  const [userId, setUserId] = useState(null);
 
   const [notifications, setNotifications] = useState([]);
   const notificationsRef = useRef(null);
@@ -79,10 +80,21 @@ const HeaderPage = ({ toggleSidebar }) => {
           console.error("Error fetching notifications:", error);
         }
       };
+      const fetchUser = async () => {
+        try {
+          const response = await GetUserLogin();
+          console.log(response.data.data);
+          setUserId(response.data.data.id);
+        } catch (err) {
+          setError({ message: err.message || "An error occurred" });
+        }
+      };
+      
   
 
       fetchUserId();
-      fetchNotifications()
+      fetchNotifications();
+      fetchUser();
   }, []);
 
   const handleRemoveProfileImage = () => {
@@ -118,6 +130,8 @@ const HeaderPage = ({ toggleSidebar }) => {
     if (newProfileImage) {
       const formData = new FormData();
       formData.append("file", newProfileImage);
+      formData.append("userId", userId);
+      // formData.append("")
 
       const token = localStorage.getItem("token");
 
@@ -125,7 +139,8 @@ const HeaderPage = ({ toggleSidebar }) => {
       setProfileImage(imageUrl);
 
       axios
-        .post(`http://192.168.100.55:8759/user/image/${formDataID.id}`, formData, {
+        .post(`http://192.168.168.4:8759/user/upload-profile`, formData, {
+
           headers: {
             Authorization: `${token}`,
             "Content-Type": "multipart/form-data",

@@ -253,7 +253,7 @@ const Product = () => {
 
     try {
       // Call your API to save the data
-      const response = await AddProduct(updatedFormData);
+      const response = await AddProduct(updatedFormData, userId);
 
       // Show success alert
       Swal.fire({

@@ -22,6 +22,7 @@ const Department = () => {
   const [company, setCompany] = useState([]);
   const [DepList, setDepList] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
+  const [userId, setUserId] = useState(null);
 
   // const DepList = [
   //   { CompanyCode: 'PPAP', DepartmentCode: 'Dep-admin', Department: 'នាយកដ្ឋាន រដ្ឋបាល',  BranchCode: 'TS3' },
@@ -43,6 +44,7 @@ const Department = () => {
       try {
         const response = await GetUserLogin(); // Call the API to get the current user
         setCurrentUser(response.data.data.username); // Assuming the response contains a username field
+        setUserId(response.data.data.id);
         console.log("Fetched user:", response.data.data.username);
       } catch (error) {
         console.error("Error fetching current user:", error);
@@ -212,29 +214,30 @@ const Department = () => {
           icon: "warning",
         });
       }
-    } catch (error) {
-      if (error.response) {
-        console.error("Error response data:", error.response.data);
-        Swal.fire({
-          title: "Error",
-          text: error.response.data.message || "An unexpected error occurred.",
-          icon: "error",
-        });
-      } else if (error.request) {
-        console.error("Error request:", error.request);
-        Swal.fire({
-          title: "Error",
-          text: "No response received from the server.",
-          icon: "error",
-        });
-      } else {
-        console.error("Error message:", error.message);
-        Swal.fire({
-          title: "Error",
-          text: "An error occurred while setting up the request.",
-          icon: "error",
-        });
-      }
+    } 
+    catch (error) {
+      // if (error.response) {
+      //   console.error("Error response data:", error.response.data);
+      //   Swal.fire({
+      //     title: "Error",
+      //     text: error.response.data.message || "An unexpected error occurred.",
+      //     icon: "error",
+      //   });
+      // } else if (error.request) {
+      //   console.error("Error request:", error.request);
+      //   Swal.fire({
+      //     title: "Error",
+      //     text: "No response received from the server.",
+      //     icon: "error",
+      //   });
+      // } else {
+      //   console.error("Error message:", error.message);
+      //   Swal.fire({
+      //     title: "Error",
+      //     text: "An error occurred while setting up the request.",
+      //     icon: "error",
+      //   });
+      // }
     }
   };
 
