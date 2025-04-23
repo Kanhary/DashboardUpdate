@@ -162,7 +162,7 @@ const Product = () => {
   // }, []);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const recordsPerPage = 7;
+  const recordsPerPage = 10;
   const filteredComputer = Computers.filter(
     (computer) =>
       computer.engName?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
@@ -593,8 +593,8 @@ const Product = () => {
 
 
   return (
-    <section className="mt-10 font-khmer">
-      <h1 className="text-xl font-medium text-blue-800">តារាងកុំព្យូទ័រ</h1>
+    <section className="font-khmer">
+      <h1 className="text-[15px] font-medium text-blue-800">តារាងកុំព្យូទ័រ</h1>
       <div className="mt-3 border"></div>
       <div className="w-full mt-4" data-aos="fade-up">
         <div className="relative w-full overflow-hidden bg-white shadow-md sm:rounded-lg">
@@ -623,7 +623,7 @@ const Product = () => {
                   <input
                     type="text"
                     id="simple-search"
-                    className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500"
+                    className="block w-full p-2 pl-10 text-[12px] text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500"
                     placeholder="ស្វែងរក"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -635,14 +635,14 @@ const Product = () => {
             <div className="flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3">
               <button
                 onClick={handleRefresh}
-                className="flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
+                className="flex items-center justify-center px-5 py-2 text-[12px] font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
               >
                 <IoMdRefresh />
                 Refresh
               </button>
               <button
                 type="button"
-                className="flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
+                className="flex items-center justify-center px-5 py-2 text-[12px] font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
                 onClick={openAddModal}
               >
                 <svg
@@ -664,11 +664,11 @@ const Product = () => {
           </div>
 
           <div className="w-full overflow-auto shadow-md rounded-lg">
-            <table className="w-full text-sm text-left text-gray-700 border-collapse">
-              <thead className="text-xs font-semibold text-gray-700 uppercase bg-gray-200 border-b">
+            <table className="w-full text-left text-gray-700 border-collapse">
+              <thead className="text-[12px] font-semibold text-gray-700 uppercase bg-gray-200 border-b">
                 <tr>
-                  <th className="sticky left-0 px-4 py-3  border-r shadow-md">Action</th>
-                  <th className="px-4 py-3 border-r">Details</th>
+                  <th className="sticky left-0 px-4 py-2 border-r shadow-md bg-gray-200">Action</th>
+                  <th className="px-4 border-r">Details</th>
                   {[
                     "Product Code",
                     "Device Name",
@@ -695,15 +695,15 @@ const Product = () => {
                     "Last By",
                     "Last Date",
                   ].map((header) => (
-                    <th key={header} className="px-4 py-3 border-r whitespace-nowrap">{header}</th>
+                    <th key={header} className="px-4 border-r whitespace-nowrap text-[12px]">{header}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {currentComputer.map((computer, index) => (
-                  <tr key={computer.id} className="border-b hover:bg-gray-100 transition">
+                  <tr key={computer.id} className="border-b hover:bg-gray-100 transition text-[12px]">
                     {/* Action Column */}
-                    <td className="sticky left-0 px-4 py-3 bg-white border-r shadow-md">
+                    <td className="sticky left-0 px-4 py-2 bg-white border-r shadow-md">
                       <div className="flex items-center space-x-3">
                         <input type="checkbox" className="mr-1 action-checkbox" />
                         <FaPen
@@ -717,7 +717,7 @@ const Product = () => {
                       </div>
                     </td>
                     {/* Details Button */}
-                    <td className="px-4 py-3 border-r">
+                    <td className="px-4 py-2 border-r">
                       <button
                         className="px-3 py-1 text-blue-500 hover:text-blue-600 transition"
                         onClick={() => setSelectedComputer(computer)}
@@ -752,7 +752,7 @@ const Product = () => {
                       "lastBy",
                       "lastDate",
                     ].map((key) => (
-                      <td key={key} className="px-4 py-3 border-r whitespace-nowrap text-ellipsis overflow-hidden max-w-[150px]">
+                      <td key={key} className="px-4 py-2 border-r whitespace-nowrap text-ellipsis overflow-hidden max-w-[150px]">
                         {computer[key]}
                       </td>
                     ))}

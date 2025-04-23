@@ -179,8 +179,8 @@ const NavItem = ({ icon, text, onClick, to, isActive, dropdownIcon }) => {
       onClick={onClick}
     >
       <Link to={to} className="flex items-center w-full">
-        <span className="text-xl">{icon}</span>
-        <span className="ml-3 text-base font-normal">{text}</span>
+        <span className="text-[13px]">{icon}</span>
+        <span className="ml-3 text-[13px] font-normal">{text}</span>
       </Link>
       {dropdownIcon && <span>{dropdownIcon}</span>}
     </li>
@@ -194,7 +194,7 @@ const SubmenuItem = ({ text, to, onClick, isActive }) => {
         isActive ? "text-sky-300" : ""
       }`}
     >
-      <Link to={to} className="w-full text-[13px]" onClick={onClick}>
+      <Link to={to} className="w-full text-[10px]" onClick={onClick}>
         {text}
       </Link>
     </li>

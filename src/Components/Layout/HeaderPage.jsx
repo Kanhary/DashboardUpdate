@@ -230,7 +230,7 @@ const HeaderPage = ({ toggleSidebar }) => {
                   className="h-8 me-3"
                   alt="PPAP Logo"
                 />
-                <span className="self-center text-base font-medium sm:text-xl whitespace-nowrap font-khmer">
+                <span className="self-center text-[13px] font-medium sm:text-xl whitespace-nowrap font-khmer">
                   ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យកុំព្យូទ័រ
                 </span>
               </a>
@@ -243,9 +243,9 @@ const HeaderPage = ({ toggleSidebar }) => {
                 onClick={handleNotificationsToggle}
                 ref={notificationsRef}
               >
-                <BiBell size={24} />
+                <BiBell size={22} />
                 {unreadCount > 0 && (
-                  <span className="absolute top-0 right-0 inline-flex items-center justify-center w-4 h-4 text-xs text-white bg-red-500 rounded-full">
+                  <span className="absolute top-0 right-0 inline-flex items-center justify-center w-3 h-3 text-[8px] text-white bg-red-500 rounded-full">
                     {unreadCount}
                   </span>
                 )}
@@ -307,7 +307,7 @@ const HeaderPage = ({ toggleSidebar }) => {
                   src={
                     // avatar || 
                     "/blank-profile-picture.png"}
-                  className="w-8 h-8 border border-blue-600 rounded-full sm:w-12 sm:h-10 md:w-8 md:h-8 lg:w-8 lg:h-8"
+                  className="w-6 h-6 border border-blue-600 rounded-full sm:w-12 sm:h-10 md:w-6 md:h-6 lg:w-7 lg:h-7"
                   alt="User Photo"
                 />
               </button>

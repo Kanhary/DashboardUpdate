@@ -70,7 +70,7 @@ const LoginForm = () => {
     };
 
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100 font-khmer">
+      <div className="flex items-center justify-center min-h-screen bg-gray-100 font-khmer text-[12px]">
         <div
           className="flex items-center justify-center min-h-screen p-4 bg-gray-100 sm:p-10"
           data-aos="zoom-in"
@@ -83,7 +83,7 @@ const LoginForm = () => {
                 alt="Logo"
                 className="w-24 h-24 mx-auto mb-4"
               />
-              <h2 className="text-[20px] md:text-[23px] font-normal mb-6 text-center">
+              <h2 className="text-[12px] md:text-[13px] font-normal mb-6 text-center">
                 ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យកុំព្យូទ័រ
               </h2>
              
@@ -157,7 +157,7 @@ const LoginForm = () => {
                     onClick={handleSubmit}
                     className="relative inline-flex items-center justify-center px-6 py-2 overflow-hidden text-base text-white transition-all duration-300 ease-in-out bg-blue-500 border rounded-md font-meduim group/button backdrop-blur-lg hover:scale-110 hover:shadow-xl hover:shadow-blue-600/50 border-white/20 "
                   >
-                    <span className="text-lg">បញ្ចូលគណនី</span>
+                    <span className="text-md">បញ្ចូលគណនី</span>
                     <div
                       className="absolute inset-0 flex h-full w-full justify-center [transform:skew(-13deg)_translateX(-100%)] group-hover/button:duration-1000 group-hover/button:[transform:skew(-13deg)_translateX(100%)]"
                     >
@@ -181,10 +181,10 @@ const LoginForm = () => {
 
              
               <div className="relative z-10 flex flex-col items-center text-center text-white px-8 py-16">
-                <h1 className="text-3xl font-bold tracking-wide drop-shadow-lg">
+                <h1 className="text-xl font-bold tracking-wide drop-shadow-lg">
                   សូមស្វាគមន៍មកកាន់ប្រព័ន្ធគ្រប់គ្រង
                 </h1>
-                <p className="mt-4 text-base font-light leading-relaxed max-w-md drop-shadow-lg">
+                <p className="mt-4 text-sm font-light leading-relaxed max-w-md drop-shadow-lg">
                   ប្រព័ន្ធនេះត្រូវបានរចនាឡើងសម្រាប់ការប្រើប្រាស់ផ្ទៃក្នុង ដើម្បីជួយបុគ្គលិកគ្រប់គ្រង 
                   និងដំណើរការផ្ទៃក្នុងបានល្អប្រសើរ។ ប្រសិនបើអ្នកត្រូវការជំនួយ សូមទាក់ទងទៅកាន់ផ្នែកបច្ចេកទេស។
                 </p>

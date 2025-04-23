@@ -237,7 +237,7 @@ const Dashboard = () => {
 
   return (
     <div className="flex flex-col min-h-screen mt-10">
-      <h1 className="text-xl font-medium text-blue-800 font-khmer">Dashboard</h1>
+      <h1 className="text-md font-medium text-blue-800 font-khmer">Dashboard</h1>
       <div className="mt-3 mb-3 border"></div>
 
       <div className="grid grid-cols-1 gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
@@ -253,12 +253,12 @@ const Dashboard = () => {
             ) : error ? (
               <p className="text-3xl font-semibold text-red-600">{error}</p>
             ) : (
-              <p className="text-3xl font-semibold text-gray-800">{totalComputers}</p>
+              <p className="text-xl font-semibold text-gray-800">{totalComputers}</p>
             )}
             {/* <div className="text-sm text-gray-500">+10 this month</div> */}
           </div>
-          <div className="flex items-center justify-center w-16 h-16 transition-transform transform bg-blue-100 rounded-full hover:scale-105">
-            <FiMonitor className="text-blue-500" size={30} />
+          <div className="flex items-center justify-center w-14 h-14 transition-transform transform bg-blue-100 rounded-full hover:scale-105">
+            <FiMonitor className="text-blue-500" size={20} />
           </div>
         </motion.div>
 
@@ -269,11 +269,11 @@ const Dashboard = () => {
             {loading ? (
               <p className="text-3xl font-semibold text-gray-800">Loading...</p>
             ) : (
-              <p className="text-3xl font-semibold text-gray-800">{statusCounts.active}</p>
+              <p className="text-xl font-semibold text-gray-800">{statusCounts.active}</p>
             )}
           </div>
-          <div className='flex items-center justify-center w-16 h-16 transition-transform transform bg-green-100 rounded-full hover:scale-105'>
-            <FiMonitor className="text-green-500" size={40} />
+          <div className='flex items-center justify-center w-14 h-14 transition-transform transform bg-green-100 rounded-full hover:scale-105'>
+            <FiMonitor className="text-green-500" size={20} />
           </div>
           
         </div>
@@ -285,11 +285,11 @@ const Dashboard = () => {
             {loading ? (
               <p className="text-3xl font-semibold text-gray-800">Loading...</p>
             ) : (
-              <p className="text-3xl font-semibold text-gray-800">{statusCounts.maintenance}</p>
+              <p className="text-xl font-semibold text-gray-800">{statusCounts.maintenance}</p>
             )}
           </div>
-          <div className='flex items-center justify-center w-16 h-16 transition-transform transform bg-yellow-100 rounded-full hover:scale-105'>
-            <FiMonitor className="text-yellow-500" size={40} />
+          <div className='flex items-center justify-center w-14 h-14 transition-transform transform bg-yellow-100 rounded-full hover:scale-105'>
+            <FiMonitor className="text-yellow-500" size={20} />
           </div>
           
         </div>
@@ -301,11 +301,11 @@ const Dashboard = () => {
             {loading ? (
               <p className="text-3xl font-semibold text-gray-800">Loading...</p>
             ) : (
-              <p className="text-3xl font-semibold text-gray-800">{statusCounts.broken}</p>
+              <p className="text-xl font-semibold text-gray-800">{statusCounts.broken}</p>
             )}
           </div>
-          <div className='flex items-center justify-center w-16 h-16 transition-transform transform bg-red-100 rounded-full hover:scale-105'>
-            <FiMonitor className="text-red-500" size={40} />
+          <div className='flex items-center justify-center w-14 h-14 transition-transform transform bg-red-100 rounded-full hover:scale-105'>
+            <FiMonitor className="text-red-500" size={20} />
           </div>
           
         </div>
