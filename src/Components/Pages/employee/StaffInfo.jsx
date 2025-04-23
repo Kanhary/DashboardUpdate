@@ -1007,8 +1007,8 @@ const StaffInfo = () => {
   };
 
   return (
-    <section className="mt-14 font-khmer">
-      <h1 className="text-xl font-medium text-blue-800">
+    <section className="font-khmer">
+      <h1 className="text-md font-medium text-blue-800">
         តារាងបង្ហាញព័ត៌មានបុគ្គលិក
       </h1>
       <div className="mt-3 border"></div>
@@ -1021,11 +1021,11 @@ const StaffInfo = () => {
                 <label htmlFor="simple-search" className="sr-only">
                   Search
                 </label>
-                <div className="relative w-full">
+                <div className="relative w-full text-[12px]">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     <svg
                       aria-hidden="true"
-                      className="w-5 h-5 text-gray-500"
+                      className="w-4 h-4 text-gray-500"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                       xmlns="http://www.w3.org/2000/svg"
@@ -1040,7 +1040,7 @@ const StaffInfo = () => {
                   <input
                     type="text"
                     id="simple-search"
-                    className="block w-full p-3 pl-10 pr-10 text-sm text-gray-900 border border-gray-400 rounded-3xl bg-gray-50 focus:ring-primary-700 focus:border-primary-700 focus:outline-none focus:ring-1"
+                    className="block w-full p-2  pl-10 pr-10 text-[12px] text-gray-900 border border-gray-400 rounded-3xl bg-gray-50 focus:ring-primary-700 focus:border-primary-700 focus:outline-none focus:ring-1"
                     placeholder="Search Fullname or Code"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -1087,7 +1087,7 @@ const StaffInfo = () => {
             <div className="flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3">
               <button
                 type="button"
-                className="flex items-center justify-center px-4 py-3 text-sm font-medium text-blue-600 duration-300 bg-blue-200 rounded-3xl hover:bg-blue-300 focus:ring-4 focus:ring-primary-300"
+                className="flex items-center justify-center px-4 py-2 text-[12px] font-medium text-blue-600 duration-300 bg-blue-200 rounded-3xl hover:bg-blue-300 focus:ring-4 focus:ring-primary-300"
                 onClick={() => setIsAddModalOpen(true)}
               >
                 <svg
@@ -1103,18 +1103,18 @@ const StaffInfo = () => {
                     d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
                   />
                 </svg>
-                <p className="text-sm font-normal">បញ្ចូលព័ត៌មានបុគ្គលិក</p>
+                <p className="text-[12px] font-normal">បញ្ចូលព័ត៌មានបុគ្គលិក</p>
               </button>
             </div>
           </div>
 
           <div className="w-full overflow-x-auto" data-aos="fade-right">
-            <table className="w-full text-sm text-left text-gray-700 border-collapse">
-              <thead className="text-xs font-semibold text-gray-700 uppercase bg-gray-200 border-b">
+            <table className="w-full text-[12px] text-left text-gray-700 border-collapse">
+              <thead className="text-[12px] font-semibold text-gray-700 uppercase bg-gray-200 border-b">
                 <tr>
                   <th
                     scope="col"
-                    className="sticky left-0 px-4 py-3 mr-3 border-t border-r bg-gray-200"
+                    className="sticky left-0 px-4 py-2 mr-3 border-t border-r bg-gray-200"
                   >
                     Action
                   </th>
@@ -1123,42 +1123,42 @@ const StaffInfo = () => {
                   </th> */}
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "120px" }}
                   >
                     staff Code
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "200px" }}
                   >
                     English Name
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "200px" }}
                   >
                     Khhmer Name
                   </th>
-                  <th scope="col" className="px-4 py-3 border-t border-r">
+                  <th scope="col" className="px-4 py-2 border-t border-r">
                     Gender
                   </th>
-                  <th scope="col" className="px-4 py-3 border-t border-r">
+                  <th scope="col" className="px-4 py-2 border-t border-r">
                     Height
                   </th>
-                  <th scope="col" className="px-4 py-3 border-t border-r ">
+                  <th scope="col" className="px-4 py-2 border-t border-r ">
                     Weight
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "170px" }}
                   >
                     Birthdate
                   </th>
-                  <th scope="col" className="px-4 py-3 border-t border-r">
+                  <th scope="col" className="px-4 py-2 border-t border-r">
                     Course
                   </th>
                   {/* <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '120px' }}>Nationality</th>
@@ -1166,7 +1166,7 @@ const StaffInfo = () => {
                     <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '330px' }}>Birthdate Address</th> */}
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "330px" }}
                   >
                     Address
@@ -1176,19 +1176,19 @@ const StaffInfo = () => {
                     <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '150px' }}>Special Number</th>
                     <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '140px' }}>Marital Status</th>
                     <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '200px' }}>Company</th> */}
-                  <th scope="col" className="px-4 py-3 border-t border-r">
+                  <th scope="col" className="px-4 py-2 border-t border-r">
                     Branch
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "150px" }}
                   >
                     Department
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "150px" }}
                   >
                     Office
@@ -1196,28 +1196,28 @@ const StaffInfo = () => {
                   {/* <th scope="col" className="px-4 py-3 border-t border-r"style={{ minWidth: '250px' }}>Office</th> */}
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "250px" }}
                   >
                     Position
                   </th>
                   <th
                     scope="col"
-                    className="px-4 border-t border-r py-30"
+                    className="px-4 border-t border-r py-2"
                     style={{ minWidth: "200px" }}
                   >
                     Last Modified By
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "250px" }}
                   >
                     Last Modified Date
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "250px" }}
                   >
                     Photo
@@ -1230,7 +1230,7 @@ const StaffInfo = () => {
                     key={employee.id}
                     className="border-b hover:bg-gray-100 transition"
                   >
-                    <td className="sticky left-0 z-10 flex items-center px-4 py-5 bg-white border-r">
+                    <td className="sticky left-0 z-10 flex items-center px-4 py-3 bg-white border-r">
                       <input type="checkbox" className="mr-3 action-checkbox" />
                       <FaPen
                         className="text-blue-500 cursor-pointer hover:text-blue-700"
@@ -1284,10 +1284,10 @@ const StaffInfo = () => {
                     </td>
 
                     {/* <td className="px-4 py-1 border-r">{employee.id}</td> */}
-                    <td className="px-4 py-3 border-r whitespace-nowrap text-ellipsis overflow-hidden max-w-[150px">{employee.staffCode}</td>
-                    <td className="px-4 py-3 border-r whitespace-nowrap text-ellipsis overflow-hidden max-w-[150px">{employee.engName}</td>
-                    <td className="px-4 py-3 border-r whitespace-nowrap text-ellipsis overflow-hidden max-w-[150px">{employee.khName}</td>
-                    <td className="px-4 py-3 border-r whitespace-nowrap text-ellipsis overflow-hidden max-w-[150px">
+                    <td className="px-4 py-2 border-r whitespace-nowrap text-ellipsis overflow-hidden max-w-[150px">{employee.staffCode}</td>
+                    <td className="px-4 py-2 border-r whitespace-nowrap text-ellipsis overflow-hidden max-w-[150px">{employee.engName}</td>
+                    <td className="px-4 py-2 border-r whitespace-nowrap text-ellipsis overflow-hidden max-w-[150px">{employee.khName}</td>
+                    <td className="px-4 py-2 border-r whitespace-nowrap text-ellipsis overflow-hidden max-w-[150px">
                       {employee.genderCode}
                     </td>
                     <td className="px-4 py-1 border-r">{employee.height}</td>
@@ -1337,7 +1337,7 @@ const StaffInfo = () => {
 
           {/* Pagination */}
           <div className="flex flex-col items-center justify-between p-4 md:flex-row">
-            <span className="mb-4 text-sm text-gray-600 md:mb-0">
+            <span className="mb-4 text-[12px] text-gray-600 md:mb-0">
               Page {currentPage} of {totalPages}
             </span>
 
@@ -1380,7 +1380,7 @@ const StaffInfo = () => {
                     <li key={index}>
                       <button
                         onClick={() => handlePageChange(page)}
-                        className={`flex items-center justify-center py-2 px-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500   ${
+                        className={`flex items-center text-[12px] justify-center py-2 px-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500   ${
                           currentPage === page
                             ? "bg-blue-500 text-white border-blue-600"
                             : "text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700"
