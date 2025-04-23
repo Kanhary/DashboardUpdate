@@ -376,8 +376,8 @@ const SubCategory = () => {
   };
 
   return (
-    <section className="mt-10 font-khmer">
-      <h1 className="text-xl font-medium text-blue-800">Sub-Categories</h1>
+    <section className="font-khmer">
+      <h1 className="text-md font-medium text-blue-800">Sub-Categories</h1>
       <div className="mt-3 border"></div>
       <div className="w-full mt-4" data-aos="fade-up">
         <div className="relative w-full overflow-hidden bg-white shadow-md sm:rounded-lg">
@@ -387,7 +387,7 @@ const SubCategory = () => {
                 <label htmlFor="simple-search" className="sr-only">
                   Search
                 </label>
-                <div className="relative w-full">
+                <div className="relative w-full text-[12px]">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     <svg
                       aria-hidden="true"
@@ -418,14 +418,14 @@ const SubCategory = () => {
             <div className="flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3">
               <button
                 onClick={handleRefresh}
-                className="flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
+                className="flex items-center justify-center px-5 py-2 text-[12px] font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
               >
                 <IoMdRefresh />
                 Refresh
               </button>
               <button
                 type="button"
-                className="flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
+                className="flex items-center justify-center px-5 py-2 text-[12px] font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
                 onClick={openAddModal}
               >
                 <svg
@@ -447,54 +447,54 @@ const SubCategory = () => {
           </div>
 
           <div className="w-full overflow-x-auto" data-aos="fade-right">
-            <table className="w-full text-sm text-left text-gray-500">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-100">
+            <table className="w-full text-[12px] text-left text-gray-500">
+              <thead className="text-[12px] text-gray-700 uppercase bg-gray-200">
                 <tr>
                   <th
                     scope="col"
-                    className="sticky left-0 w-full h-full px-4 py-3 bg-white border-r"
+                    className="sticky left-0 w-full h-full px-4 py-2 bg-gray-200 border-r"
                     style={{ minWidth: "30px" }}
                   >
                     Action
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "200px" }}
                   >
                     Sub-Category Code
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "200px" }}
                   >
                     Sub-Category Name
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "150px" }}
                   >
                     Create By
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "150px" }}
                   >
                     Create Date
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "150px" }}
                   >
                     Last By
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "150px" }}
                   >
                     last Date
@@ -508,7 +508,7 @@ const SubCategory = () => {
                     key={Subcategory.id}
                     className="transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50"
                   >
-                    <td className="sticky left-0 w-full h-full px-4 py-3 bg-white border-r">
+                    <td className="sticky left-0 w-full h-full px-4 py-2 bg-white border-r">
                       <div
                         className="flex justify-start space-x-3"
                         style={{ minWidth: "30px" }}
@@ -529,17 +529,17 @@ const SubCategory = () => {
                         </button>
                       </div>
                     </td>
-                    <td className="px-4 py-4 border-r">
+                    <td className="px-4 py-2 border-r">
                       {Subcategory.subCategoryCode}
                     </td>
-                    <td className="px-4 py-4 border-r">
+                    <td className="px-4 py-2 border-r">
                       {Subcategory.subCategoryName}
                     </td>
                     
-                    <td className="px-4 py-4 border-r">{Subcategory.createBy}</td>
-                    <td className="px-4 py-4 border-r">{Subcategory.createDate}</td>
-                    <td className="px-4 py-4 border-r">{Subcategory.lastBy}</td>
-                    <td className="px-4 py-3 border-r whitespace-nowrap text-ellipsis overflow-hidden max-w-[150px]">{Subcategory.lastDate}</td>
+                    <td className="px-4 py-2 border-r">{Subcategory.createBy}</td>
+                    <td className="px-4 py-2 border-r">{Subcategory.createDate}</td>
+                    <td className="px-4 py-2 border-r">{Subcategory.lastBy}</td>
+                    <td className="px-4 py-2 border-r whitespace-nowrap text-ellipsis overflow-hidden max-w-[150px]">{Subcategory.lastDate}</td>
                   </tr>
                 ))}
               </tbody>
@@ -547,7 +547,7 @@ const SubCategory = () => {
           </div>
 
           <div className="flex flex-col items-center justify-between p-4 md:flex-row">
-            <span className="mb-4 text-sm text-gray-600 md:mb-0">
+            <span className="mb-4 text-[12px] text-gray-600 md:mb-0">
               Page {currentPage} of {totalPages}
             </span>
 
@@ -590,7 +590,7 @@ const SubCategory = () => {
                     <li key={index}>
                       <button
                         onClick={() => handlePageChange(page)}
-                        className={`flex items-center justify-center py-2 px-3 border rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-200 ${
+                        className={`flex items-center text-[12px] justify-center py-2 px-3 border rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-200 ${
                           currentPage === page
                             ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white border-blue-600 shadow-lg"
                             : "text-gray-500 bg-gradient-to-r from-gray-200 to-gray-300 hover:from-gray-300 hover:to-gray-400"

@@ -377,8 +377,8 @@ const Category = () => {
   };
 
   return (
-    <section className="mt-10 font-khmer">
-      <h1 className="text-xl font-medium text-blue-800">Categories</h1>
+    <section className="font-khmer">
+      <h1 className="text-md font-medium text-blue-800">Categories</h1>
       <div className="mt-3 border"></div>
       <div className="w-full mt-4" data-aos="fade-up">
         <div className="relative w-full overflow-hidden bg-white shadow-md sm:rounded-lg">
@@ -388,7 +388,7 @@ const Category = () => {
                 <label htmlFor="simple-search" className="sr-only">
                   Search
                 </label>
-                <div className="relative w-full">
+                <div className="relative w-full text-[12px]">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     <svg
                       aria-hidden="true"
@@ -407,7 +407,7 @@ const Category = () => {
                   <input
                     type="text"
                     id="simple-search"
-                    className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500"
+                    className="block w-full p-2 pl-10 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500"
                     placeholder="ស្វែងរក"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -419,14 +419,14 @@ const Category = () => {
             <div className="flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3">
               <button
                 onClick={handleRefresh}
-                className="flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
+                className="flex items-center justify-center px-5 py-2 text-[12px] font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
               >
                 <IoMdRefresh />
                 Refresh
               </button>
               <button
                 type="button"
-                className="flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
+                className="flex items-center justify-center px-5 py-2 text-[12px] font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
                 onClick={openAddModal}
               >
                 <svg
@@ -447,23 +447,23 @@ const Category = () => {
             </div>
           </div>
 
-          <div className="w-full overflow-auto shadow-md rounded-lg">
-  <table className="w-full text-sm text-left text-gray-700 border-collapse">
+          <div className="w-full overflow-auto shadow-md">
+  <table className="w-full text-[12px] text-left text-gray-700 border-collapse">
     <thead className="text-xs font-semibold text-gray-700 uppercase bg-gray-200 border-b">
       <tr>
-        <th className="sticky left-0 px-4 py-3  border-r shadow-md">Action</th>
-        <th className="px-4 py-3 border-r">Category Code</th>
-        <th className="px-4 py-3 border-r">Category Name</th>
-        <th className="px-4 py-3 border-r">Create By</th>
-        <th className="px-4 py-3 border-r">Last By</th>
-        <th className="px-4 py-3 border-r">Last Date</th>
+        <th className="sticky left-0 px-4 py-2  border-r shadow-md">Action</th>
+        <th className="px-4 py-2 border-r">Category Code</th>
+        <th className="px-4 py-2 border-r">Category Name</th>
+        <th className="px-4 py-2 border-r">Create By</th>
+        <th className="px-4 py-2 border-r">Last By</th>
+        <th className="px-4 py-2 border-r">Last Date</th>
       </tr>
     </thead>
     <tbody>
       {currentCategory.map((category) => (
         <tr key={category.id} className="border-b hover:bg-gray-100 transition">
           {/* Action Column */}
-          <td className="sticky left-0 px-4 py-3 bg-white border-r shadow-md">
+          <td className="sticky left-0 px-4 py-2 bg-white border-r shadow-md">
             <div className="flex items-center space-x-3">
               <FaPen
                 className="text-blue-500 cursor-pointer hover:text-blue-700"
@@ -476,11 +476,11 @@ const Category = () => {
             </div>
           </td>
           {/* Other Columns */}
-          <td className="px-4 py-3 border-r whitespace-nowrap">{category.categoryCode}</td>
-          <td className="px-4 py-3 border-r whitespace-nowrap">{category.categoryName}</td>
-          <td className="px-4 py-3 border-r whitespace-nowrap">{category.createBy}</td>
-          <td className="px-4 py-3 border-r whitespace-nowrap">{category.lastBy}</td>
-          <td className="px-4 py-3 border-r whitespace-nowrap">{category.lastDate}</td>
+          <td className="px-4 py-2 border-r whitespace-nowrap">{category.categoryCode}</td>
+          <td className="px-4 py-2 border-r whitespace-nowrap">{category.categoryName}</td>
+          <td className="px-4 py-2 border-r whitespace-nowrap">{category.createBy}</td>
+          <td className="px-4 py-2 border-r whitespace-nowrap">{category.lastBy}</td>
+          <td className="px-4 py-2 border-r whitespace-nowrap">{category.lastDate}</td>
         </tr>
       ))}
     </tbody>
@@ -489,7 +489,7 @@ const Category = () => {
 
 
           <div className="flex flex-col items-center justify-between p-4 md:flex-row">
-            <span className="mb-4 text-sm text-gray-600 md:mb-0">
+            <span className="mb-4 text-[12px] text-gray-600 md:mb-0">
               Page {currentPage} of {totalPages}
             </span>
 
@@ -532,7 +532,7 @@ const Category = () => {
                     <li key={index}>
                       <button
                         onClick={() => handlePageChange(page)}
-                        className={`flex items-center justify-center py-2 px-3 border rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-200 ${
+                        className={`flex items-center justify-center py-2 px-3 border rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-200 text-[12px] ${
                           currentPage === page
                             ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white border-blue-600 shadow-lg"
                             : "text-gray-500 bg-gradient-to-r from-gray-200 to-gray-300 hover:from-gray-300 hover:to-gray-400"

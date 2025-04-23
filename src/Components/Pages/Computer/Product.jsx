@@ -663,7 +663,7 @@ const Product = () => {
             </div>
           </div>
 
-          <div className="w-full overflow-auto shadow-md rounded-lg">
+          <div className="w-full overflow-auto shadow-md">
             <table className="w-full text-left text-gray-700 border-collapse">
               <thead className="text-[12px] font-semibold text-gray-700 uppercase bg-gray-200 border-b">
                 <tr>
@@ -705,13 +705,13 @@ const Product = () => {
                     {/* Action Column */}
                     <td className="sticky left-0 px-4 py-2 bg-white border-r shadow-md">
                       <div className="flex items-center space-x-3">
-                        <input type="checkbox" className="mr-1 action-checkbox" />
+                        <input type="checkbox" className="mr-1 action-checkbo w-[12px] h-[12px]" />
                         <FaPen
                           className="text-blue-500 cursor-pointer hover:text-blue-700"
                           onClick={() => openEditModal(computer)}
                         />
                         <FaTrashAlt
-                          className="text-red-500 cursor-pointer hover:text-red-700"
+                          className="text-red-500 cursor-pointer hover:text-red-700 text-[11px]"
                           onClick={() => deleteProduct(computer.id)}
                         />
                       </div>
@@ -752,7 +752,7 @@ const Product = () => {
                       "lastBy",
                       "lastDate",
                     ].map((key) => (
-                      <td key={key} className="px-4 py-2 border-r whitespace-nowrap text-ellipsis overflow-hidden max-w-[150px]">
+                      <td key={key} className="px-4 py-2 border-r whitespace-nowrap text-ellipsis overflow-hidden max-w-[150px] text-[12px]">
                         {computer[key]}
                       </td>
                     ))}
@@ -763,8 +763,8 @@ const Product = () => {
           </div>
 
 
-          <div className="flex flex-col items-center justify-between p-4 md:flex-row">
-            <span className="mb-4 text-sm text-gray-600 md:mb-0">
+          <div className="flex flex-col items-center justify-between px-4 md:flex-row">
+            <span className="mb-4 text-[12px] text-gray-600 md:mb-0">
               Page {currentPage} of {totalPages}
             </span>
 
@@ -807,7 +807,7 @@ const Product = () => {
                     <li key={index}>
                       <button
                         onClick={() => handlePageChange(page)}
-                        className={`flex items-center justify-center py-2 px-3 border rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-200 ${
+                        className={`flex text-[12px] items-center justify-center py-2 px-3 border rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-200 ${
                           currentPage === page
                             ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white border-blue-600 shadow-lg"
                             : "text-gray-500 bg-gradient-to-r from-gray-200 to-gray-300 hover:from-gray-300 hover:to-gray-400"
