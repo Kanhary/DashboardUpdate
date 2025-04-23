@@ -217,7 +217,7 @@ const ItemPermission = () => {
 
   return (
     <section className="mt-14 font-khmer">
-      <h1 className="text-xl font-medium text-blue-800">
+      <h1 className="text-md font-medium text-blue-800">
         ការអនុញ្ញាតអ្នកប្រើប្រាស់
       </h1>
       <div className="mt-3 border"></div>
@@ -248,7 +248,7 @@ const ItemPermission = () => {
                   <input
                     type="text"
                     id="simple-search"
-                    className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500 "
+                    className="block w-full p-2 pl-10 text-[12px] text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500 "
                     placeholder="ស្វែងរក"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -260,14 +260,14 @@ const ItemPermission = () => {
             <div className="flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3">
               <button
                 onClick={handleRefresh}
-                className="flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
+                className="flex items-center justify-center px-5 py-2 text-[12px] font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
               >
                 <IoMdRefresh />
                 Refresh
               </button>
               <button
                 type="button"
-                className="flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
+                className="flex items-center justify-center px-5 py-2 text-[12px] font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
                 onClick={openAddModal}
               >
                 <svg
@@ -289,30 +289,30 @@ const ItemPermission = () => {
           </div>
 
           <div className="w-full overflow-x-auto" data-aos="fade-right">
-            <table className="w-full text-sm text-left text-gray-700 border-collapse">
-              <thead className="text-xs font-semibold text-gray-700 uppercase bg-gray-200 border-b">
+            <table className="w-full text-[12px] text-left text-gray-700 border-collapse">
+              <thead className="text-[12px] font-semibold text-gray-700 uppercase bg-gray-200 border-b">
                 <tr>
                   <th
                     scope="col"
-                    className="sticky left-0 px-4 py-3 bg-gray-200 border-t border-r"
+                    className="sticky left-0 px-4 py-2 bg-gray-200 border-t border-r"
                   >
                     Action
                   </th>
-                  <th scope="col" className="px-4 py-3 border-t border-r">
+                  <th scope="col" className="px-4 py-2 border-t border-r">
                     Code
                   </th>
                   {/* <th scope='col' className='px-4 py-3 border-t border-r' style={{ minWidth: '300px' }}>Function Code</th>
                   <th scope='col' className='px-4 py-3 border-t border-r' style={{ minWidth: '300px' }}>Function Name</th> */}
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "150px" }}
                   >
                     Create By
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "150px" }}
                   >
                     Last By
@@ -320,7 +320,7 @@ const ItemPermission = () => {
 
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "150px" }}
                   >
                     Last Date
@@ -332,7 +332,7 @@ const ItemPermission = () => {
                   <React.Fragment key={index}>
                     {/* Parent Row */}
                     <tr className="transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50">
-                      <td className="sticky left-0 flex px-6 py-4 bg-white border-r w-28">
+                      <td className="sticky left-0 flex px-6 py-2 bg-white border-r w-28">
                         <input
                           type="checkbox"
                           className="mr-1 action-checkbox"
@@ -353,26 +353,26 @@ const ItemPermission = () => {
                         />
                       </td>
                       <td
-                        className="px-4 py-3 border-r"
+                        className="px-4 py-2 border-r"
                         style={{ minWidth: "150px" }}
                       >
                         {translateText(item.menuName)}{" "}
                         {/* Translated menu name */}
                       </td>
                       <td
-                        className="px-4 py-3 border-r"
+                        className="px-4 py-2 border-r"
                         style={{ minWidth: "150px" }}
                       >
                         {item.creator}
                       </td>
                       <td
-                        className="px-4 py-3 border-r"
+                        className="px-4 py-2 border-r"
                         style={{ minWidth: "150px" }}
                       >
                         {item.updater}
                       </td>
                       <td
-                        className="px-4 py-3 border-r"
+                        className="px-4 py-2 border-r"
                         style={{ minWidth: "160px" }}
                       >
                         {formatDateTime(item.updateTime)}

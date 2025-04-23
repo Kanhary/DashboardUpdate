@@ -194,7 +194,7 @@ const SubmenuItem = ({ text, to, onClick, isActive }) => {
         isActive ? "text-sky-300" : ""
       }`}
     >
-      <Link to={to} className="w-full text-[10px]" onClick={onClick}>
+      <Link to={to} className="w-full text-[11px]" onClick={onClick}>
         {text}
       </Link>
     </li>

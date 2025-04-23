@@ -198,7 +198,7 @@ const GroupDetails = () => {
       </div>
 
       <div className="pt-5 mt-5 border-t">
-        <table className="w-full text-sm text-left text-gray-700 border-collapse">
+        <table className="w-full text-[12px] text-left text-gray-700 border-collapse">
           <thead className="text-xs font-semibold text-gray-700 uppercase bg-gray-200 border-b">
             <tr>
               <th className="px-4 py-2 border">Menu</th>
@@ -212,7 +212,7 @@ const GroupDetails = () => {
             {currentMenus.map((menu) => (
               <tr
                 key={menu.id}
-                className={`text-sm text-gray-700 hover:bg-gray-50 ${menu.isChild ? "pl-8" : ""}`}
+                className={`text-[12px] text-gray-700 hover:bg-gray-50 ${menu.isChild ? "pl-8" : ""}`}
               >
                 <td className={`px-4 py-2 border ${menu.isChild ? "pl-8" : ""}`}>
                   {menu.menuName}
@@ -220,7 +220,7 @@ const GroupDetails = () => {
                 <td className="px-4 py-2 text-center border">
                 <input
                   type="checkbox"
-                  className="w-4 h-4 text-blue-600"
+                  className="w-3 h-3 text-blue-600"
                   checked={
                     roleMenuPermissions.find((permission) => permission.menuName === menu.menuName)?.enabled || false
                   }
@@ -233,7 +233,7 @@ const GroupDetails = () => {
                 <td className="px-4 py-2 text-center border">
                 <input
                   type="checkbox"
-                  className="w-4 h-4 text-blue-600"
+                  className="w-3 h-3 text-blue-600"
                   checked={
                     roleMenuPermissions.find((permission) => permission.menuName === menu.menuName)?.enabled || false
                   }
@@ -246,7 +246,7 @@ const GroupDetails = () => {
                 <td className="px-4 py-2 text-center border">
                 <input
                   type="checkbox"
-                  className="w-4 h-4 text-blue-600"
+                  className="w-3 h-3 text-blue-600"
                   checked={
                     roleMenuPermissions.find((permission) => permission.menuName === menu.menuName)?.enabled || false
                   }
@@ -259,7 +259,7 @@ const GroupDetails = () => {
                 <td className="px-4 py-2 text-center border">
                 <input
                   type="checkbox"
-                  className="w-4 h-4 text-blue-600"
+                  className="w-3 h-3 text-blue-600"
                   checked={
                     roleMenuPermissions.find((permission) => permission.menuName === menu.menuName)?.enabled || false
                   }

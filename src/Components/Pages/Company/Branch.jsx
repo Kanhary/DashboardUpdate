@@ -415,7 +415,7 @@ const Branch = () => {
 
   return (
     <section className="mt-16">
-      <h1 className="text-xl font-medium text-blue-800">បញ្ចូលព័ត៌មានសាខា</h1>
+      <h1 className="text-md font-medium text-blue-800">ព័ត៌មានសាខា</h1>
       <div className="mt-3 border"></div>
       <div className="w-full mt-4" data-aos="fade-up">
         <div className="relative w-full overflow-hidden bg-white shadow-md sm:rounded-lg">
@@ -455,14 +455,14 @@ const Branch = () => {
             <div className="flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3">
               <button
                 onClick={handleRefresh}
-                className="flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
+                className="flex items-center justify-center px-5 py-2 text-[13px] font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
               >
                 <IoMdRefresh />
                 Refresh
               </button>
               <button
                 type="button"
-                className="flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
+                className="flex items-center justify-center px-5 py-2 text-[13px] font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
                 onClick={openAddModal}
               >
                 <svg
@@ -483,116 +483,116 @@ const Branch = () => {
             </div>
           </div>
           <div className="w-full overflow-x-auto" data-aos="fade-right">
-            <table className="w-full text-sm text-left text-gray-500 ">
+            <table className="w-full text-[12px] text-left text-gray-500 ">
               <thead className="text-xs text-gray-700 uppercase bg-gray-100">
                 <tr>
                   <th
                     scope="col"
-                    className="sticky left-0 px-4 py-3 mr-3 bg-gray-100 border-t border-r"
+                    className="sticky left-0 px-4 py-2 mr-3 bg-gray-100 border-t border-r"
                   >
                     Action
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r-2"
+                    className="px-4 py-2 border-t border-r-2"
                     style={{ minWidth: "150px" }}
                   >
                     Company Code
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "200px" }}
                   >
                     Branch Code
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "200px" }}
                   >
                     Khmer Name
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "200px" }}
                   >
                     English Name
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "200px" }}
                   >
                     Phone
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "200px" }}
                   >
                     Address
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "200px" }}
                   >
                     Email
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "200px" }}
                   >
                     VAT Number
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "200px" }}
                   >
                     Bank Name
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "200px" }}
                   >
                     Bank Acoount Name
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "200px" }}
                   >
                     Bank Account Number
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "200px" }}
                   >
                     Back branch
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "200px" }}
                   >
                     Company Logo
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "200px" }}
                   >
                     Last By
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "200px" }}
                   >
                     Last Date
@@ -605,7 +605,7 @@ const Branch = () => {
                     key={branch.id}
                     className="transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50"
                   >
-                    <td className="sticky left-0 z-10 flex items-center px-4 py-6 bg-white border-r">
+                    <td className="sticky left-0 z-10 flex items-center px-4 py-2 bg-white border-r">
                       <div className="flex gap-2">
                         {/* Checkbox */}
                         <input type="checkbox" className="mr-2" />
@@ -628,29 +628,29 @@ const Branch = () => {
                         </button>
                       </div>
                     </td>
-                    <td className="px-4 py-4 border-r">{branch.companyCode}</td>
-                    <td className="px-4 py-4 border-r">{branch.branchCode}</td>
-                    <td className="px-4 py-4 border-r">{branch.khName}</td>
-                    <td className="px-4 py-4 border-r">{branch.engName}</td>
-                    <td className="px-4 py-4 border-r">{branch.phone}</td>
-                    <td className="px-4 py-4 border-r">{branch.address}</td>
-                    <td className="px-4 py-4 border-r">{branch.email}</td>
-                    <td className="px-4 py-4 border-r">{branch.vatNo}</td>
-                    <td className="px-4 py-4 border-r">{branch.bankName}</td>
-                    <td className="px-4 py-4 border-r">{branch.bankAccName}</td>
-                    <td className="px-4 py-4 border-r">{branch.bankAccNo}</td>
-                    <td className="px-4 py-4 border-r">{branch.bankBranch}</td>
-                    <td className="px-4 py-4 border-r">{branch.companyLogo}</td>
-                    <td className="px-4 py-4 border-r">{branch.LastBy}</td>
-                    <td className="px-4 py-4 border-r">{branch.LastDate}</td>
+                    <td className="px-4 py-2 border-r">{branch.companyCode}</td>
+                    <td className="px-4 py-2 border-r">{branch.branchCode}</td>
+                    <td className="px-4 py-2 border-r">{branch.khName}</td>
+                    <td className="px-4 py-2 border-r">{branch.engName}</td>
+                    <td className="px-4 py-2 border-r">{branch.phone}</td>
+                    <td className="px-4 py-2 border-r">{branch.address}</td>
+                    <td className="px-4 py-2 border-r">{branch.email}</td>
+                    <td className="px-4 py-2 border-r">{branch.vatNo}</td>
+                    <td className="px-4 py-2 border-r">{branch.bankName}</td>
+                    <td className="px-4 py-2 border-r">{branch.bankAccName}</td>
+                    <td className="px-4 py-2 border-r">{branch.bankAccNo}</td>
+                    <td className="px-4 py-2 border-r">{branch.bankBranch}</td>
+                    <td className="px-4 py-2 border-r">{branch.companyLogo}</td>
+                    <td className="px-4 py-2 border-r">{branch.LastBy}</td>
+                    <td className="px-4 py-2 border-r">{branch.LastDate}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
           {/* Pagination */}
-          <div className="flex flex-col items-center justify-between p-4 md:flex-row">
-            <span className="mb-4 text-sm text-gray-600 md:mb-0">
+          <div className="flex flex-col items-center justify-between px-4 md:flex-row">
+            <span className="mb-4 text-[12px] text-gray-600 md:mb-0">
               Page {currentPage} of {totalPages}
             </span>
 
@@ -693,7 +693,7 @@ const Branch = () => {
                     <li key={index}>
                       <button
                         onClick={() => handlePageChange(page)}
-                        className={`flex items-center justify-center py-2 px-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500   ${
+                        className={`flex items-center text-[12px] justify-center py-2 px-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500   ${
                           currentPage === page
                             ? "bg-blue-500 text-white border-blue-600"
                             : "text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700"
