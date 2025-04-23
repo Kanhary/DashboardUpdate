@@ -305,7 +305,7 @@ const HeaderPage = ({ toggleSidebar }) => {
                 <span className="sr-only">Open user menu</span>
                 <img
                   src={
-                    // avatar || 
+                    avatar || 
                     "/blank-profile-picture.png"}
                   className="w-6 h-6 border border-blue-600 rounded-full sm:w-12 sm:h-10 md:w-6 md:h-6 lg:w-7 lg:h-7"
                   alt="User Photo"
@@ -324,7 +324,7 @@ const HeaderPage = ({ toggleSidebar }) => {
                       <span className="sr-only">Open user menu</span>
                       <img
                         src={
-                          // avatar || 
+                          avatar || 
                           "/blank-profile-picture.png"}
                         className="w-8 h-8 border border-blue-600 rounded-full sm:w-12 sm:h-10 md:w-8 md:h-8 lg:w-8 lg:h-8"
                         alt="User Photo"

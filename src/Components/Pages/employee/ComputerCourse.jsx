@@ -374,8 +374,8 @@ const optionsStaffName = employees.map(employee => ({
   };
   
   return (
-    <section className='mt-10 font-khmer'>
-      <h1 className='text-xl font-medium text-blue-800'>Course</h1>
+    <section className='font-khmer'>
+      <h1 className='text-md font-medium text-blue-800'>Course</h1>
       <div className='mt-3 border'></div>
       <div className='w-full mt-4' data-aos='fade-up'>
         <div className='relative w-full overflow-hidden bg-white shadow-md sm:rounded-lg'>
@@ -392,7 +392,7 @@ const optionsStaffName = employees.map(employee => ({
                   <input
                     type="text"
                     id='simple-search'
-                    className='block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500'
+                    className='block w-full p-2 pl-10 text-[12px] text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500'
                     placeholder='ស្វែងរក'
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -404,14 +404,14 @@ const optionsStaffName = employees.map(employee => ({
             <div className='flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3'>
             <button
                 onClick={handleRefresh}
-                className="flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
+                className="flex items-center justify-center px-5 py-2 text-[12px] font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
               >
                 <IoMdRefresh />
                 Refresh
               </button>
               <button
                 type='button'
-                className='flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95'
+                className='flex items-center justify-center px-5 py-2 text-[12px] font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95'
                 onClick={openAddModal}
               >
                 <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -423,21 +423,21 @@ const optionsStaffName = employees.map(employee => ({
           </div>
           
           <div className='w-full overflow-x-auto' data-aos='fade-right'>
-            <table className='w-full text-sm text-left text-gray-500'>
-              <thead className='text-xs text-gray-700 uppercase bg-gray-100'>
+            <table className='w-full text-[12px] text-left text-gray-500'>
+              <thead className='text-[12px] text-gray-700 uppercase bg-gray-100'>
               <tr>
-                <th scope="col" className="sticky left-0 px-4 py-3 bg-gray-100 border-t border-r" style={{ minWidth: '30px' }}>Action</th> 
-                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Course Code</th>
-                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Staff Code</th>
-                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Staff Name</th>
-                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '200px' }}>Course Name</th>
-                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Organize</th>
+                <th scope="col" className="sticky left-0 px-4 py-2 bg-gray-100 border-t border-r" style={{ minWidth: '30px' }}>Action</th> 
+                <th scope="col" className="px-4 py-2 border-t border-r" style={{ minWidth: '150px' }}>Course Code</th>
+                <th scope="col" className="px-4 py-2 border-t border-r" style={{ minWidth: '150px' }}>Staff Code</th>
+                <th scope="col" className="px-4 py-2 border-t border-r" style={{ minWidth: '150px' }}>Staff Name</th>
+                <th scope="col" className="px-4 py-2 border-t border-r" style={{ minWidth: '200px' }}>Course Name</th>
+                <th scope="col" className="px-4 py-2 border-t border-r" style={{ minWidth: '150px' }}>Organize</th>
                 {/* <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Gender Code</th> */}
-                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>From Date</th>
-                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '100px' }}>To Date</th>
-                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>In Country</th>
-                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Out Country</th>
-                <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Last By</th>
+                <th scope="col" className="px-4 py-2 border-t border-r" style={{ minWidth: '150px' }}>From Date</th>
+                <th scope="col" className="px-4 py-2 border-t border-r" style={{ minWidth: '100px' }}>To Date</th>
+                <th scope="col" className="px-4 py-2 border-t border-r" style={{ minWidth: '150px' }}>In Country</th>
+                <th scope="col" className="px-4 py-2 border-t border-r" style={{ minWidth: '150px' }}>Out Country</th>
+                <th scope="col" className="px-4 py-2 border-t border-r" style={{ minWidth: '150px' }}>Last By</th>
                 {/* <th scope="col" className="px-4 py-3 border-t border-r" style={{ minWidth: '150px' }}>Company Code</th> */}
               </tr>
 
@@ -446,7 +446,7 @@ const optionsStaffName = employees.map(employee => ({
                 {currentComputerCourse.map(computerCourse=> (
                   <tr key={computerCourse.id} className='transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50'>
                     
-                    <td className="sticky left-0 h-full px-4 py-3 bg-white border-r" >
+                    <td className="sticky left-0 h-full px-4 py-2 bg-white border-r" >
                       <div className="flex justify-start space-x-3" style={{minWidth: '30px'}}>
                       {/* <input type="checkbox" className="mr-1 action-checkbox"/> */}
                         <button
@@ -464,18 +464,18 @@ const optionsStaffName = employees.map(employee => ({
                         </button>
                       </div>
                     </td>
-                    <td className='px-4 py-4 border-r'>{computerCourse.courseCode}</td>
-                    <td className='px-4 py-4 border-r'>{computerCourse.staffcode}</td>
-                    <td className='px-4 py-4 border-r'>{computerCourse.staffname}</td>
-                    <td className='px-4 py-4 border-r'>{computerCourse.coursename}</td>
-                    <td className='px-4 py-4 border-r'>{computerCourse.organize}</td>
-                    <td className='px-4 py-4 border-r'>{computerCourse.fromDate}</td>
-                    <td className='px-4 py-4 border-r'>{computerCourse.toDate}</td>
+                    <td className='px-4 py-2 border-r'>{computerCourse.courseCode}</td>
+                    <td className='px-4 py-2 border-r'>{computerCourse.staffcode}</td>
+                    <td className='px-4 py-2 border-r'>{computerCourse.staffname}</td>
+                    <td className='px-4 py-2 border-r'>{computerCourse.coursename}</td>
+                    <td className='px-4 py-2 border-r'>{computerCourse.organize}</td>
+                    <td className='px-4 py-2 border-r'>{computerCourse.fromDate}</td>
+                    <td className='px-4 py-2 border-r'>{computerCourse.toDate}</td>
                     {/* <td className='px-4 py-4 border-computerCoursewife.genderCode}</td> */}
                     
-                    <td className='px-4 py-4 border-r'>{computerCourse.inCountry}</td>
-                    <td className='px-4 py-4 border-r'>{computerCourse.outCountry}</td>
-                    <td className='px-4 py-4 border-r'>{computerCourse.lastby}</td>
+                    <td className='px-4 py-2 border-r'>{computerCourse.inCountry}</td>
+                    <td className='px-4 py-2 border-r'>{computerCourse.outCountry}</td>
+                    <td className='px-4 py-2 border-r'>{computerCourse.lastby}</td>
                   </tr>
                 ))}
               </tbody>
@@ -483,7 +483,7 @@ const optionsStaffName = employees.map(employee => ({
           </div>
 
           <div className="flex flex-col items-center justify-between p-4 md:flex-row">
-            <span className="mb-4 text-sm text-gray-600 md:mb-0">
+            <span className="mb-4 text-[12px] text-gray-600 md:mb-0">
               Page {currentPage} of {totalPages}
             </span>
 
@@ -514,7 +514,7 @@ const optionsStaffName = employees.map(employee => ({
                     <li key={index}>
                       <button
                         onClick={() => handlePageChange(page)}
-                        className={`flex items-center justify-center py-2 px-3 border rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-200 ${currentPage === page ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white border-blue-600 shadow-lg' : 'text-gray-500 bg-gradient-to-r from-gray-200 to-gray-300 hover:from-gray-300 hover:to-gray-400'}`}
+                        className={`flex items-center justify-center py-2 text-[12px] px-3 border rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-200 ${currentPage === page ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white border-blue-600 shadow-lg' : 'text-gray-500 bg-gradient-to-r from-gray-200 to-gray-300 hover:from-gray-300 hover:to-gray-400'}`}
                       >
                         {page}
                       </button>

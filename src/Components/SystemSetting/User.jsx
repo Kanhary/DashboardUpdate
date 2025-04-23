@@ -768,8 +768,8 @@ const User = () => {
 };
 
   return (
-    <section className="mt-16 font-khmer">
-      <h1 className="text-xl font-medium text-blue-800">អ្នកប្រើប្រាស់</h1>
+    <section className="mt-10 font-khmer">
+      <h1 className="text-md font-medium text-blue-800">អ្នកប្រើប្រាស់</h1>
       <div className="mt-3 border"></div>
       <div className="w-full mt-4" data-aos="fade-up">
         <div className="relative w-full overflow-hidden bg-white shadow-md sm:rounded-lg">
@@ -798,7 +798,7 @@ const User = () => {
                   <input
                     type="text"
                     id="simple-search"
-                    className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500 "
+                    className="block w-full p-2 pl-10 text-[12px] text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500 "
                     placeholder="ស្វែងរក"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -810,14 +810,14 @@ const User = () => {
             <div className="flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3">
               <button
                 onClick={handleRefresh}
-                className="flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
+                className="flex items-center justify-center px-5 py-2 text-[13px] font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
               >
                 <IoMdRefresh />
                 Refresh
               </button>
               <button
                 type="button"
-                className="flex items-center justify-center px-5 py-2 text-lg font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
+                className="flex items-center justify-center px-5 py-2 text-[13px] font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"
                 onClick={openAddModal}
               >
                 <svg
@@ -839,8 +839,8 @@ const User = () => {
           </div>
 
           <div className="w-full overflow-x-auto" data-aos="fade-right">
-            <table className="w-full text-sm text-left text-gray-700 border-collapse">
-              <thead className="text-xs font-semibold text-gray-700 uppercase bg-gray-200 border-b">
+            <table className="w-full text-[12px] text-left text-gray-700 border-collapse">
+              <thead className="text-[12px] font-semibold text-gray-700 uppercase bg-gray-200 border-b">
                 <tr>
                   <th
                     scope="col"
