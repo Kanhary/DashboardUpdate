@@ -477,35 +477,35 @@ const OfficeList = () => {
                 <tr>   
                   <th
                     scope="col"
-                    className="sticky left-0 px-4 py-3 bg-gray-100 border-t border-r"
+                    className="sticky left-0 px-4 py-2 bg-gray-100 border-t border-r"
                     style={{ minWidth: "30px" }}
                   >
                     Action
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "100px" }}
                   >
                     Office Code
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "200px" }}
                   >
                     English Name
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "150px" }}
                   >
                     Khmer Name
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 border-t border-r"
+                    className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "150px" }}
                   >
                     Department
@@ -519,7 +519,7 @@ const OfficeList = () => {
                     key={officeList.id}
                     className="transition-colors duration-200 border border-b-gray-200 hover:bg-indigo-50"
                   >
-                    <td className="sticky left-0 h-full px-4 py-3 bg-white border-r">
+                    <td className="sticky left-0 h-full px-4 py-2 bg-white border-r">
                       <div
                         className="flex justify-start space-x-3"
                         style={{ minWidth: "30px" }}
@@ -540,19 +540,19 @@ const OfficeList = () => {
                         </button>
                       </div>
                     </td>
-                    <td className="px-4 py-4 border-r">
+                    <td className="px-4 py-2 border-r">
                       {officeList.officeCode}
                     </td>
-                    <td className="px-4 py-4 border-r">
+                    <td className="px-4 py-2 border-r">
                       {officeList.officeEngName}
                     </td>
                     <td
-                      className="px-4 py-4 border-r"
+                      className="px-4 py-2 border-r"
                       style={{ minWidth: "300px" }}
                     >
                       {officeList.officeKhName}
                     </td>
-                    <td className="px-4 py-4 border-r">
+                    <td className="px-4 py-2 border-r">
                       {officeList.departCode}
                     </td>
                     {/* <td className='px-4 py-4 border-r'>{officeList.companyCode}</td> */}
@@ -562,8 +562,8 @@ const OfficeList = () => {
             </table>
           </div>
 
-          <div className="flex flex-col items-center justify-between p-4 md:flex-row">
-            <span className="mb-4 text-sm text-gray-600 md:mb-0">
+          <div className="flex flex-col items-center justify-between px-4 md:flex-row">
+            <span className="mb-4 text-[12px] text-gray-600 md:mb-0">
               Page {currentPage} of {totalPages}
             </span>
 
@@ -606,7 +606,7 @@ const OfficeList = () => {
                     <li key={index}>
                       <button
                         onClick={() => handlePageChange(page)}
-                        className={`flex items-center justify-center py-2 px-3 border rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-200 ${
+                        className={`flex items-center text-[12px] justify-center py-2 px-3 border rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-200 ${
                           currentPage === page
                             ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white border-blue-600 shadow-lg"
                             : "text-gray-500 bg-gradient-to-r from-gray-200 to-gray-300 hover:from-gray-300 hover:to-gray-400"

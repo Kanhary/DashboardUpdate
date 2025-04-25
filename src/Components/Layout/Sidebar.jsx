@@ -123,7 +123,7 @@ const Sidebar = ({ isSidebarOpen }) => {
     <aside
       className={`fixed left-0 top-0 h-full bg-gradient-to-r from-blue-800 to-indigo-900 text-white shadow-lg transition-transform z-40 ${
         isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-      } md:translate-x-0 md:w-64`}
+      } md:translate-x-0 md:w-56`}
     >
       <nav
         className="flex flex-col h-full overflow-y-auto"

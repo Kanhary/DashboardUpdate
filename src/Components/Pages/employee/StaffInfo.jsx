@@ -27,6 +27,7 @@ const StaffInfo = () => {
   const [editingEmployees, setEditingEmployees] = useState(null);
   const [employees, setEmployees] = useState([]);
   const { scrollYProgress } = useScroll();
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
 
   const [department, setDepartment] = useState([]);
   const [allOfficeOptions , setallOfficeOptions ] = useState([]);
@@ -78,6 +79,7 @@ const StaffInfo = () => {
   };
 
   const [formData, setFormData] = useState({
+    id: "",
     staffCode: "",
     engName: "",
     khName: "",
@@ -493,10 +495,12 @@ const StaffInfo = () => {
   
   const handleSaveEdit = async (e) => {
     e.preventDefault(); // Fix: Prevent form submission
+    
   
     try {
       console.log("Saving employee data:", formData);
-      const id = editingStaff.id;
+      const id = employees?.id;
+      console.log("id : ",employees?.id);
   
       // if (!id) {
       //   Swal.fire({
@@ -533,16 +537,16 @@ const StaffInfo = () => {
         });
       }
     } catch (error) {
-      if (error.response) {
-        console.error("Error response data:", error.response.data);
-        alert(`Error: ${error.response.data.message || "An unexpected error occurred."}`);
-      } else if (error.request) {
-        console.error("Error request:", error.request);
-        alert("No response received from the server.");
-      } else {
-        console.error("Error message:", error.message);
-        alert("An error occurred while setting up the request.");
-      }
+      // if (error.response) {
+      //   console.error("Error response data:", error.response.data);
+      //   alert(`Error: ${error.response.data.message || "An unexpected error occurred."}`);
+      // } else if (error.request) {
+      //   console.error("Error request:", error.request);
+      //   alert("No response received from the server.");
+      // } else {
+      //   console.error("Error message:", error.message);
+      //   alert("An error occurred while setting up the request.");
+      // }
     }
   };
   
@@ -644,6 +648,7 @@ const StaffInfo = () => {
     try {
       console.log("Saving employee data:", formData);
       const id = formData.id; // Ensure this is valid
+      console.log("Employee ID : " ,employees);
       if (!id) {
         Swal.fire({
           title: "Error",
@@ -1507,7 +1512,7 @@ const StaffInfo = () => {
 
       {isEditModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="relative w-full max-w-md sm:max-w-4xl bg-white rounded-md shadow-lg overflow-auto max-h-[90vh] mt-14 sm:ml-52 h-[550px] modal-scrollbar">
+          <div className="relative w-full max-w-md sm:max-w-4xl bg-white rounded-md shadow-lg overflow-auto max-h-[90vh] mt-14 sm:ml-52 h-[500px] modal-scrollbar">
             <div className="sticky top-0 z-50 flex items-center justify-between w-full p-4 mb-6 bg-gray-100 border-b border-gray-300 border-dashed">
               <h2 className="flex-1 ml-3 text-2xl font-medium text-blue-800 font-khmer">
                 កែប្រែព័ត៌មានបុគ្គលិក

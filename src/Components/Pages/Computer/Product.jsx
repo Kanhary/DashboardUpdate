@@ -864,11 +864,11 @@ const Product = () => {
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
           <div
-            className="relative mx-auto transition-all transform bg-white shadow-2xl rounded-xl h-[600px] overflow-y-auto w-[1000px]"
+            className="relative mx-auto transition-all transform bg-white shadow-2xl rounded-xl h-[550px] overflow-y-auto w-[1000px]"
             data-aos="zoom-in"
           >
             <header className="sticky top-0 z-50 flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl ">
-              <h2 className="text-xl font-bold text-white md:text-2xl">
+              <h2 className="text-md font-bold text-white">
                 បន្ថែមកុំព្យូទ័រថ្មី
               </h2>
               <button
@@ -883,13 +883,13 @@ const Product = () => {
                 <div className="w-full md:w-1/2">
                   <label
                     htmlFor="productCode"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
+                    className="block mb-2 text-[13px] font-semibold text-gray-700"
                   >
                     Product Code
                   </label>
                   <input
                     id="productCode"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    className="block w-full px-4 py-2 text-[12px] text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                     value={formData.productCode}
                     onChange={handleChange}
                     required
@@ -899,13 +899,13 @@ const Product = () => {
                 <div className="w-full md:w-1/2">
                   <label
                     htmlFor="engName"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
+                    className="block mb-2 text-[13px] font-semibold text-gray-700"
                   >
                     Device Name
                   </label>
                   <input
                     id="deviceName"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    className="block w-full px-4 py-2 text-[12px] text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                     value={formData.deviceName}
                     onChange={handleChange}
                   />
@@ -916,7 +916,7 @@ const Product = () => {
               <div className="w-full md:w-1/2">
                   <label
                     htmlFor="staffcode"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
+                    className="block mb-2 text-[13px] font-semibold text-gray-700"
                   >
                     Staff Code
                   </label>
@@ -936,7 +936,7 @@ const Product = () => {
                 <div className="w-full md:w-1/2">
                   <label
                     htmlFor="CompanyCode"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
+                    className="block mb-2 text-[13px] font-semibold text-gray-700"
                   >
                     Department
                   </label>
@@ -959,13 +959,13 @@ const Product = () => {
                 <div className="w-full md:w-1/2">
                   <label
                     htmlFor="brand"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
+                    className="block mb-2 text-[13px] font-semibold text-gray-700"
                   >
                     Brand Name
                   </label>
                   <input
                     id="brand"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    className="block w-full px-4 py-2 text-[12px] text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                     value={formData.brand}
                     onChange={handleChange}
                     required
@@ -975,13 +975,13 @@ const Product = () => {
                 <div className="w-full md:w-1/2">
                   <label
                     htmlFor="modelName"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
+                    className="block mb-2 text-[13px] font-semibold text-gray-700"
                   >
                     Model
                   </label>
                   <input
                     id="modelName"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    className="block w-full px-4 py-2 text-[12px] text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                     value={formData.modelName}
                     onChange={handleChange}
                   />
@@ -991,7 +991,7 @@ const Product = () => {
                 <div className="w-full md:w-1/2">
                   <label
                     htmlFor="staffcode"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
+                    className="block mb-2 text-[13px] font-semibold text-gray-700"
                   >
                     RAM size
                   </label>
@@ -1010,13 +1010,13 @@ const Product = () => {
                 <div className="w-full md:w-1/2">
                   <label
                     htmlFor="processor"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
+                    className="block mb-2 text-[13px] font-semibold text-gray-700"
                   >
                     Processor
                   </label>
                   <input
                     id="processor"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    className="block w-full px-4 py-2 text-[12px] text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                     value={formData.processor }
                     onChange={handleChange}
                     required
@@ -1028,13 +1028,13 @@ const Product = () => {
                 <div className="w-full md:w-1/2">
                   <label
                     htmlFor="storageSize"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
+                    className="block mb-2 text-[13px] font-semibold text-gray-700"
                   >
                     Storage Size
                   </label>
                   <input
                     id="storageSize"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    className="block w-full px-4 py-2 text-[12px] text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                     value={formData.storageSize}
                     onChange={handleChange}
                     required
@@ -1043,13 +1043,13 @@ const Product = () => {
                 <div className="w-full md:w-1/2">
                   <label
                     htmlFor="storageType"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
+                    className="block mb-2 text-[13px] font-semibold text-gray-700"
                   >
                     Storage Type
                   </label>
                   <input
                     id="storageType"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    className="block w-full px-4 py-2 text-[12px] text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                     value={formData.storageType}
                     onChange={handleChange}
                   />
@@ -1060,13 +1060,13 @@ const Product = () => {
                 <div className="w-full md:w-1/2">
                   <label
                     htmlFor="serialNumber"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
+                    className="block mb-2 text-[13px] font-semibold text-gray-700"
                   >
                     Serial Number
                   </label>
                   <input
                     id="serialNumber"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    className="block w-full px-4 py-2 text-[12px] text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                     value={formData.serialNumber}
                     onChange={handleChange}
                     required
@@ -1075,13 +1075,13 @@ const Product = () => {
                 <div className="w-full md:w-1/2">
                   <label
                     htmlFor="engName"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
+                    className="block mb-2 text-[13px] font-semibold text-gray-700"
                   >
                     Price
                   </label>
                   <input
                     id="price"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    className="block w-full px-4 py-2 text-[12px] text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                     value={formData.price}
                     onChange={handleChange}
                   />
@@ -1092,14 +1092,14 @@ const Product = () => {
                 <div className="w-full md:w-1/2">
                   <label
                     htmlFor="warrantyExpiration"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
+                    className="block mb-2 text-[13px] font-semibold text-gray-700"
                   >
                     Warranty Expiration
                   </label>
                   <input
                     id="warrantyExpiration"
                     type="date"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    className="block w-full px-4 py-2 text-[12px] text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                     value={formData.warrantyExpiration}
                     onChange={handleChange}
                     required
@@ -1109,14 +1109,14 @@ const Product = () => {
                 <div className="w-full md:w-1/2">
                   <label
                     htmlFor="purchaseDate"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
+                    className="block mb-2 text-[13px] font-semibold text-gray-700"
                   >
                     Purchase Date
                   </label>
                   <input
                     type="date"
                     id="purchaseDate"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    className="block w-full px-4 py-2 text-[12px] text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                     value={formData.purchaseDate}
                     onChange={handleChange}
                   />
@@ -1128,13 +1128,13 @@ const Product = () => {
                 <div className="w-full md:w-1/2">
                   <label
                     htmlFor="ipaddress"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
+                    className="block mb-2 text-[13px] font-semibold text-gray-700"
                   >
                     IP Address
                   </label>
                   <input
                     id="ipaddress"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    className="block w-full px-4 py-2 text-[12px] text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                     value={formData.ipaddress}
                     onChange={handleChange}
                     required
@@ -1144,13 +1144,13 @@ const Product = () => {
                 <div className="w-full md:w-1/2">
                   <label
                     htmlFor="engName"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
+                    className="block mb-2 text-[13px] font-semibold text-gray-700"
                   >
                     Mac Address
                   </label>
                   <input
                     id="macAddress"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    className="block w-full px-4 py-2 text-[12px] text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                     value={formData.macAddress}
                     onChange={handleChange}
                   />
@@ -1161,7 +1161,7 @@ const Product = () => {
               <div className="w-full md:w-1/2">
                   <label
                     htmlFor="categoryCode"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
+                    className="block mb-2 text-[13px] font-semibold text-gray-700"
                   >
                     Category Code
                   </label>
@@ -1181,7 +1181,7 @@ const Product = () => {
                 <div className="w-full md:w-1/2">
                   <label
                     htmlFor="unitOrSet"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
+                    className="block mb-2 text-[13px] font-semibold text-gray-700"
                   >
                     Unit or Set
                   </label>
@@ -1204,13 +1204,13 @@ const Product = () => {
                 <div className="w-full md:w-1/2">
                   <label
                     htmlFor="quantity"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
+                    className="block mb-2 text-[13px] font-semibold text-gray-700"
                   >
                     Quantity
                   </label>
                   <input
                     id="quantity"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    className="block w-full px-4 py-2 text-[12px] text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                     value={formData.quantity}
                     onChange={handleChange}
                     required
@@ -1220,13 +1220,13 @@ const Product = () => {
                 <div className="w-full md:w-1/2">
                   <label
                     htmlFor="supply"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
+                    className="block mb-2 text-[13px] font-semibold text-gray-700"
                   >
                     Supplier
                   </label>
                   <input
                     id="supply"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    className="block w-full px-4 py-2 text-[12px] text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                     value={formData.supply}
                     onChange={handleChange}
                   />
@@ -1236,13 +1236,13 @@ const Product = () => {
                 <div className="w-full md:w-1/2">
                   <label
                     htmlFor="note"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
+                    className="block mb-2 text-[13px] font-semibold text-gray-700"
                   >
                     Note
                   </label>
                   <input
                     id="note"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    className="block w-full px-4 py-2 text-[12px] text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                     value={formData.note}
                     onChange={handleChange}
                     required
@@ -1252,7 +1252,7 @@ const Product = () => {
                 <div className="w-full md:w-1/2">
                   <label
                     htmlFor="status"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
+                    className="block mb-2 text-[13px] font-semibold text-gray-700"
                   >
                     Status
                   </label>
@@ -1274,13 +1274,13 @@ const Product = () => {
               <div className="w-full">
                   <label
                     htmlFor="location"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
+                    className="block mb-2 text-[13px] font-semibold text-gray-700"
                   >
                     Location
                   </label>
                   <input
                     id="location"
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                    className="block w-full px-4 py-2 text-[12px] text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                     value={formData.location}
                     onChange={handleChange}
                     required
@@ -1292,19 +1292,19 @@ const Product = () => {
             <footer className="flex flex-col-reverse items-center justify-end px-6 py-4 space-y-3 space-y-reverse bg-gray-100 rounded-b-xl md:flex-row md:space-x-3 md:space-y-0">
               <button
                 onClick={handleSaveNew}
-                className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto"
+                className="w-full px-5 py-2 text-[12px] font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto"
               >
                 Save & New
               </button>
               <button
                 onClick={handleSave}
-                className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-green-500 to-green-700 hover:shadow-lg hover:scale-105 md:w-auto"
+                className="w-full px-5 py-2 text-[12px] font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-green-500 to-green-700 hover:shadow-lg hover:scale-105 md:w-auto"
               >
                 Save
               </button>
               <button
                 onClick={closeAddModal}
-                className="w-full px-5 py-2 text-sm font-medium text-gray-700 transition duration-200 transform bg-gray-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105 md:w-auto"
+                className="w-full px-5 py-2 text-[12px] font-medium text-gray-700 transition duration-200 transform bg-gray-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105 md:w-auto"
               >
                 Cancel
               </button>
@@ -1316,11 +1316,11 @@ const Product = () => {
       {isEditModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
           <div
-            className="relative mx-auto transition-all transform bg-white shadow-2xl rounded-xl h-[600px] overflow-y-auto w-[1000px]"
+            className="relative mx-auto transition-all transform bg-white shadow-2xl rounded-xl h-[550px] overflow-y-auto w-[1000px]"
             data-aos="zoom-in"
           >
             <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
-              <h2 className="text-xl font-bold text-white md:text-2xl">
+              <h2 className="text-md font-bold text-white">
                 កែប្រែព័ត៌មានកុំព្យូទ័រ
               </h2>
               <button
