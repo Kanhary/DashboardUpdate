@@ -22,7 +22,7 @@ const GroupMaster = () => {
       const response = await GetRole();
       console.log(response.data.data); 
       setGroupMaster(response.data.data);
-      
+      setFormData(response.data.data);
     } catch (err) {
       setError({ message: err.message || 'An error occurred' });
     }
@@ -149,18 +149,20 @@ const GroupMaster = () => {
 
   const handleUpdate = async () => {
     try {
-      console.log('Saving category data:', formData);
-      const roleId = formData.id;  // Ensure this is valid
-      if (!roleId) {
-        Swal.fire({
-          title: "Error",
-          text: "Category ID is missing",
-          icon: "warning"
-        });
-        return;
-      }
+      // const selectedRole = formData.id; // get the one you're editing
   
-      const response = await UpdateRole(roleId, formData);
+      // if (!selectedRole || !selectedRole.roleId) {
+      //   Swal.fire({
+      //     title: "Error",
+      //     text: "Category ID is missing",
+      //     icon: "warning"
+      //   });
+      //   return;
+      // }
+  
+      // console.log('Saving category data:', formData.data.roleId);
+  
+      const response = await UpdateRole(formData.roleId);
   
       if (response.status === 200) {
         console.log('Category updated successfully:', response.data);
@@ -169,7 +171,7 @@ const GroupMaster = () => {
           text: "Category updated successfully",
           icon: "success"
         });
-        setIsEditModalOpen(false);  // Close the edit modal
+        setIsEditModalOpen(false);
         fetchRole();
       } else {
         const errorMessage = response.data.message || 'An unexpected error occurred.';
@@ -181,21 +183,18 @@ const GroupMaster = () => {
       }
     } catch (error) {
       if (error.response) {
-        console.error('Error response data:', error.response.data);
         Swal.fire({
           title: "Error",
           text: error.response.data.message || 'An unexpected error occurred.',
           icon: "error"
         });
       } else if (error.request) {
-        console.error('Error request:', error.request);
         Swal.fire({
           title: "Error",
           text: "No response received from the server.",
           icon: "error"
         });
       } else {
-        console.error('Error message:', error.message);
         Swal.fire({
           title: "Error",
           text: "An error occurred while setting up the request.",
@@ -204,6 +203,7 @@ const GroupMaster = () => {
       }
     }
   };
+  
 
   const handleDelete = async (roleId) => {
     try {

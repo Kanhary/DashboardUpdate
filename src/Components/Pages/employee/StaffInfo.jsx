@@ -499,8 +499,8 @@ const StaffInfo = () => {
   
     try {
       console.log("Saving employee data:", formData);
-      const id = employees?.id;
-      console.log("id : ",employees?.id);
+      const id = formData.id;
+      console.log("id : ",formData);
   
       // if (!id) {
       //   Swal.fire({
