@@ -141,7 +141,7 @@ const User = () => {
       const rolePromises = usersData.map(async (user) => {
         try {
           const roleResponse = await axios.get(
-            `http://192.168.100.55:8759/user/getRoleName/${user.username}`
+            `http://192.168.168.4:8759/user/getRoleName/${user.username}`
           );
           const roleName = roleResponse.data.data[0]?.roleName || "Unknown"; // Extract roleName
           return { ...user, roleName }; // Add roleName to user object
@@ -739,7 +739,7 @@ const User = () => {
 
   const optionRoleCode = role.map((r) => ({
     value: r.roleId,
-    label: `${r.roleId}-${r.roleLabel}`,
+    label: `${r.roleId}-${r.roleName}`,
   }));
 
   const optionUserCode = users.map((user) => ({

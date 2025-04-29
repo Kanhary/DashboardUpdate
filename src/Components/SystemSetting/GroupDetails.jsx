@@ -86,48 +86,49 @@ const GroupDetails = () => {
     return flattened;
   };
 
-  const handleCheckboxChange = (menuName) => {
+  const handleCheckboxChange = (menuName, permissionType) => {
     const updatedPermissions = roleMenuPermissions.map((permission) =>
       permission.menuName === menuName
-        ? { ...permission, enabled: !permission.enabled }
+        ? { ...permission, [permissionType]: !permission[permissionType] }
         : permission
     );
   
     setRoleMenuPermissions(updatedPermissions);
   };
   
+  
 
   const handleSavePermissions = async () => {
     try {
-      // const roleId = selectedRole;
-
-      if (!roleId) {
-        console.error("Role ID is missing!");
-        return;
-      }
-
-      const enabledMenuIds = roleMenuPermissions
-        .filter((permission) => permission.enabled)
-        .map((permission) => permission.menuId);
-
-      const payload = enabledMenuIds;
-      const apiUrl = `http://192.168.100.55:8759/RoleMenu/${roleId}/menus`;
-
+      const apiUrl = `http://192.168.168.4:8759/Role/edit-permissions`;
+  
+      const payload = {
+        roleId: roleId, // make sure selectedRole contains the role ID you want to send
+        permissionIds: roleMenuPermissions.map(permission => ({
+          menuId: permission.menuId,
+          menuName: permission.menuName,
+          View: permission.View || false,
+          New: permission.New || false,
+          Edit: permission.Edit || false,
+          Delete: permission.Delete || false,
+        })),
+      };
+  
       await axios.post(apiUrl, payload, {
         headers: {
           "Content-Type": "application/json",
         },
       });
-
+  
       alert("Permissions updated successfully!");
-
-      // Close editing mode after successful save
+  
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating permissions:", error);
       alert("Failed to update permissions. Please try again.");
     }
   };
+  
   
 
   const handleRoleChange = (selectedOption) => {
@@ -147,7 +148,7 @@ const GroupDetails = () => {
 
   const optionRoleCode = roles.map((r) => ({
     value: r.roleId,
-    label: `${r.roleId}-${r.roleLabel}`,
+    label: `${r.roleId}-${r.roleName}`,
   }));
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -211,65 +212,66 @@ const GroupDetails = () => {
           <tbody>
             {currentMenus.map((menu) => (
               <tr
-                key={menu.id}
-                className={`text-[12px] text-gray-700 hover:bg-gray-50 ${menu.isChild ? "pl-8" : ""}`}
-              >
-                <td className={`px-4 py-2 border ${menu.isChild ? "pl-8" : ""}`}>
-                  {menu.menuName}
-                </td>
-                <td className="px-4 py-2 text-center border">
+              key={menu.id}
+              className={`text-[12px] text-gray-700 hover:bg-gray-50 ${menu.isChild ? "pl-8" : ""}`}
+            >
+              <td className={`px-4 py-2 border ${menu.isChild ? "pl-8" : ""}`}>
+                {menu.menuName}
+              </td>
+            
+              {/* View */}
+              <td className="px-4 py-2 text-center border">
                 <input
                   type="checkbox"
                   className="w-3 h-3 text-blue-600"
                   checked={
-                    roleMenuPermissions.find((permission) => permission.menuName === menu.menuName)?.enabled || false
+                    roleMenuPermissions.find((p) => p.menuName === menu.menuName)?.View || false
                   }
-                  onChange={() => (isEditing ? handleCheckboxChange(menu.menuName) : null)} // Change to menuName
+                  onChange={() => isEditing && handleCheckboxChange(menu.menuName, "View")}
                   disabled={!isEditing}
                 />
-
-
-                </td>
-                <td className="px-4 py-2 text-center border">
+              </td>
+            
+              {/* Add (New) */}
+              <td className="px-4 py-2 text-center border">
                 <input
                   type="checkbox"
                   className="w-3 h-3 text-blue-600"
                   checked={
-                    roleMenuPermissions.find((permission) => permission.menuName === menu.menuName)?.enabled || false
+                    roleMenuPermissions.find((p) => p.menuName === menu.menuName)?.New || false
                   }
-                  onChange={() => (isEditing ? handleCheckboxChange(menu.menuName) : null)} // Change to menuName
+                  onChange={() => isEditing && handleCheckboxChange(menu.menuName, "New")}
                   disabled={!isEditing}
                 />
-
-
-                </td>
-                <td className="px-4 py-2 text-center border">
+              </td>
+            
+              {/* Update (Edit) */}
+              <td className="px-4 py-2 text-center border">
                 <input
                   type="checkbox"
                   className="w-3 h-3 text-blue-600"
                   checked={
-                    roleMenuPermissions.find((permission) => permission.menuName === menu.menuName)?.enabled || false
+                    roleMenuPermissions.find((p) => p.menuName === menu.menuName)?.Edit || false
                   }
-                  onChange={() => (isEditing ? handleCheckboxChange(menu.menuName) : null)} // Change to menuName
+                  onChange={() => isEditing && handleCheckboxChange(menu.menuName, "Edit")}
                   disabled={!isEditing}
                 />
-
-
-                </td>
-                <td className="px-4 py-2 text-center border">
+              </td>
+            
+              {/* Delete */}
+              <td className="px-4 py-2 text-center border">
                 <input
                   type="checkbox"
                   className="w-3 h-3 text-blue-600"
                   checked={
-                    roleMenuPermissions.find((permission) => permission.menuName === menu.menuName)?.enabled || false
+                    roleMenuPermissions.find((p) => p.menuName === menu.menuName)?.Delete || false
                   }
-                  onChange={() => (isEditing ? handleCheckboxChange(menu.menuName) : null)} // Change to menuName
+                  onChange={() => isEditing && handleCheckboxChange(menu.menuName, "Delete")}
                   disabled={!isEditing}
                 />
-
-
-                </td>
-              </tr>
+              </td>
+            </tr>
+            
             ))}
           </tbody>
         </table>

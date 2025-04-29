@@ -500,7 +500,9 @@ const StaffInfo = () => {
     try {
       console.log("Saving employee data:", formData);
       const id = formData.id;
-      console.log("id : ",formData);
+      console.log("STAFF id : ",formData);
+
+      console.log("Staff : ", editingEmployees);
   
       // if (!id) {
       //   Swal.fire({
@@ -517,7 +519,7 @@ const StaffInfo = () => {
         lastDate: new Date().toISOString(),
       };
   
-      const response = await UpdateStaff(id, updatedFormData);
+      const response = await UpdateStaff( updatedFormData, editingEmployees.id);
   
       if (response.status === 200) {
         console.log("Employee updated successfully:", response.data);
@@ -709,6 +711,7 @@ const StaffInfo = () => {
   const recordsPerPage = 8;
   //open edit modal
   const openEditModal = (
+    id,
     staffCode,
     engName,
     khName,
@@ -730,6 +733,7 @@ const StaffInfo = () => {
     outcountry
   ) => {
     console.log({
+      id,
       staffCode,
       engName,
       khName,
@@ -752,6 +756,7 @@ const StaffInfo = () => {
     });
 
     setEditingEmployees({
+      id,
       staffCode,
       engName,
       khName,
@@ -767,6 +772,7 @@ const StaffInfo = () => {
     });
 
     setFormData({
+      id,
       staffCode,
       engName,
       khName,
@@ -1241,7 +1247,7 @@ const StaffInfo = () => {
                         className="text-blue-500 cursor-pointer hover:text-blue-700"
                         onClick={() =>
                           openEditModal(
-                            // employee.id,
+                            employee.id,
                             employee.staffCode,
                             employee.engName,
                             employee.khName,

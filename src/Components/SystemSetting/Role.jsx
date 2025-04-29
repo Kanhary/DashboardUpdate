@@ -12,6 +12,11 @@ const GroupMaster = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  // const [formData, setFormData] = useState({
+  //   roleLabel: '',
+  //   roleName: '',
+  // });
+
   const [formData, setFormData] = useState(INITAIL_FORM_DATA);
   const [editingGroupMaster,setEditingGroupMaster] = useState(null);
   const [groupMaster, setGroupMaster] = useState([]);
@@ -54,7 +59,7 @@ const GroupMaster = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 8;
   const filterGroupMaster = groupMaster.filter(groupmaster =>
-    groupmaster.roleLabel.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()) ||
+    groupmaster.roleName.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()) ||
     groupmaster.roleId.includes(searchTerm)
   );
   const totalPages = Math.ceil(filterGroupMaster.length / recordsPerPage);
@@ -101,8 +106,12 @@ const GroupMaster = () => {
 
   const handleChange = (e) => {
     const { id, value } = e.target;
-    setFormData(prev => ({ ...prev, [id]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
   };
+  
 
   const handleSaveNew = () => {
     console.log('Save & New clicked', formData);
@@ -110,9 +119,16 @@ const GroupMaster = () => {
   };
 
   const handleSave = async () => {
+
+    const roleName = formData.roleName;
+    console.log("formData:", formData);
+    console.log("roleName:", formData.roleName);
+
     // Prepare the data for submission
     const updatedFormData = {
-      ...formData, // Spread the current formData state
+      // Spread the current formData state
+      // roleLabel: formData.roleLabel,
+      roleName: formData.roleName,
       creator: currentUser,
       updater: currentUser,
       createTime: new Date().toISOString(),
@@ -121,7 +137,7 @@ const GroupMaster = () => {
   
     try {
       // Call your API to save the data
-      const response = await AddNewRole(updatedFormData);
+      const response = await AddNewRole(updatedFormData, roleName);
   
       // Show success alert
       Swal.fire({

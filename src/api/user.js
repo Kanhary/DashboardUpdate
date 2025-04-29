@@ -65,10 +65,10 @@ export function DelStaff(id) {
   });
 }
 
-export function UpdateStaff(id, data) {
+export function UpdateStaff(data, id) {
   return request({
     method: "POST",
-    url: `/staff/updateStaff/${id}`, // Use the Id to construct the URL
+    url: `/staff/updateStaff?id=${id}`, // Use the Id to construct the URL
     data: data, // Include the data in the request body
   });
 }
@@ -510,10 +510,10 @@ export function GetRole() {
   });
 }
 
-export function AddNewRole(data) {
+export function AddNewRole(data, roleName) {
   return request({
     method: "POST",
-    url: "/Role/addNewRole",
+    url: `/Role/addNewRole/${roleName}`,
     data: data,
   });
 }
