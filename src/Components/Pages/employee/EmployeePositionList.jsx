@@ -394,7 +394,7 @@ const EmployeePositionList = () => {
                     scope="col"
                     className="px-4 py-2 border-t border-r text-start"
                   >
-                    ID
+                    Position Code 
                   </th>
                   <th
                     scope="col"
@@ -438,21 +438,21 @@ const EmployeePositionList = () => {
                         onClick={() => deletePosition(position.id)}
                       />
                     </td>
-                    <td className="px-2 py-2 border-r ">
+                    <td className="px-4 py-2 border-r ">
                       {position.positionCode}
                     </td>
-                    <td className="px-2 py-2 border-r ">
+                    <td className="px-4 py-2 border-r ">
                       {position.positionName}
                     </td>
                     {/* <td className='px-4 py-3 border-r' style={{ minWidth: '250px' }}>{employee.description}</td> */}
                     <td
-                      className="px-2 py-2 border-r "
+                      className="px-4 py-2 border-r "
                       style={{ minWidth: "150px" }}
                     >
                       {position.createdBy}
                     </td>
                     <td
-                      className="px-2 py-2 border-r "
+                      className="px-4 py-2 border-r "
                       style={{ minWidth: "160px" }}
                     ></td>
                   </tr>

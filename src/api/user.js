@@ -65,10 +65,10 @@ export function DelStaff(id) {
   });
 }
 
-export function UpdateStaff(data, id) {
+export function UpdateStaff(data) {
   return request({
     method: "POST",
-    url: `/staff/updateStaff?id=${id}`, // Use the Id to construct the URL
+    url: `/staff/updateStaff`, // Use the Id to construct the URL
     data: data, // Include the data in the request body
   });
 }

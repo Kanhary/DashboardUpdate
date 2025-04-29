@@ -43,7 +43,7 @@ const GroupDetails = () => {
     if (roleId) {
       const fetchRolePermissions = async () => {
         try {
-          const apiUrl = `http://192.168.100.55:8759/RoleMenu/menuName/${roleId}`;
+          const apiUrl = `http://192.168.168.4:8759/RoleMenu/menuName/${roleId}`;
           const response = await axios.get(apiUrl);
   
           if (response.data.code === 200) {
@@ -53,10 +53,12 @@ const GroupDetails = () => {
             const updatedPermissions = flattenedMenus.map((menu) => {
               // Check if the menuName exists in the permissions data
               const matchedPermission = permissions.some(
-                (permission) => permission.menuName === menu.menuName
+                (permission) => permission.menuName === menu.menuName,
+                // (permission) => permission.id === menu.id,
               );
   
               return {
+                id: menu.id,
                 menuName: menu.menuName, // Use menuName for matching
                 enabled: matchedPermission, // Set enabled if the menuName matches
               };
@@ -102,17 +104,24 @@ const GroupDetails = () => {
     try {
       const apiUrl = `http://192.168.168.4:8759/Role/edit-permissions`;
   
+      // Filter out only the permissions where at least one checkbox is true
+      const filteredPermissions = roleMenuPermissions.filter(permission =>
+        permission.View || permission.New || permission.Edit || permission.Delete
+      );
+  
       const payload = {
-        roleId: roleId, // make sure selectedRole contains the role ID you want to send
-        permissionIds: roleMenuPermissions.map(permission => ({
-          menuId: permission.menuId,
+        roleId: roleId,
+        permissionIds: filteredPermissions.map(permission => ({
+          menuId: permission.id,
           menuName: permission.menuName,
-          View: permission.View || false,
-          New: permission.New || false,
-          Edit: permission.Edit || false,
-          Delete: permission.Delete || false,
+          Delete: Boolean(permission.Delete),
+          New: Boolean(permission.New),
+          Edit: Boolean(permission.Edit),
+          View: Boolean(permission.View)
         })),
       };
+  
+      console.log("Payload being sent:", JSON.stringify(payload, null, 2));
   
       await axios.post(apiUrl, payload, {
         headers: {
@@ -121,13 +130,13 @@ const GroupDetails = () => {
       });
   
       alert("Permissions updated successfully!");
-  
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating permissions:", error);
       alert("Failed to update permissions. Please try again.");
     }
   };
+  
   
   
 

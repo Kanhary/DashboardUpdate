@@ -142,7 +142,7 @@ const GroupMaster = () => {
       // Show success alert
       Swal.fire({
         title: "Saved!",
-        text: "Category has been saved successfully.",
+        text: "Role has been saved successfully.",
         icon: "success",
         confirmButtonText: "Okay",
       });
@@ -156,7 +156,7 @@ const GroupMaster = () => {
       // Show error alert if something goes wrong
       Swal.fire({
         title: "Error!",
-        text: "Failed to save category.",
+        text: "Failed to save role.",
         icon: "error",
         confirmButtonText: "Okay",
       });
@@ -177,14 +177,20 @@ const GroupMaster = () => {
       // }
   
       // console.log('Saving category data:', formData.data.roleId);
+
+      const updatedFormData = {
+        ...formData,
+        lastBy: currentUser, // Fix: match casing with `lastBy`
+        lastDate: new Date().toISOString(),
+      };
   
-      const response = await UpdateRole(formData.roleId);
+      const response = await UpdateRole(formData.roleId, updatedFormData);
   
       if (response.status === 200) {
-        console.log('Category updated successfully:', response.data);
+        console.log('Role updated successfully:', response.data);
         Swal.fire({
           title: "Successful",
-          text: "Category updated successfully",
+          text: "Role updated successfully",
           icon: "success"
         });
         setIsEditModalOpen(false);
@@ -242,7 +248,7 @@ const GroupMaster = () => {
             if (response.status === 200) {  // Check for successful response
                 Swal.fire({
                     title: "Deleted!",
-                    text: "Category has been deleted.",
+                    text: "Role has been deleted.",
                     icon: "success",
                     confirmButtonText: "Okay",
                 });
@@ -253,7 +259,7 @@ const GroupMaster = () => {
             } else {
                 Swal.fire({
                     title: "Error!",
-                    text: "Failed to delete category.",
+                    text: "Failed to delete Role.",
                     icon: "error",
                     confirmButtonText: "Okay",
                 });

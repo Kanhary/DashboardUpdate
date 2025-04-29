@@ -440,13 +440,13 @@ const MenuTab = ({
                     required: true,
                   },
                   {
-                    id: "engName",
+                    id: "khName",
                     label: "គោត្តនាម/នាម",
                     type: "text",
                     required: true,
                   },
                   {
-                    id: "khName",
+                    id: "engName",
                     label: "អក្សរឡាតាំង",
                     type: "text",
                     required: true,

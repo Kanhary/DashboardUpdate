@@ -519,7 +519,7 @@ const StaffInfo = () => {
         lastDate: new Date().toISOString(),
       };
   
-      const response = await UpdateStaff( updatedFormData, editingEmployees.id);
+      const response = await UpdateStaff(updatedFormData);
   
       if (response.status === 200) {
         console.log("Employee updated successfully:", response.data);
