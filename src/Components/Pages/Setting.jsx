@@ -52,7 +52,7 @@ const Setting = () => {
     
       try {
         // Call your API to save the data
-        const response = axios.post(`http://192.168.100.55:8759/user/change-password`,
+        const response = axios.post(`http://192.168.168.4:8759/user/change-password`,
           new URLSearchParams({
             userId: currentUser,
             newPassword: formData.newPassword

@@ -203,7 +203,7 @@ const MenuTab = ({
     // Fetch offices based on department ID
     setLoadingOffices(true);
     try {
-      const response = await axios.get(`http://192.168.100.55:8759/Office/selectOfficeFromDepartmentByDepartCode/${selectedOption.value}`);
+      const response = await axios.get(`http://192.168.168.4:8759/Office/selectOfficeFromDepartmentByDepartCode/${selectedOption.value}`);
       const officeOptions = response.data.data.map((office) => ({
         value: office.officeCode,
         label: office.officeEngName,

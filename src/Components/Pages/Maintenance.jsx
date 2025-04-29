@@ -320,7 +320,7 @@ const MaintenancePage = () => {
     try {
       // Call your API to update the maintenance record
       const response = await fetch(
-        `http://192.168.100.55:8759/Maintenance/updateMaintenanceById/${formData.id}`,
+        `http://192.168.168.4:8759/Maintenance/updateMaintenanceById/${formData.id}`,
         {
           method: "POST",
           headers: {
@@ -562,7 +562,7 @@ const MaintenancePage = () => {
   
     try {
       const response = await axios.post(
-        "http://192.168.100.55:8759/Docs/uploadFilePdf",
+        "http://192.168.168.4:8759/Docs/uploadFilePdf",
         formDataToSend,
         {
           headers: {

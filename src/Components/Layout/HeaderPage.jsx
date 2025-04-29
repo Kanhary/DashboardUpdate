@@ -71,7 +71,7 @@ const HeaderPage = ({ toggleSidebar }) => {
 
       const fetchNotifications = async () => {
         try {
-          const response = await axios.get("http://192.168.100.55:8759/helpRequest/getAllRequest"); // Replace with your API endpoint
+          const response = await axios.get("http://192.168.168.4:8759/helpRequest/getAllRequest"); // Replace with your API endpoint
           setNotifications(response.data.data);
           const unread = response.data.data.filter((notif) => notif.status !== "approved").length;
           setUnreadCount(unread);
@@ -185,7 +185,7 @@ const HeaderPage = ({ toggleSidebar }) => {
 
   const handleApprove = async () => {
     try {
-      await axios.put(`http://192.168.100.55:8759/helpRequest/requestApprove/${selectedNotification.id}`);
+      await axios.put(`http://192.168.168.4:8759/helpRequest/requestApprove/${selectedNotification.id}`);
       setNotifications(notifications.filter((n) => n.id !== selectedNotification.id));
       setSelectedNotification(null); // Close modal after approval
     } catch (error) {

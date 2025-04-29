@@ -2242,7 +2242,7 @@ const ModifyMaintenanceModal = ({computer, closeModal}) =>{
     formDataToSend.append("description", formData.description);
 
     try {
-      const response = await axios.post("http://192.168.100.55:8759/Docs/uploadFilePdf", formDataToSend, {
+      const response = await axios.post("http://192.168.168.4:8759/Docs/uploadFilePdf", formDataToSend, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -2311,7 +2311,7 @@ const ModifyMaintenanceModal = ({computer, closeModal}) =>{
     try {
       // Call your API to update the maintenance record
       const response = await fetch(
-        `http://192.168.100.55:8759/Maintenance/updateMaintenanceById/${formData.maintenanceId}`,
+        `http://192.168.168.4:8759/Maintenance/updateMaintenanceById/${formData.maintenanceId}`,
         {
           method: "PUT", // Use PUT for updates
           headers: {
@@ -2555,7 +2555,7 @@ const ViewDetailsModal = ({ computer, closeModal }) => {
 
       try {
         const response = await axios.get(
-          `http://192.168.100.55:8759/Maintenance/getMaintenancesByProductId/${computer.id}`
+          `http://192.168.168.4:8759/Maintenance/getMaintenancesByProductId/${computer.id}`
         );
 
         if (response.data?.data) {
@@ -2759,7 +2759,7 @@ const handleFileUpload = async () => {
   formDataToSend.append("description", formData.description);
 
   try {
-    const response = await axios.post("http://192.168.100.55:8759/Docs/uploadFilePdf", formDataToSend, {
+    const response = await axios.post("http://192.168.168.4:8759/Docs/uploadFilePdf", formDataToSend, {
       headers: { "Content-Type": "multipart/form-data" },
     });
 
@@ -2803,7 +2803,7 @@ const handleSaveEdit = async () => {
   try {
     // Call your API to update the maintenance record
     const response = await fetch(
-      `http://192.168.100.55:8759/Maintenance/updateMaintenanceById/${formData.id}`,
+      `http://192.168.168.4:8759/Maintenance/updateMaintenanceById/${formData.id}`,
       {
         method: "POST", // Use PUT for updates
         headers: {

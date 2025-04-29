@@ -175,24 +175,24 @@ const Help = () => {
 
   return (
     <div className="min-h-screen mt-10 font-khmer" data-aos='fade-right'>
-      <h1 className='text-xl font-medium text-blue-800 font-khmer'>ជំនួយ</h1>
+      <h1 className='text-md font-medium text-blue-800 font-khmer'>ជំនួយ</h1>
       <div className='mt-3 mb-3 border'></div>
       <div className="p-8 mx-auto bg-white shadow-xl rounded-2xl">
-        <p className="mb-10 text-lg text-gray-700">
+        <p className="mb-5 text-md text-gray-700">
           Welcome to the Help Center. Here you can find answers to frequently asked questions and troubleshoot common issues.
         </p>
 
-        <section className="mb-16">
-          <h2 className="mb-6 text-3xl font-semibold text-gray-800">សំណួរដែលសួរញឹកញាប់</h2>
+        <section>
+          <h2 className="mb-6 text-xl font-semibold text-gray-800">សំណួរដែលសួរញឹកញាប់</h2>
           <div className="space-y-8">
             <div className="p-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg shadow-md hover:shadow-lg">
               <div className="flex items-center mb-3 text-indigo-600">
                 <svg className="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8h18M3 12h18m-6 4H3"></path>
                 </svg>
-                <h3 className="text-xl font-semibold">How do I reset my password?</h3>
+                <h3 className="text-md font-semibold">How do I reset my password?</h3>
               </div>
-              <p className="text-gray-600">
+              <p className="text-gray-600 text-sm">
                 To reset your password, please contact directly to <a href="https://t.me/Kagnary_Uk/" className='font-medium text-blue-800'>ICT Team</a>.
               </p>
             </div>
@@ -202,9 +202,9 @@ const Help = () => {
                 <svg className="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8h18M3 12h18m-6 4H3"></path>
                 </svg>
-                <h3 className="text-xl font-semibold">Who should I contact for technical support?</h3>
+                <h3 className="text-md font-semibold">Who should I contact for technical support?</h3>
               </div>
-              <p className="text-gray-600">
+              <p className="text-gray-600 text-sm">
                 For technical support, please contact our support team at support@example.com. Include as much detail as possible about your issue to receive prompt assistance.
               </p>
             </div>
@@ -251,7 +251,7 @@ const Help = () => {
   className="p-5 lg:p-11 lg:rounded-r-2xl rounded-2xl"
   onSubmit={handleSave}
 >
-  <h2 className="text-4xl font-semibold leading-10 text-indigo-900 font-manrope mb-11">
+  <h2 className="text-2xl font-semibold leading-10 text-indigo-900 font-manrope mb-11">
     Send Us A Message If You Need Help
   </h2>
 
@@ -363,7 +363,7 @@ const Help = () => {
     <button
       type="submit"
       // onClick={handleSave}
-      className="w-full h-12 text-base font-semibold leading-6 text-white transition-all duration-700 bg-indigo-900 rounded-full shadow-sm hover:bg-indigo-800"
+      className="w-full h-12 text-sm font-semibold leading-6 text-white transition-all duration-700 bg-indigo-900 rounded-full shadow-sm hover:bg-indigo-800"
     >
       ផ្ញើ
     </button>

@@ -61,7 +61,7 @@ function MainDashboard() {
       <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       <main
         className={`flex-1 p-6 overflow-y-auto bg-gray-100 transition-all duration-300 ${
-          isSidebarOpen ? "md:ml-64" : "md:ml-0" // Adjust margin on medium screens and up
+          isSidebarOpen ? "md:ml-[220px]" : "md:ml-0" // Adjust margin on medium screens and up
         }`}
       >
         <Routes>
