@@ -27,7 +27,7 @@ const MenuTab = ({
   offices,
   // department,
   // handleDepartmentChange,
-  handlePositionChange,
+  // handlePositionChange,
   handleCourseChange,
   handleStaffCode,
   saveAllModalCourse,
@@ -97,6 +97,8 @@ const MenuTab = ({
     inCountry: true,
     lastBy: "",
   });
+
+  
 
   useEffect(() => {
     const fetchAllDep = async () => {
@@ -217,6 +219,18 @@ const MenuTab = ({
     setLoadingOffices(false);
   };
 
+  const handlePositionChange = (selectedOption) => {
+    console.log("Selected department option:", selectedOption);
+
+    setFormData((prevData) => {
+      const updatedData = {
+        ...prevData,
+        positionCode: selectedOption ? selectedOption.value : "",
+      };
+      console.log("Updated formData:", updatedData); // Check if the updated data is correct
+      return updatedData;
+    });
+  };
   const handleOfficeChange = (selectedOption) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -255,6 +269,11 @@ const MenuTab = ({
     value: pos.positionCode,
     label: `${pos.positionCode} - ${pos.positionName}`,
   }));
+
+  console.log("Matching option:", optionsPosiotn.find(
+    (option) => option.value === formData.positionCode
+  ));
+
 
   const optionCourse = ComputerCourse.map((course) => ({
     value: course.courseCode,
@@ -401,7 +420,7 @@ const MenuTab = ({
 
   return (
     <div className="relative" data-aos="zoom-in-up duration-1000">
-      <div className="w-full p-4">
+      <div className="w-full text-[13px]">
         <div className="flex space-x-4 border-b">
           <button
             className={`p-2 ${
@@ -424,7 +443,7 @@ const MenuTab = ({
         </div>
       </div>
 
-      <div className="mt-4">
+      <div className="text-[13px]">
         {activeTab === "បញ្ចូលព័ត៌មានបុគ្គលិក" && (
           <div className="overflow-auto ">
             <form >
@@ -668,20 +687,20 @@ const MenuTab = ({
                 </div>
               </div>
 
-              <div className="flex justify-center gap-5 p-6 mt-12">
+              <div className="sticky bottom-0 z-40 flex justify-center gap-5 px-6 py-3 bg-slate-100">
                 <button
                   type="submit"
                   onClick={saveAllModal}
-                  className="px-8 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 focus:ring-4 focus:ring-blue-300"
+                  className="px-5 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 focus:ring-4 focus:ring-blue-300"
                 >
-                  <p className="text-base font-normal">រក្សាទុក</p>
+                  <p className="text-md font-normal">រក្សាទុក</p>
                 </button>
                 <button
                   type="button"
                   onClick={closeAllModals}
-                  className="px-6 py-4 text-sm font-medium text-gray-700 bg-white border border-gray-300 border-dashed rounded-lg shadow-sm hover:bg-gray-100"
+                  className="px-6 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 border-dashed rounded-lg shadow-sm hover:bg-gray-100"
                 >
-                  <p className="text-base font-normal">ចាកចេញ</p>
+                  <p className="text-md font-normal">ចាកចេញ</p>
                 </button>
               </div>
 

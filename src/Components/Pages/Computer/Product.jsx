@@ -515,13 +515,16 @@ const Product = () => {
     }));
   };
 
-  const handleStaffCode = (option) => {
-    console.log("Selected option:", option); // Check if selectedOption has the correct value
-    setSelectedOption(option);
-    setFormData((prevData) => ({
-      ...prevData,
-      staffCode: option ? option.value : "",
-    }));
+  const handleStaffCode = (selectedOption) => {
+    console.log("Selected option:", selectedOption); // Check if selectedOption has the correct value
+    setFormData((prevData) => {
+      const updatedData = {
+        ...prevData,
+        staffCode: selectedOption ? selectedOption.value : "",
+      };
+      console.log("Updated formData:", updatedData); // Check if the updated data is correct
+      return updatedData;
+    });
   };
 
   const handleDepartmentChange = (selectedOption) => {
@@ -537,10 +540,20 @@ const Product = () => {
     });
   };
 
+
+
   const optionsStaffCode = (Staffs || []).map((staff) => ({
     value: staff.staffCode,
     label: `${staff.staffCode}-${staff.khName}`,
   }));
+
+
+  console.log("Matching option:", optionsStaffCode.find(
+    (option) => option.value === formData.staffCode
+  ));
+
+  console.log("formData.staffCode:", formData.staffCode);
+// console.log("optionsStaffCode:", optionsStaffCode.map(o => o.value));
 
   const optionsDepartment = department.map((dep) => ({
     value: dep.departCode,
@@ -924,8 +937,9 @@ const Product = () => {
                     options={optionsStaffCode}
                     onChange={handleStaffCode} // Ensure handleStaffCode is passed correctly here
                     value={optionsStaffCode.find(
-                      (option) => option.value === formData.staffCode
+                      (option) => String(option.value) === String(formData.staffCode)
                     )}
+                    
                     placeholder="Select or type to search"
                     className="basic-single"
                     classNamePrefix="select"
@@ -1319,7 +1333,7 @@ const Product = () => {
             className="relative mx-auto transition-all transform bg-white shadow-2xl rounded-xl h-[550px] overflow-y-auto w-[1000px]"
             data-aos="zoom-in"
           >
-            <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
+            <header className="flex sticky top-0 z-50 items-center justify-between px-6 py-2 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
               <h2 className="text-md font-bold text-white">
                 កែប្រែព័ត៌មានកុំព្យូទ័រ
               </h2>
@@ -1330,7 +1344,7 @@ const Product = () => {
                 &times;
               </button>
             </header>
-            <div className="px-6 py-6 space-y-6">
+            <div className="px-6 py-6 space-y-6 text-[13px]">
               <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
                 <div className="w-full md:w-1/2">
                   <label
@@ -1742,16 +1756,16 @@ const Product = () => {
               </div>
               
             </div>
-            <footer className="flex flex-col-reverse items-center justify-end px-6 py-4 space-y-3 space-y-reverse bg-gray-100 rounded-b-xl md:flex-row md:space-x-3 md:space-y-0">
+            <footer className="flex sticky bottom-0 z-50 flex-col-reverse items-center justify-end px-6 py-2 space-y-3 space-y-reverse bg-gray-100 rounded-b-xl md:flex-row md:space-x-3 md:space-y-0">
               <button
                 onClick={handleUpdate}
-                className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-green-500 to-green-700 hover:shadow-lg hover:scale-105 md:w-auto"
+                className="w-full px-5 py-2 text-[12px] font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-green-500 to-green-700 hover:shadow-lg hover:scale-105 md:w-auto"
               >
                 Save
               </button>
               <button
                 onClick={closeEditModal}
-                className="w-full px-5 py-2 text-sm font-medium text-gray-700 transition duration-200 transform bg-gray-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105 md:w-auto"
+                className="w-full px-5 py-2 text-[12px] font-medium text-gray-700 transition duration-200 transform bg-gray-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105 md:w-auto"
               >
                 Cancel
               </button>
@@ -2847,8 +2861,8 @@ const handleSaveEdit = async () => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
           <div className="relative mx-auto transition-all transform bg-white shadow-2xl rounded-xl h-[550px] overflow-y-auto w-[1000px]" data-aos="zoom-in">
-      <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
-              <h2 className="text-xl font-bold text-white md:text-2xl">
+      <header className="flex sticky top-0 z-50 items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
+              <h2 className="text-md font-bold text-white md:text-md">
                 Maintenace View 
               </h2>
               <button
@@ -2860,7 +2874,7 @@ const handleSaveEdit = async () => {
             </header>
 
         {/* Tabs */}
-        <div className="flex border-b mb-4">
+        <div className="flex border-b mb-4 text-md">
           <button
             className={`px-4 py-2 ${
               activeTab === "details" ? "border-b-2 border-blue-500 font-bold" : "text-gray-500"
@@ -2889,7 +2903,7 @@ const handleSaveEdit = async () => {
 
         {/* Tab Content */}
         {activeTab === "details" && (
-  <div className="px-6 space-y-8">
+  <div className="space-y-8">
     {/* Maintenance History Header */}
     {/* <div className="flex justify-between items-center border-b pb-4 mb-6">
       <h2 className="text-xl font-semibold text-gray-900">Maintenance History for {computer.name}</h2>
@@ -2920,9 +2934,9 @@ const handleSaveEdit = async () => {
 
     {/* Full Maintenance History Table */}
     <div className="mt-6">
-      <p className="text-sm font-semibold text-gray-900">Full Maintenance History</p>
+      {/* <p className="text-sm font-semibold text-gray-900">Full Maintenance History</p> */}
       <div className="overflow-x-auto mt-4 bg-white shadow-sm rounded-lg">
-  <table className="min-w-full table-auto">
+  <table className="w-full table-auto">
     <thead>
       <tr className="bg-gray-100 text-sm text-gray-700">
         <th className="py-3 px-6 text-left">Action</th>
@@ -3246,7 +3260,7 @@ const handleSaveEdit = async () => {
                 
               </div>
           </div>
-          <footer className="flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">
+          <footer className="flex sticky bottom-0 z-40 justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">
             <button
               onClick={handleSave}
               className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto"

@@ -555,13 +555,13 @@ const EmployeePositionList = () => {
             className="relative w-1/2 mx-auto transition-all transform bg-white shadow-2xl rounded-xl"
             data-aos="zoom-in"
           >
-            <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
-              <h2 className="flex items-center space-x-2 text-xl font-bold text-white md:text-2xl">
-                <img
+            <header className="flex items-center justify-between px-6 py-2 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
+              <h2 className="flex items-center space-x-2 text-md font-bold text-white md:text-md">
+                {/* <img
                   src="/LOGO PPAP.png"
                   alt=""
                   className="w-10 h-10 p-1 bg-white rounded-full"
-                />
+                /> */}
                 <span>បន្ថែមមុខតំណែងថ្មី</span>
               </h2>
               <button
@@ -608,7 +608,7 @@ const EmployeePositionList = () => {
               </div>
               {/* Input for Description */}
             </div>
-            <footer className="flex flex-col-reverse items-center justify-end px-6 py-4 space-y-3 space-y-reverse bg-gray-100 rounded-b-xl md:flex-row md:space-x-3 md:space-y-0">
+            <footer className="flex flex-col-reverse items-center justify-end px-6 py-2 space-y-3 space-y-reverse bg-gray-100 rounded-b-xl md:flex-row md:space-x-3 md:space-y-0">
               <button
                 onClick={handleSave}
                 className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto"
@@ -635,14 +635,14 @@ const EmployeePositionList = () => {
       {isEditModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
           <div className="relative w-1/2 mx-auto transition-all transform bg-white shadow-2xl rounded-xl">
-            <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
-              <h2 className="flex items-center space-x-2 text-xl font-bold text-white md:text-2xl">
-                <img
+            <header className="flex items-center justify-between px-6 py-2 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
+              <h2 className="flex items-center space-x-2 text-md font-bold text-white md:text-md">
+                {/* <img
                   src="/ship.png"
                   alt=""
                   className="w-32 h-32 animate-ship md:w-10 md:h-10"
-                />
-                <span>កែរប្រែមុខតំណែង</span>
+                /> */}
+                <span>កែប្រែមុខតំណែង</span>
               </h2>
               <button
                 onClick={closeEditModal}
@@ -688,7 +688,7 @@ const EmployeePositionList = () => {
                 </div>
               </div>
             </div>
-            <footer className="flex flex-col-reverse items-center justify-end px-6 py-4 space-y-3 space-y-reverse bg-gray-100 rounded-b-xl md:flex-row md:space-x-3 md:space-y-0">
+            <footer className="flex flex-col-reverse items-center justify-end px-6 py-2 space-y-3 space-y-reverse bg-gray-100 rounded-b-xl md:flex-row md:space-x-3 md:space-y-0">
               <button
                 onClick={handleUpdate}
                 className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto"

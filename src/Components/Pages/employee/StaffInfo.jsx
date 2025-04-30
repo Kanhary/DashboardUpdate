@@ -970,9 +970,9 @@ const StaffInfo = () => {
       setFilteredEmployees(
         employees.filter(
           (employee) =>
-            (employee.engname || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (employee.engName || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
             (employee.staffcode || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-            (employee.khname || "").toLowerCase().includes(searchTerm.toLowerCase())
+            (employee.khName || "").toLowerCase().includes(searchTerm.toLowerCase())
         )
       );
     }
@@ -1438,11 +1438,11 @@ const StaffInfo = () => {
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm ">
           <div
-            className="relative w-full max-w-xl sm:max-w-5xl md:max-w-4xl lg:max-w-4xl bg-white rounded-md shadow-lg overflow-auto max-h-[90vh] h-[73vh] sm:h-[550px] md:h-[550px] modal-scrollbar mt-14 sm:ml-52 md:ml-0"
+            className="relative w-full max-w-xl sm:max-w-5xl md:max-w-4xl lg:max-w-4xl bg-white rounded-md shadow-lg overflow-auto max-h-[90vh] h-[73vh] sm:h-[550px] md:h-[550px] modal-scrollbar sm:ml-52 md:ml-0"
             data-aos="zoom-in"
           >
-            <div className="sticky top-0 z-50 flex items-center justify-between w-full p-4 py-4 mb-6 bg-gray-100 border-b-2 border-gray-300 border-dashed">
-              <h2 className="flex-1 ml-3 text-xl font-medium text-blue-800 sm:text-2xl md:text-2xl font-khmer leading-2">
+            <div className="sticky top-0 z-50 flex items-center justify-between w-full p-4 py-2 mb-6 bg-gray-100 border-b-2 border-gray-300 border-dashed">
+              <h2 className="flex-1 ml-3 text-md font-medium text-blue-800 sm:text-md md:text-md font-khmer leading-2">
                 បញ្ចូលព័ត៌មានបុគ្គលិក
               </h2>
               <button
@@ -1451,7 +1451,7 @@ const StaffInfo = () => {
                 className="px-2 py-2 mr-2 text-gray-500 bg-gray-100 rounded-md hover:text-gray-700 ring-1 ring-gray-400"
               >
                 <svg
-                  className="w-6 h-6"
+                  className="w-4 h-4"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -1467,7 +1467,7 @@ const StaffInfo = () => {
               </button>
             </div>
 
-            <div className="px-4">
+            <div className="">
               <MenuTab
                 formData={formData}
                 setFormData={setFormData}
@@ -1544,7 +1544,7 @@ const StaffInfo = () => {
                 </svg>
               </button>
             </div>
-            <div>
+            <div className="px-0">
               <MenuTab
                 formData={formData}
                 setFormData={setFormData}
