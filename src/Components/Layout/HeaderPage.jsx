@@ -413,12 +413,13 @@ const HeaderPage = ({ toggleSidebar }) => {
                   />
                 ) : (
                   <>
-                    <FaCamera className="text-5xl text-gray-500" />{" "}
-                    {/* Display icon if no image is uploaded */}
-                    <p className="mt-4 text-sm text-gray-600">
+                    <img src={avatar} alt="" />
+                    {/* <FaCamera className="text-5xl text-gray-100 absolute" />{" "}
+                   
+                    <p className="mt-20 text-sm text-gray-100 absolute">
                       Upload Picture <br />
                       (PNG or JPEG)
-                    </p>{" "}
+                    </p>{" "} */}
                     {/* Display text only if no image is uploaded */}
                   </>
                 )}

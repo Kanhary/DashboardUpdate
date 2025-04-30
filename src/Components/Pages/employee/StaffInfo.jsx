@@ -971,7 +971,7 @@ const StaffInfo = () => {
         employees.filter(
           (employee) =>
             (employee.engName || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-            (employee.staffcode || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (employee.staffCode || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
             (employee.khName || "").toLowerCase().includes(searchTerm.toLowerCase())
         )
       );
@@ -1019,10 +1019,10 @@ const StaffInfo = () => {
 
   return (
     <section className="font-khmer">
-      <h1 className="text-md font-medium text-blue-800">
+      {/* <h1 className="text-md font-medium text-blue-800">
         តារាងបង្ហាញព័ត៌មានបុគ្គលិក
       </h1>
-      <div className="mt-3 border"></div>
+      <div className="mt-3 border"></div> */}
       <div className="w-full mt-4" data-aos="fade-up">
         <div className="relative w-full overflow-hidden bg-white shadow-md sm:rounded-lg">
           <div className="flex flex-col items-center justify-between p-4 space-y-4 md:flex-row md:space-y-0">

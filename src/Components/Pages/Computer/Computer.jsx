@@ -13,10 +13,10 @@ const Computer = () => {
   return (
     <div className="p-6 mt-10 rounded-lg shadow-md">
       {/* Page Header */}
-      <h1 className="text-[15px] font-medium text-blue-800">Computer</h1>
+      <h1 className="text-[15px] font-medium text-blue-800">តារាងទិន្នន័យកុំព្យូទ័រ</h1>
       <div className="mt-3 border"></div>
       {/* Tab Menu */}
-      <div className="flex gap-4 mb-6 border-b ">
+      <div className="flex gap-4 border-b ">
         {["Product", "Category", "Subcategory"].map((tab) => (
           <button
             key={tab}

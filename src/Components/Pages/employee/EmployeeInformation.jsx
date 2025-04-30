@@ -7,7 +7,7 @@ import ComputerCourse from './ComputerCourse';
 
 
 const EmployeeInformation = () => {
-  const [activeTab, setActiveTab] = useState('Staff');
+  const [activeTab, setActiveTab] = useState('បុគ្គលិក');
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -16,11 +16,11 @@ const EmployeeInformation = () => {
   return (
     <div className=" mt-10 rounded-lg">
       {/* Page Header */}
-      <h1 className='text-md font-medium text-blue-800'>Staff</h1>
+      <h1 className='text-md font-medium text-blue-800'>បុគ្គលិក</h1>
       <div className='mt-3 border'></div>
       {/* Tab Menu */}
       <div className="flex gap-4 mb-6 border-b ">
-        {['Staff', 'Child', 'Wife', 'Computer Course'].map((tab) => (
+        {['បុគ្គលិក', 'Child', 'Wife', 'Computer Course'].map((tab) => (
           <button
             key={tab}
             className={`px-5 py-2 text-[12px] font-medium transition-all duration-200 border-b-2 ${
@@ -37,7 +37,7 @@ const EmployeeInformation = () => {
 
       {/* Tab Content */}
       <div className="">
-        {activeTab === 'Staff' && <StaffInfo/>}
+        {activeTab === 'បុគ្គលិក' && <StaffInfo/>}
         {activeTab === 'Child' && <EmployeeChild/>}
         {activeTab === 'Wife' && <StaffWifeInfo/>}
         {activeTab === 'Computer Course' && <ComputerCourse/>}
