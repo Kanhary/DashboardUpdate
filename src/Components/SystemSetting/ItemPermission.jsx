@@ -299,7 +299,7 @@ const ItemPermission = () => {
                     Action
                   </th>
                   <th scope="col" className="px-4 py-2 border-t border-r">
-                    Code
+                    Menu Name
                   </th>
                   {/* <th scope='col' className='px-4 py-3 border-t border-r' style={{ minWidth: '300px' }}>Function Code</th>
                   <th scope='col' className='px-4 py-3 border-t border-r' style={{ minWidth: '300px' }}>Function Name</th> */}
@@ -534,9 +534,9 @@ const ItemPermission = () => {
             className="relative w-1/2 mx-auto transition-all transform bg-white shadow-2xl rounded-xl"
             data-aos="zoom-in"
           >
-            <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
-              <h2 className="text-xl font-bold text-white md:text-2xl">
-                Add New Item Permission
+            <header className="flex items-center justify-between px-6 py-2 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
+              <h2 className="text-md font-bold text-white ">
+                New Menu
               </h2>
               <button
                 onClick={closeAddModal}
@@ -546,25 +546,9 @@ const ItemPermission = () => {
               </button>
             </header>
             <div className="px-6 py-6 space-y-6">
-              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                {/* Input for Code */}
-                <div className="w-full md:w-1/2">
-                  <label
-                    htmlFor="code"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
-                  >
-                    Code
-                  </label>
-                  <input
-                    type="text"
-                    id="code"
-                    value={formData.code}
-                    onChange={handleChange}
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                  />
-                </div>
-                {/* Input for Position */}
-                <div className="w-full md:w-1/2">
+              {/* <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+               
+                <div className="w-full">
                   <label
                     htmlFor="functionCode"
                     className="block mb-2 text-sm font-semibold text-gray-700"
@@ -579,13 +563,13 @@ const ItemPermission = () => {
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                   />
                 </div>
-              </div>
+              </div> */}
               <div>
                 <label
                   htmlFor="functionName"
-                  className="block mb-2 text-sm font-semibold text-gray-700 dark:text-gray-300"
+                  className="block mb-2 text-sm font-semibold text-gray-700"
                 >
-                  Function Name
+                  Menu Name
                 </label>
                 <textarea
                   id="functionName"
@@ -622,9 +606,9 @@ const ItemPermission = () => {
       {isEditModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
           <div className="relative w-1/2 mx-auto transition-all transform bg-white shadow-2xl rounded-xl">
-            <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
-              <h2 className="text-xl font-bold text-white md:text-2xl">
-                Add New Menu
+            <header className="flex items-center justify-between px-6 py-2 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
+              <h2 className="text-md font-bold text-white ">
+                Edit Menu
               </h2>
               <button
                 onClick={closeEditModal}
@@ -634,8 +618,8 @@ const ItemPermission = () => {
               </button>
             </header>
             <div className="px-6 py-6 space-y-6">
-              <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-                {/* Input for Code */}
+              {/* <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+               
                 <div className="w-full md:w-1/2">
                   <label
                     htmlFor="code"
@@ -652,7 +636,7 @@ const ItemPermission = () => {
                     disabled
                   />
                 </div>
-                {/* Input for Position */}
+              
                 <div className="w-full md:w-1/2">
                   <label
                     htmlFor="functionCode"
@@ -668,11 +652,11 @@ const ItemPermission = () => {
                     className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                   />
                 </div>
-              </div>
+              </div> */}
               <div>
                 <label
                   htmlFor="functionName"
-                  className="block mb-2 text-sm font-semibold text-gray-700 dark:text-gray-300"
+                  className="block mb-2 text-sm font-semibold text-gray-700 "
                 >
                   Function Name
                 </label>

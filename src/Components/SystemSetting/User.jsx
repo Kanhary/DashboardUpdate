@@ -65,6 +65,7 @@ const User = () => {
   const [mergedData, setMergedData] = useState([]);
   const [roleName, setRoleName] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState(null);
+  // const [avatar, setAvatar] = useState("");
 
   const [Avatar, setAvatar] = useState(null);
   const recordsPerPage = 8;
@@ -189,6 +190,7 @@ const User = () => {
       try {
         const response = await GetUserLogin(); // Call the API to get the current user
         setCurrentUser(response.data.data.username); // Assuming the response contains a username field
+        setAvatar(response.data.data.avatar);
         console.log("Fetched user:", response.data.data.username);
       } catch (error) {
         console.error("Error fetching current user:", error);
@@ -1094,11 +1096,11 @@ const User = () => {
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-60 backdrop-blur">
           {/* user form */}
           <div
-            className="relative flex flex-col w-full mx-auto overflow-auto transition-all transform bg-white shadow-2xl lg:w-2/3 h-5/6"
+            className="relative flex flex-col w-full mx-auto overflow-auto transition-all transform bg-white shadow-2xl lg:w-2/3 h-5/6 rounded-xl"
             data-aos="zoom-in"
           >
-            <header className="sticky top-0 z-50 flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
-              <h2 className="flex items-center space-x-2 text-xl font-bold text-white md:text-2xl">
+            <header className="sticky top-0 z-50 flex items-center justify-between px-6 py-2 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 ">
+              <h2 className="flex items-center space-x-2 text-md font-bold text-white ">
                 {/* <GiShipBow className="text-3xl animate-ship" /> */}
                 <span>បន្ថែមអ្នកប្រើប្រាស់ថ្មី</span>
               </h2>
@@ -1110,7 +1112,7 @@ const User = () => {
               </button>
             </header>
 
-            <div className="w-full p-4">
+            <div className="w-full px-4 text-[13px] font-medium">
               <div className="flex space-x-4 border-b">
                 <button
                   className={`p-2 ${
@@ -1136,7 +1138,7 @@ const User = () => {
             </div>
 
             {/* Tab Content */}
-            <div className="mt-4">
+            <div className="text-[13px]">
               {activeTab === "Create User" && (
                 <div>
                   {/* <h2 className="px-6 mb-4 text-xl font-semibold">Create User</h2> */}
@@ -1151,7 +1153,7 @@ const User = () => {
                         <div className="w-full md:w-1/2">
                           <label
                             htmlFor="usercode"
-                            className="block mb-2 text-sm font-semibold text-gray-700"
+                            className="block mb-2 text-[13px] font-semibold text-gray-700"
                           >
                             User Code
                           </label>
@@ -1160,7 +1162,7 @@ const User = () => {
                             id="usercode"
                             value={formData.usercode}
                             onChange={handleChange}
-                            className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                            className="block w-full px-4 py-2 text-[13px] text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                             autoComplete="usercode"
                             placeholder="user-0001"
                           />
@@ -1175,7 +1177,7 @@ const User = () => {
                         <div className="w-full md:w-1/2">
                           <label
                             htmlFor="username"
-                            className="block mb-2 text-sm font-semibold text-gray-700"
+                            className="block mb-2 font-semibold text-gray-700"
                           >
                             Username
                           </label>
@@ -1184,7 +1186,7 @@ const User = () => {
                             id="username"
                             value={formData.username}
                             onChange={handleChange}
-                            className={`block w-full px-4 py-2 text-sm text-gray-800 border ${
+                            className={`block w-full px-4 py-2 text-gray-800 border ${
                               errors.username
                                 ? "border-red-500"
                                 : "border-gray-300"
@@ -1203,7 +1205,7 @@ const User = () => {
                         <div className="w-full md:w-1/2">
                           <label
                             htmlFor="nickname"
-                            className="block mb-2 text-sm font-semibold text-gray-700"
+                            className="block mb-2 font-semibold text-gray-700"
                           >
                             Nickname
                           </label>
@@ -1228,7 +1230,7 @@ const User = () => {
                         <div className="w-full md:w-1/2">
                           <label
                             htmlFor="sex"
-                            className="block mb-2 text-sm font-semibold text-gray-700"
+                            className="block mb-2  font-semibold text-gray-700"
                           >
                             Gender
                           </label>
@@ -1254,7 +1256,7 @@ const User = () => {
                         <div className="w-full md:w-1/2">
                           <label
                             htmlFor="password"
-                            className="block mb-2 text-sm font-semibold text-gray-700"
+                            className="block mb-2  font-semibold text-gray-700"
                           >
                             Password
                           </label>
@@ -1263,7 +1265,7 @@ const User = () => {
                             id="password"
                             value={formData.password}
                             onChange={handleChange}
-                            className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                            className="block w-full px-4 py-2  text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                           />
                         </div>
 
@@ -1271,7 +1273,7 @@ const User = () => {
                         <div className="w-full md:w-1/2">
                           <label
                             htmlFor="staffcode"
-                            className="block mb-2 text-sm font-semibold text-gray-700"
+                            className="block mb-2 font-semibold text-gray-700"
                           >
                             Staff Code
                           </label>
@@ -1298,7 +1300,7 @@ const User = () => {
                         <div className="w-full md:w-1/2">
                           <label
                             htmlFor="mobile"
-                            className="block mb-2 text-sm font-semibold text-gray-700"
+                            className="block mb-2 font-semibold text-gray-700"
                           >
                             Phone Number
                           </label>
@@ -1314,7 +1316,7 @@ const User = () => {
                         <div className="w-full md:w-1/2">
                           <label
                             htmlFor="email"
-                            className="block mb-2 text-sm font-semibold text-gray-700"
+                            className="block mb-2 font-semibold text-gray-700"
                           >
                             Email
                           </label>
@@ -1339,10 +1341,48 @@ const User = () => {
                     </div>
 
                     {/* Right Side: Picture Upload */}
-                    <input type="file" accept="image/*" onChange={handleFileChange} />
+                    <div className="flex items-center w-full space-y-4 justify-evenly lg:justify-center lg:flex-col md:w-1/4">
+                      <div className="relative flex items-center justify-center w-40 h-40 overflow-hidden bg-gray-100 rounded-lg shadow-lg">
+                        {formData.avatar ? (
+                          <img
+                            src={formData.path} // Use the stored path
+                            alt="Profile"
+                            className="object-cover w-full h-full"
+                          />
+                        ) : (
+                          <svg
+                            className="w-12 h-12 text-gray-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M12 4v16m8-8H4"
+                            />
+                          </svg>
+                        )}
+                      </div>
+                      <input
+                        type="file"
+                        id="avatar"
+                        accept="image/*"
+                        onChange={handlePictureChange}
+                        className="hidden"
+                      />
+                      <label
+                        htmlFor="avatar"
+                        className="flex items-center px-4 py-2 text-sm font-semibold text-center text-white transition-colors duration-200 bg-blue-500 rounded-lg cursor-pointer hover:bg-blue-600"
+                      >
+                        {formData.avatar ? "Change Picture" : "Upload Picture"}
+                      </label>
+                    </div>
                   </form>
 
-                  <footer className="flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">
+                  <footer className="flex justify-end flex-shrink-0 px-4 py-2 space-x-4 bg-gray-100 rounded-b-xl">
                     <button
                       onClick={handleSave}
                       className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto"
@@ -1361,7 +1401,7 @@ const User = () => {
               )}
 
               {activeTab === "assignRole" && (
-                <div className="flex flex-col min-h-[450px]">
+                <div className="flex flex-col min-h-[450px] mt-4">
                   <form className="flex-grow px-6 space-y-6">
                     <div className="w-full md:w-1/2 ">
                       <label
@@ -1434,9 +1474,9 @@ const User = () => {
       {isEditModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
           <div className="relative flex flex-col w-full mx-auto overflow-auto transition-all transform bg-white shadow-2xl lg:w-2/3 rounded-xl h-5/6">
-            <header className="sticky top-0 flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
-              <h2 className="flex items-center space-x-2 text-xl font-bold text-white md:text-2xl">
-                <GiShipBow className="text-3xl animate-ship" />
+            <header className="sticky top-0 flex items-center justify-between px-6 py-2 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
+              <h2 className="flex items-center space-x-2 text-md font-bold text-white ">
+                {/* <GiShipBow className="text-3xl animate-ship" /> */}
                 <span>កែរប្រែព័ត៌មានអ្នកប្រើប្រាស់</span>
               </h2>
               <button
@@ -1446,8 +1486,8 @@ const User = () => {
                 &times;
               </button>
             </header>
-            <div className="w-full p-4">
-              <div className="flex space-x-4 border-b">
+            <div className="w-full px-4">
+              <div className="flex space-x-4 border-b text-[13px] font-medium">
                 <button
                   className={`p-2 ${
                     activeTab === "Create User"
@@ -1471,12 +1511,12 @@ const User = () => {
               </div>
             </div>
 
-            <div className="mt-4">
+            <div className="text-[13px] ">
               {activeTab === "Create User" && (
                 <div>
-                  <h2 className="px-6 mb-4 text-xl font-semibold">
+                  {/* <h2 className="px-6 mb-4 text-xl font-semibold">
                     Create User
-                  </h2>
+                  </h2> */}
                   <form
                     className="z-10 flex flex-col flex-grow px-6 py-6 space-y-6 md:flex-row md:space-x-6"
                     data-aos="zoom-in"
@@ -1488,7 +1528,7 @@ const User = () => {
                         <div className="w-full md:w-1/2">
                           <label
                             htmlFor="usercode"
-                            className="block mb-2 text-sm font-semibold text-gray-700"
+                            className="block mb-2 font-semibold text-gray-700"
                           >
                             User Code
                           </label>
@@ -1497,7 +1537,7 @@ const User = () => {
                             id="usercode"
                             value={formData.usercode}
                             onChange={handleChange}
-                            className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                            className="block w-full px-4 py-2 text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                             autoComplete="usercode"
                           />
                           {errors.usercode && (
@@ -1511,7 +1551,7 @@ const User = () => {
                         <div className="w-full md:w-1/2">
                           <label
                             htmlFor="username"
-                            className="block mb-2 text-sm font-semibold text-gray-700"
+                            className="block mb-2 font-semibold text-gray-700"
                           >
                             Username
                           </label>
@@ -1520,7 +1560,7 @@ const User = () => {
                             id="username"
                             value={formData.username}
                             onChange={handleChange}
-                            className={`block w-full px-4 py-2 text-sm text-gray-800 border ${
+                            className={`block w-full px-4 py-2 text-gray-800 border ${
                               errors.username
                                 ? "border-red-500"
                                 : "border-gray-300"
@@ -1539,7 +1579,7 @@ const User = () => {
                         <div className="w-full md:w-1/2">
                           <label
                             htmlFor="nickname"
-                            className="block mb-2 text-sm font-semibold text-gray-700"
+                            className="block mb-2 font-semibold text-gray-700"
                           >
                             Nickname
                           </label>
@@ -1548,7 +1588,7 @@ const User = () => {
                             id="nickname"
                             value={formData.nickname}
                             onChange={handleChange}
-                            className={`block w-full px-4 py-2 text-sm text-gray-800 border ${
+                            className={`block w-full px-4 py-2 text-gray-800 border ${
                               errors.nickname
                                 ? "border-red-500"
                                 : "border-gray-300"
@@ -1564,7 +1604,7 @@ const User = () => {
                         <div className="w-full md:w-1/2">
                           <label
                             htmlFor="sex"
-                            className="block mb-2 text-sm font-semibold text-gray-700"
+                            className="block mb-2 font-semibold text-gray-700"
                           >
                             Gender
                           </label>
@@ -1573,7 +1613,7 @@ const User = () => {
                             id="sex"
                             value={formData.sex}
                             onChange={handleChange}
-                            className={`block w-full px-4 py-2 text-sm text-gray-800 border ${
+                            className={`block w-full px-4 py-2 text-gray-800 border ${
                               errors.sex ? "border-red-500" : "border-gray-300"
                             } rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200`}
                           />
@@ -1588,7 +1628,7 @@ const User = () => {
                         <div className="w-full md:w-1/2">
                           <label
                             htmlFor="password"
-                            className="block mb-2 text-sm font-semibold text-gray-700"
+                            className="block mb-2  font-semibold text-gray-700"
                           >
                             Password
                           </label>
@@ -1597,7 +1637,7 @@ const User = () => {
                             id="password"
                             value={formData.password}
                             onChange={handleChange}
-                            className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                            className="block w-full px-4 py-2 text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                           />
                         </div>
 
@@ -1605,7 +1645,7 @@ const User = () => {
                         <div className="w-full md:w-1/2">
                           <label
                             htmlFor="staffcode"
-                            className="block mb-2 text-sm font-semibold text-gray-700"
+                            className="block mb-2 font-semibold text-gray-700"
                           >
                             Staff Code
                           </label>
@@ -1613,7 +1653,7 @@ const User = () => {
                             options={optionsStaffCode}
                             onChange={handleStaffCode} // Ensure handleStaffCode is passed correctly here
                             value={optionsStaffCode.find(
-                              (option) => option.value === formData.staffCode
+                              (option) => option.value === formData.staffcode
                             )}
                             placeholder="Select or type to search"
                             className="basic-single"
@@ -1632,7 +1672,7 @@ const User = () => {
                         <div className="w-full md:w-1/2">
                           <label
                             htmlFor="mobile"
-                            className="block mb-2 text-sm font-semibold text-gray-700"
+                            className="block mb-2 font-semibold text-gray-700"
                           >
                             Phone Number
                           </label>
@@ -1641,14 +1681,14 @@ const User = () => {
                             id="mobile"
                             value={formData.mobile}
                             onChange={handleChange}
-                            className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
+                            className="block w-full px-4 py-2 text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                           />
                         </div>
                         {/* Input for Email */}
                         <div className="w-full md:w-1/2">
                           <label
                             htmlFor="email"
-                            className="block mb-2 text-sm font-semibold text-gray-700"
+                            className="block mb-2 font-semibold text-gray-700"
                           >
                             Email
                           </label>
@@ -1657,7 +1697,7 @@ const User = () => {
                             id="email"
                             value={formData.email}
                             onChange={handleChange}
-                            className={`block w-full px-4 py-2 text-sm text-gray-800 border ${
+                            className={`block w-full px-4 py-2 text-gray-800 border ${
                               errors.email
                                 ? "border-red-500"
                                 : "border-gray-300"
@@ -1677,7 +1717,7 @@ const User = () => {
                       <div className="relative flex items-center justify-center w-40 h-40 overflow-hidden bg-gray-100 rounded-lg shadow-lg">
                         {formData.avatar ? (
                           <img
-                            src={formData.path} // Use the stored path
+                            src={formData.path || Avatar} // Use the stored path
                             alt="Profile"
                             className="object-cover w-full h-full"
                           />
@@ -1714,7 +1754,7 @@ const User = () => {
                     </div>
                   </form>
 
-                  <footer className="flex justify-end flex-shrink-0 p-4 space-x-4 bg-gray-100 rounded-b-xl">
+                  <footer className="flex justify-end flex-shrink-0 px-4 py-2 space-x-4 bg-gray-100 rounded-b-xl">
                     <button
                       onClick={handleSaveEdit}
                       className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto"

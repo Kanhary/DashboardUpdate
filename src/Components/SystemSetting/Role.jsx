@@ -448,8 +448,8 @@ const GroupMaster = () => {
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
           <div className="relative w-1/2 mx-auto transition-all transform bg-white shadow-2xl rounded-xl" data-aos='zoom-in'>
-            <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
-              <h2 className="text-xl font-bold text-white md:text-2xl">New Group Master</h2>
+            <header className="flex items-center justify-between px-6 py-2 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
+              <h2 className="text-md font-bold text-white ">New Role</h2>
               <button onClick={closeAddModal} className="text-2xl text-white transition duration-200 hover:text-gray-300 md:text-3xl">
                 &times;
               </button>
@@ -469,8 +469,8 @@ const GroupMaster = () => {
                   />
                 </div> */}
                 {/* Input for Position */}
-                <div className="w-full md:w-1/2">
-                  <label htmlFor="roleLabel" className="block mb-2 text-sm font-semibold text-gray-700">Role Label</label>
+                <div className="w-full ">
+                  <label htmlFor="roleLabel" className="block mb-2 text-[13px] font-semibold text-gray-700">Role Label</label>
                   <input
                     type="text"
                     id="roleLabel"
@@ -481,7 +481,7 @@ const GroupMaster = () => {
                 </div>
               </div>
               <div>
-                <label htmlFor="roleName" className="block mb-2 text-sm font-semibold text-gray-700 dark:text-gray-300">Role Name</label>
+                <label htmlFor="roleName" className="block mb-2 text-[13px] font-semibold text-gray-700">Role Name</label>
                 <textarea
                   id="roleName"
                   value={formData.roleName}
@@ -491,15 +491,15 @@ const GroupMaster = () => {
               </div>
 
             </div>
-            <footer className="flex flex-col-reverse items-center justify-end px-6 py-4 space-y-3 space-y-reverse bg-gray-100 rounded-b-xl md:flex-row md:space-x-3 md:space-y-0">
+            <footer className="flex flex-col-reverse items-center justify-end px-6 py-2 space-y-3 space-y-reverse bg-gray-100 rounded-b-xl md:flex-row md:space-x-3 md:space-y-0">
               
-              <button onClick={handleSave} className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto">
+              <button onClick={handleSave} className="w-full px-5 py-2 text-[13px] font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-700 hover:shadow-lg hover:scale-105 md:w-auto">
                 Save
               </button>
-              <button onClick={handleSaveNew} className="w-full px-5 py-2 text-sm font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-green-500 to-green-700 hover:shadow-lg hover:scale-105 md:w-auto">
+              <button onClick={handleSaveNew} className="w-full px-5 py-2 text-[13px] font-medium text-white transition duration-200 transform rounded-lg shadow-md bg-gradient-to-r from-green-500 to-green-700 hover:shadow-lg hover:scale-105 md:w-auto">
                 Save & New
               </button>
-              <button onClick={closeAddModal} className="w-full px-5 py-2 text-sm font-medium text-gray-700 transition duration-200 transform bg-gray-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105 md:w-auto">
+              <button onClick={closeAddModal} className="w-full px-5 py-2 text-[13px] font-medium text-gray-700 transition duration-200 transform bg-gray-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105 md:w-auto">
                 Cancel
               </button>
             </footer>
@@ -510,8 +510,8 @@ const GroupMaster = () => {
       {isEditModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
           <div className="relative w-1/2 mx-auto transition-all transform bg-white shadow-2xl rounded-xl">
-            <header className="flex items-center justify-between px-6 py-4 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
-              <h2 className="text-xl font-bold text-white md:text-2xl">បន្ថែមអ្នកប្រើប្រាស់</h2>
+            <header className="flex items-center justify-between px-6 py-2 shadow-lg bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 rounded-t-xl">
+              <h2 className="text-md font-bold text-white ">កែប្រែ Role</h2>
               <button onClick={closeEditModal} className="text-2xl text-white transition duration-200 hover:text-gray-300 md:text-3xl">
                 &times;
               </button>
@@ -519,19 +519,9 @@ const GroupMaster = () => {
             <div className="px-6 py-6 space-y-6">
               <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
                 {/* Input for Code */}
-                <div className="w-full md:w-1/2">
-                  <label htmlFor="Code" className="block mb-2 text-sm font-semibold text-gray-700">Code</label>
-                  <input
-                    type="text"
-                    id="Code"
-                    value={formData.Code}
-                    onChange={handleChange}
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                    disabled
-                  />
-                </div>
+                
                 {/* Input for Position */}
-                <div className="w-full md:w-1/2">
+                <div className="w-full">
                   <label htmlFor="roleLabel" className="block mb-2 text-sm font-semibold text-gray-700">Role Label</label>
                   <input
                     type="text"

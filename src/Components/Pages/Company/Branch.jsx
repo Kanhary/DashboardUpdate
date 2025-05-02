@@ -383,7 +383,7 @@ const Branch = () => {
       background: "#fff",
       borderColor: "#9e9e9e",
       minHeight: "30px",
-      height: "37px",
+      height: "38px",
       boxShadow: state.isFocused ? null : null,
     }),
 
@@ -574,7 +574,7 @@ const Branch = () => {
                     className="px-4 py-2 border-t border-r"
                     style={{ minWidth: "200px" }}
                   >
-                    Back branch
+                    Bank branch
                   </th>
                   <th
                     scope="col"
@@ -641,8 +641,8 @@ const Branch = () => {
                     <td className="px-4 py-2 border-r">{branch.bankAccNo}</td>
                     <td className="px-4 py-2 border-r">{branch.bankBranch}</td>
                     <td className="px-4 py-2 border-r">{branch.companyLogo}</td>
-                    <td className="px-4 py-2 border-r">{branch.LastBy}</td>
-                    <td className="px-4 py-2 border-r">{branch.LastDate}</td>
+                    <td className="px-4 py-2 border-r">{branch.lastBy}</td>
+                    <td className="px-4 py-2 border-r whitespace-nowrap overflow-hidden">{branch.lastdate}</td>
                   </tr>
                 ))}
               </tbody>
@@ -740,11 +740,11 @@ const Branch = () => {
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
           <div
-            className="relative w-full max-w-xl sm:max-w-5xl md:max-w-4xl lg:max-w-[1000px] bg-white rounded-md shadow-lg h-[550px] modal-scrollbar mt-14 sm:ml-52 md:ml-0 overflow-y-auto"
+            className="relative w-full max-w-xl sm:max-w-5xl md:max-w-4xl lg:max-w-[1000px] bg-white rounded-md shadow-lg h-[550px] modal-scrollbar  sm:ml-52 md:ml-0 overflow-y-auto"
             data-aos="zoom-in"
           >
-            <div className="sticky top-0 z-50 flex items-center justify-between w-full p-4 py-4 mb-6 bg-gray-100 border-b-2 border-gray-300 border-dashed">
-              <h2 className="flex-1 ml-3 text-xl font-medium text-blue-800 sm:text-2xl md:text-2xl font-khmer leading-2">
+            <div className="sticky top-0 z-50 flex items-center justify-between w-full p-4 py-2 mb-6 bg-gray-100 border-b-2 border-gray-300 border-dashed">
+              <h2 className="flex-1 ml-3 text-md font-medium text-blue-800  font-khmer leading-2">
                 បញ្ចូលព័ត៌មានសាខា
               </h2>
               <button
@@ -753,7 +753,7 @@ const Branch = () => {
                 className="px-2 py-2 mr-2 text-gray-500 bg-gray-100 rounded-md hover:text-gray-700 ring-1 ring-gray-400"
               >
                 <svg
-                  className="w-6 h-6"
+                  className="w-4 h-4"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -771,16 +771,16 @@ const Branch = () => {
 
             <div className="px-8">
               <form
-                className="grid grid-cols-1 gap-6 md:grid-cols-2"
+                className="grid grid-cols-1 gap-4 md:grid-cols-2 text-[13px]"
                 onSubmit={handleSave}
               >
                 {" "}
                 {/* Form submission handler */}
                 {/* Company Code Dropdown */}
-                <div className="mb-4">
+                <div className="">
                   <label
                     htmlFor="companyCode"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-[13px] font-medium text-gray-700"
                   >
                     Company Code
                   </label>
@@ -790,7 +790,7 @@ const Branch = () => {
                     placeholder="Select Department"
                     // value={optionsCompany.find(option => option.value === formData.companyCode)}
                     isClearable
-                    className="basic-single"
+                    className="basic-single mt-1"
                     classNamePrefix="select"
                     styles={customStyles}
                   />
@@ -803,7 +803,7 @@ const Branch = () => {
                   )}
                 </div>
                 {/* Branch Code Input */}
-                <div className="mb-4">
+                <div className="">
                   <label
                     htmlFor="branchCode"
                     className="block text-sm font-medium text-gray-700"
@@ -821,7 +821,7 @@ const Branch = () => {
                   />
                 </div>
                 {/* Branch Name Input */}
-                <div className="mb-4">
+                <div className="">
                   <label
                     htmlFor="engName"
                     className="block text-sm font-medium text-gray-700"
@@ -838,7 +838,7 @@ const Branch = () => {
                     required
                   />
                 </div>
-                <div className="mb-4">
+                <div className="">
                   <label
                     htmlFor="khName"
                     className="block text-sm font-medium text-gray-700"
@@ -855,7 +855,7 @@ const Branch = () => {
                     required
                   />
                 </div>
-                <div className="mb-4">
+                <div className="">
                   <label
                     htmlFor="phone"
                     className="block text-sm font-medium text-gray-700"
@@ -872,7 +872,7 @@ const Branch = () => {
                     required
                   />
                 </div>
-                <div className="mb-4">
+                <div className="">
                   <label
                     htmlFor="address"
                     className="block text-sm font-medium text-gray-700"
@@ -889,7 +889,7 @@ const Branch = () => {
                     required
                   />
                 </div>
-                <div className="mb-4">
+                <div className="">
                   <label
                     htmlFor="email"
                     className="block text-sm font-medium text-gray-700"
@@ -906,7 +906,7 @@ const Branch = () => {
                     required
                   />
                 </div>
-                <div className="mb-4">
+                <div className="">
                   <label
                     htmlFor="vatNo"
                     className="block text-sm font-medium text-gray-700"
@@ -923,7 +923,7 @@ const Branch = () => {
                     required
                   />
                 </div>
-                <div className="mb-4">
+                <div className="">
                   <label
                     htmlFor="bankName"
                     className="block text-sm font-medium text-gray-700"
@@ -940,7 +940,7 @@ const Branch = () => {
                     required
                   />
                 </div>
-                <div className="mb-4">
+                <div className="">
                   <label
                     htmlFor="bankAccName"
                     className="block text-sm font-medium text-gray-700"
@@ -957,7 +957,7 @@ const Branch = () => {
                     required
                   />
                 </div>
-                <div className="mb-4">
+                <div className="">
                   <label
                     htmlFor="bankAccNo"
                     className="block text-sm font-medium text-gray-700"
@@ -974,7 +974,7 @@ const Branch = () => {
                     required
                   />
                 </div>
-                <div className="mb-4">
+                <div className="">
                   <label
                     htmlFor="bankBranch"
                     className="block text-sm font-medium text-gray-700"
@@ -991,7 +991,7 @@ const Branch = () => {
                     required
                   />
                 </div>
-                <div className="mb-4">
+                <div className="">
                   <label
                     htmlFor="companyLogo"
                     className="block text-sm font-medium text-gray-700"
@@ -1009,18 +1009,18 @@ const Branch = () => {
                   />
                 </div>
               </form>
-              <div className="flex justify-center gap-5 p-6 mt-4">
+              <div className="flex justify-center gap-5 px-6 py-2 mt-4 mb-2">
                 <button
                   type="submit" // Submit button
                   onClick={handleSave}
-                  className="px-8 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 focus:ring-4 focus:ring-blue-300"
+                  className="px-8  text-[13px] font-medium text-white bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 focus:ring-4 focus:ring-blue-300"
                 >
-                  <p className="text-base font-normal">រក្សាទុក</p>
+                  <p className="text-[13px] font-normal">រក្សាទុក</p>
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)} // Close modal function
-                  className="px-6 py-4 text-sm font-medium text-gray-700 bg-white border border-gray-300 border-dashed rounded-lg shadow-sm hover:bg-gray-100"
+                  className="px-6 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 border-dashed rounded-lg shadow-sm hover:bg-gray-100"
                 >
                   <p className="text-base font-normal">ចាកចេញ</p>
                 </button>
@@ -1032,12 +1032,12 @@ const Branch = () => {
 
       {isEditModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
-          <div
-            className="relative w-full max-w-xl sm:max-w-5xl md:max-w-4xl lg:max-w-2xl bg-white rounded-md shadow-lg overflow-auto max-h-[90vh] h-[73vh] sm:h-[550px] md:h-[450px] modal-scrollbar mt-14 sm:ml-52 md:ml-0"
-            data-aos="zoom-in"
-          >
-            <div className="sticky top-0 z-50 flex items-center justify-between w-full p-4 py-4 mb-6 bg-gray-100 border-b-2 border-gray-300 border-dashed">
-              <h2 className="flex-1 ml-3 text-xl font-medium text-blue-800 sm:text-2xl md:text-2xl font-khmer leading-2">
+        <div
+          className="relative w-full max-w-xl sm:max-w-5xl md:max-w-4xl lg:max-w-[1000px] bg-white rounded-md shadow-lg h-[550px] modal-scrollbar  sm:ml-52 md:ml-0 overflow-y-auto"
+          data-aos="zoom-in"
+        >
+          <div className="sticky top-0 z-50 flex items-center justify-between w-full p-4 py-2 mb-6 bg-gray-100 border-b-2 border-gray-300 border-dashed">
+            <h2 className="flex-1 ml-3 text-md font-medium text-blue-800  font-khmer leading-2">
                 កែប្រែព័ត៌មានសាខា
               </h2>
               <button
@@ -1046,7 +1046,7 @@ const Branch = () => {
                 className="px-2 py-2 mr-2 text-gray-500 bg-gray-100 rounded-md hover:text-gray-700 ring-1 ring-gray-400"
               >
                 <svg
-                  className="w-6 h-6"
+                  className="w-4 h-4"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -1064,13 +1064,13 @@ const Branch = () => {
 
             <div className="px-8">
               <form
-                className="grid grid-cols-1 gap-6 md:grid-cols-2"
+                className="grid grid-cols-1 gap-4 md:grid-cols-2 text-[13px]"
                 onSubmit={handleSave}
               >
                 {" "}
                 {/* Form submission handler */}
                 {/* Company Code Dropdown */}
-                <div className="mb-4">
+                <div className="">
                   <label
                     htmlFor="companyCode"
                     className="block text-sm font-medium text-gray-700"
@@ -1081,22 +1081,22 @@ const Branch = () => {
                     options={optionsCompany}
                     onChange={handleCompanyChange}
                     placeholder="Select Department"
-                    // value={optionsCompany.find(option => option.value === formData.companyCode)}
+                    value={optionsCompany.find(option => option.value === formData.companyCode)}
                     isClearable
-                    className="basic-single"
+                    className="basic-single mt-1"
                     classNamePrefix="select"
                     styles={customStyles}
                   />
 
                   {/* Display selected company code */}
-                  {formData.companyCode && (
+                  {/* {formData.companyCode && (
                     <p className="mt-2 text-sm text-gray-600">
                       Selected Company Code: {formData.companyCode}
                     </p>
-                  )}
+                  )} */}
                 </div>
                 {/* Branch Code Input */}
-                <div className="mb-4">
+                <div className="">
                   <label
                     htmlFor="branchCode"
                     className="block text-sm font-medium text-gray-700"
@@ -1114,7 +1114,7 @@ const Branch = () => {
                   />
                 </div>
                 {/* Branch Name Input */}
-                <div className="mb-4">
+                <div className="">
                   <label
                     htmlFor="engName"
                     className="block text-sm font-medium text-gray-700"
@@ -1131,7 +1131,7 @@ const Branch = () => {
                     required
                   />
                 </div>
-                <div className="mb-4">
+                <div className="">
                   <label
                     htmlFor="khName"
                     className="block text-sm font-medium text-gray-700"
@@ -1148,7 +1148,7 @@ const Branch = () => {
                     required
                   />
                 </div>
-                <div className="mb-4">
+                <div className="">
                   <label
                     htmlFor="phone"
                     className="block text-sm font-medium text-gray-700"
@@ -1165,7 +1165,7 @@ const Branch = () => {
                     required
                   />
                 </div>
-                <div className="mb-4">
+                <div className="">
                   <label
                     htmlFor="address"
                     className="block text-sm font-medium text-gray-700"
@@ -1182,7 +1182,7 @@ const Branch = () => {
                     required
                   />
                 </div>
-                <div className="mb-4">
+                <div className="">
                   <label
                     htmlFor="email"
                     className="block text-sm font-medium text-gray-700"
@@ -1199,7 +1199,7 @@ const Branch = () => {
                     required
                   />
                 </div>
-                <div className="mb-4">
+                <div className="">
                   <label
                     htmlFor="vatNo"
                     className="block text-sm font-medium text-gray-700"
@@ -1216,7 +1216,7 @@ const Branch = () => {
                     required
                   />
                 </div>
-                <div className="mb-4">
+                <div className="">
                   <label
                     htmlFor="bankName"
                     className="block text-sm font-medium text-gray-700"
@@ -1233,7 +1233,7 @@ const Branch = () => {
                     required
                   />
                 </div>
-                <div className="mb-4">
+                <div className="">
                   <label
                     htmlFor="bankAccName"
                     className="block text-sm font-medium text-gray-700"
@@ -1250,7 +1250,7 @@ const Branch = () => {
                     required
                   />
                 </div>
-                <div className="mb-4">
+                <div className="">
                   <label
                     htmlFor="bankAccNo"
                     className="block text-sm font-medium text-gray-700"
@@ -1267,7 +1267,7 @@ const Branch = () => {
                     required
                   />
                 </div>
-                <div className="mb-4">
+                <div className="">
                   <label
                     htmlFor="bankBranch"
                     className="block text-sm font-medium text-gray-700"
@@ -1284,7 +1284,7 @@ const Branch = () => {
                     required
                   />
                 </div>
-                <div className="mb-4">
+                <div className="">
                   <label
                     htmlFor="companyLogo"
                     className="block text-sm font-medium text-gray-700"
@@ -1308,14 +1308,14 @@ const Branch = () => {
                   onClick={handleUpdate}
                   className="px-8 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 focus:ring-4 focus:ring-blue-300"
                 >
-                  <p className="text-base font-normal">រក្សាទុក</p>
+                  <p className="text-[13px] font-normal">រក្សាទុក</p>
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)} // Close modal function
-                  className="px-6 py-4 text-sm font-medium text-gray-700 bg-white border border-gray-300 border-dashed rounded-lg shadow-sm hover:bg-gray-100"
+                  className="px-6 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 border-dashed rounded-lg shadow-sm hover:bg-gray-100"
                 >
-                  <p className="text-base font-normal">ចាកចេញ</p>
+                  <p className="text-[13px] font-normal">ចាកចេញ</p>
                 </button>
               </div>
             </div>
@@ -1368,7 +1368,7 @@ const Branch = () => {
                   <input
                     type="text"
                     id="CompanyCode"
-                    value={formData.CompanyCode}
+                    value={formData.companyCode}
                     readOnly
                     className="block w-full p-2 mt-1 bg-gray-100 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1"
                   />
@@ -1385,7 +1385,7 @@ const Branch = () => {
                   <input
                     type="text"
                     id="BranchCode"
-                    value={formData.BranchCode}
+                    value={formData.branchCode}
                     readOnly
                     className="block w-full p-2 mt-1 bg-gray-100 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1"
                   />
@@ -1402,7 +1402,7 @@ const Branch = () => {
                   <input
                     type="text"
                     id="Branch"
-                    value={formData.Branch}
+                    value={`${formData.engName} - ${formData.khName}`}
                     readOnly
                     className="block w-full p-2 mt-1 bg-gray-100 border border-gray-300 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:border-primary-500 focus:ring-1"
                   />

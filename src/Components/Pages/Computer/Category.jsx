@@ -478,7 +478,7 @@ const Category = () => {
           {/* Other Columns */}
           <td className="px-4 py-2 border-r whitespace-nowrap">{category.categoryCode}</td>
           <td className="px-4 py-2 border-r whitespace-nowrap">{category.categoryName}</td>
-          <td className="px-4 py-2 border-r whitespace-nowrap">{category.createBy}</td>
+          <td className="px-4 py-2 border-r whitespace-nowrap">{category.createdBy}</td>
           <td className="px-4 py-2 border-r whitespace-nowrap">{category.lastBy}</td>
           <td className="px-4 py-2 border-r whitespace-nowrap">{category.lastDate}</td>
         </tr>

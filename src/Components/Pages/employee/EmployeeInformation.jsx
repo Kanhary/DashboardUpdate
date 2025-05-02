@@ -16,7 +16,7 @@ const EmployeeInformation = () => {
   return (
     <div className=" mt-10 rounded-lg">
       {/* Page Header */}
-      <h1 className='text-md font-medium text-blue-800'>បុគ្គលិក</h1>
+      <h1 className='text-md font-medium text-blue-800'>តារាងបុគ្គលិក</h1>
       <div className='mt-3 border'></div>
       {/* Tab Menu */}
       <div className="flex gap-4 mb-6 border-b ">
