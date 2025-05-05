@@ -623,7 +623,7 @@ const Branch = () => {
                         </button>
 
                         {/* Delete Button */}
-                        <button onClick={() => deleteBranch(branch.id)}>
+                        <button onClick={() => deleteBranch(branch.id)}>                          
                           <FaTrashAlt className="ml-1 text-red-500 cursor-pointer hover:text-red-700" />
                         </button>
                       </div>
