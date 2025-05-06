@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { GetAllUser, GetDep, HelpRequest } from '../../api/user';
 import Select from "react-select";
-
+import {  PaperclipIcon } from "lucide-react"
 const Help = () => {
 
 
@@ -15,6 +15,7 @@ const Help = () => {
   const [departId, setdepartId] =useState([]);
   const [userId, setUserId] = useState([]);
   const [error, setError] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null)
 
     useEffect(() => {
       const fetchAllDep = async () => {
@@ -84,7 +85,7 @@ const Help = () => {
         background: "#fff",
         borderColor: "#9e9e9e",
         minHeight: "30px",
-        height: "50px",
+        height: "40px",
         boxShadow: state.isFocused ? null : null,
       }),
   
@@ -142,6 +143,10 @@ const Help = () => {
     };
     
 
+    const handleFileChange = (event) => {
+      setSelectedFile(event.target.files[0]);
+    };
+  
 
     const handleChange = (e) => {
       const { id, value } = e.target;
@@ -174,15 +179,15 @@ const Help = () => {
 // };
 
   return (
-    <div className="min-h-screen mt-10 font-khmer" data-aos='fade-right'>
+    <div className=" mt-10 font-khmer" data-aos='fade-right'>
       <h1 className='text-md font-medium text-blue-800 font-khmer'>ជំនួយ</h1>
       <div className='mt-3 mb-3 border'></div>
       <div className="p-8 mx-auto bg-white shadow-xl rounded-2xl">
-        <p className="mb-5 text-md text-gray-700">
+        {/* <p className=" text-md text-gray-700">
           Welcome to the Help Center. Here you can find answers to frequently asked questions and troubleshoot common issues.
-        </p>
+        </p> */}
 
-        <section>
+        {/* <section>
           <h2 className="mb-6 text-xl font-semibold text-gray-800">សំណួរដែលសួរញឹកញាប់</h2>
           <div className="space-y-8">
             <div className="p-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg shadow-md hover:shadow-lg">
@@ -209,7 +214,7 @@ const Help = () => {
               </p>
             </div>
           </div>
-        </section>
+        </section> */}
         
         <section>
           <div className='sm:px-6 lg:px-8'>
@@ -248,12 +253,13 @@ const Help = () => {
               <div>
               <form 
   action="#" 
-  className="p-5 lg:p-11 lg:rounded-r-2xl rounded-2xl"
+  className="px-5 lg:rounded-r-2xl rounded-2xl"
   onSubmit={handleSave}
 >
-  <h2 className="text-2xl font-semibold leading-10 text-indigo-900 font-manrope mb-11">
-    Send Us A Message If You Need Help
+  <h2 className="text-2xl font-semibold leading-10 text-indigo-900 font-manrope mb-3">
+  IT Support Request
   </h2>
+  {/* <p>Submit a request to the IT support team to help resolve issues with your computer.</p> */}
 
   {/* Two-Column Layout for Input Fields */}
   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -339,10 +345,11 @@ const Help = () => {
   </div>
 
   {/* Message Field (Full Width) */}
-  <div className="relative mt-6">
+  <div className="mt-3">
+    <label htmlFor="" className='text-[14px] font-medium'>សារ</label>
     <textarea
       id="description"
-      rows={4}
+      rows={2}
       name="message"
       value={formData.description}
       onChange={handleChange}
@@ -350,20 +357,38 @@ const Help = () => {
       className="peer w-full px-3 py-4 text-[16px] md:text-[18px] text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
       placeholder=" "
     />
-    <label
-      htmlFor="message"
-      className="absolute text-gray-500 duration-300 transform -translate-y-6 scale-75 top-2 z-10 bg-white px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8 left-3 mt-2 peer-focus:text-blue-500"
-    >
-      សារ
-    </label>
+
   </div>
+
+  
+  <div className="space-y-2">
+              <div className="text-sm font-medium">Attach Screenshot (Optional)</div>
+              <div className="flex items-center gap-2">
+                <label
+                  htmlFor="screenshot"
+                  className="flex h-10 w-full cursor-pointer items-center justify-center rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <PaperclipIcon className="mr-2 h-4 w-4" />
+                  {selectedFile ? selectedFile.name : "Choose file..."}
+                </label>
+                <input id="screenshot" type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+                {selectedFile && (
+                  <button type="button" variant="outline" size="sm" onClick={() => setSelectedFile(null)}>
+                    Clear
+                  </button>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Upload a screenshot of the issue to help the IT team diagnose the problem.
+              </p>
+            </div>
 
   {/* Submit Button */}
   <div className="flex items-center justify-center mt-6">
     <button
       type="submit"
       // onClick={handleSave}
-      className="w-full h-12 text-sm font-semibold leading-6 text-white transition-all duration-700 bg-indigo-900 rounded-full shadow-sm hover:bg-indigo-800"
+      className="w-full h-10 text-[14px] font-semibold leading-6 text-white transition-all duration-700 bg-indigo-900 rounded-full shadow-sm hover:bg-indigo-800"
     >
       ផ្ញើ
     </button>
