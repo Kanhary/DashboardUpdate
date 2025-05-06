@@ -19,6 +19,7 @@ import {
   AddNewMaintenance,
   GetMaintenance,
 } from "../../../api/user";
+import { AiOutlineFileExcel } from "react-icons/ai";
 
 
 const Product = () => {
@@ -66,6 +67,7 @@ const Product = () => {
   const [maintenanceId, setMaintenanceId] = useState({});
   const [selectedComputer, setSelectedComputer] = useState(null);
   const [userId, setUserId] = useState(null);
+  const [loading, setLoading] = useState({computer: false});
   
 
   // const DepList = [
@@ -111,6 +113,7 @@ const Product = () => {
         console.error("Error fetching current user:", error);
       }
     };
+
 
     const fetchAllStaff = async () => {
       try {
@@ -160,6 +163,43 @@ const Product = () => {
   //     }
   //   }
   // }, []);
+
+  const downloadExcel = async (url, fileName, type) => {
+    setLoading((prev) => ({ ...prev, [type]: true }));
+
+    try {
+      const response = await axios.get(url, { responseType: "blob" });
+
+      const blob = new Blob([response.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      Swal.fire({
+        title: "Download",
+        text: `${fileName} generated and downloaded successfully!`,
+        icon: "success",
+        confirmButtonText: "Okay",
+      });
+    } catch (error) {
+      console.error(`Error generating ${fileName}:`, error);
+      Swal.fire({
+        title: "Error!",
+        text: `Failed to generate ${fileName}. Please try again.`,
+        icon: "error",
+        confirmButtonText: "Okay",
+      });
+    } finally {
+      setLoading((prev) => ({ ...prev, [type]: false }));
+    }
+  };
+
 
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 10;
@@ -646,6 +686,14 @@ const Product = () => {
               </form>
             </div>
             <div className="flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3">
+            <button
+                onClick={() => downloadExcel("http://192.168.168.4:8759/product/exportProduct", "Computer.xlsx", "staff")}
+                                  disabled={loading.computer}
+                                  className={`flex items-center px-4 py-2 text-white text-[12px] font-medium rounded-lg shadow-md ${loading.computer ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"}`}
+                                >
+                                  <AiOutlineFileExcel className="mr-2" size={15} />
+                                  {loading.computer ? "Generating..." : "Export"}
+              </button>
               <button
                 onClick={handleRefresh}
                 className="flex items-center justify-center px-5 py-2 text-[12px] font-medium text-white transition-transform transform rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95"

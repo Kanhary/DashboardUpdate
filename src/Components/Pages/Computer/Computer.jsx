@@ -11,7 +11,7 @@ const Computer = () => {
   };
 
   return (
-    <div className="p-6 mt-10 rounded-lg shadow-md">
+    <div className="py-6 mt-10 rounded-lg ">
       {/* Page Header */}
       <h1 className="text-[15px] font-medium text-blue-800">តារាងទិន្នន័យកុំព្យូទ័រ</h1>
       <div className="mt-3 border"></div>
