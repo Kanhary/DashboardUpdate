@@ -78,3 +78,41 @@
   transform-origin: 0%;
 }
 
+/* app.css or globals.css */
+.Toastify__toast {
+  background-color: white !important;
+  border-left: 4px solid var(--toast-border-color, #4ade80); /* default to green */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  color: #1f2937;
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: flex-start;
+}
+
+.Toastify__toast--error {
+  --toast-border-color: #f87171; /* red-400 */
+}
+
+.Toastify__toast--success {
+  --toast-border-color: #4ade80; /* green-400 */
+}
+
+.Toastify__toast--info {
+  --toast-border-color: #60a5fa; /* blue-400 */
+}
+
+.Toastify__toast--warning {
+  --toast-border-color: #facc15; /* yellow-400 */
+}
+
+.Toastify__close-button {
+  top: 0.75rem;
+  right: 0.75rem;
+  color: #9ca3af;
+}
+
+.Toastify__progress-bar {
+  background: #4ade80;
+  height: 4px;
+}

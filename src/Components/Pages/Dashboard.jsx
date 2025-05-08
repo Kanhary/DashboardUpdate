@@ -74,6 +74,19 @@ const Dashboard = () => {
     { active: 0, maintenance: 0, broken: 0 }
   );
 
+  const assetCounts = allComputer.reduce(
+    (acc, device) => {
+      const code = device.categoryCode; // e.g., "FA-C" or "MA-C"
+      if (code === "FA-C" || code === "MA-C") {
+        acc[code] = (acc[code] || 0) + 1;
+      }
+      return acc;
+    },
+    { "MA-C": 0, "FA-C": 0 }
+  );
+  
+  
+
   const computerStatusData = {
     labels: ["Active", "In Maintenance", "Broken"],
     datasets: [
@@ -99,6 +112,30 @@ const Dashboard = () => {
         borderWidth: 2,
         // borderRadius: 12,
         
+      },
+    ],
+  };
+
+  const assetStatusData = {
+    labels: ["Minor Asset", "Fixed Asset"],
+    datasets: [
+      {
+        label: "Asset Type",
+        data: [assetCounts["MA-C"], assetCounts["FA-C"]],
+        backgroundColor: [
+          'rgba(59, 130, 246, 0.7)',  // Blue — for Fixed Asset
+          'rgba(34, 197, 94, 0.7)',   // Green — for Minor Asset
+        ],
+        hoverBackgroundColor: [
+          'rgba(59, 130, 246, 0.9)',  // Blue
+          'rgba(34, 197, 94, 0.9)',   // Green
+        ],
+        borderColor: [
+          'rgba(59, 130, 246, 1)',    // Blue
+          'rgba(34, 197, 94, 1)',     // Green
+        ],
+        
+        borderWidth: 2,
       },
     ],
   };
@@ -332,6 +369,11 @@ const Dashboard = () => {
           ))}
         </ul>
       </div>
+
+      <div className="p-6 bg-white rounded-lg shadow-lg">
+          <h2 className="mb-4 text-lg font-semibold text-gray-800">Computer Status Overview</h2>
+          <Pie data={assetStatusData} options={chartOptions} />
+        </div>
 
         {/* <div className="p-6 bg-white rounded-lg shadow-lg">
           <h2 className="mb-4 text-lg font-semibold text-gray-800">Computer Trend Over Time</h2>

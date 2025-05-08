@@ -3,96 +3,95 @@ import { FiLock } from 'react-icons/fi';
 import { ChangePwd, GetUserLogin } from '../../api/user';
 import Swal from "sweetalert2";
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const Setting = () => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [currentUser, setCurrentUser] = useState(null);
-  // const [userId, setUserId] = useState(null);
   const [formData, setFormData] = useState({
     userId: '',
     newPassword: ''
   });
-  
+
   const handleChangePassword = (e) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
-      alert("New password and confirmation do not match!");
+      toast.error("New password and confirmation do not match!"); // Using Toast for error
       return;
     }
     // Handle password change logic here (API call, validation, etc.)
-    alert("Password changed successfully!");
+    toast.success("Password changed successfully!"); // Using Toast for success
   };
 
-
   useEffect(() => {
-      
-      const fetchCurrentUser = async () => {
-        try {
-          const response = await GetUserLogin();
-          setCurrentUser(response.data.data.id); // Assuming the response contains a username field
-          console.log("Fetched user:", response.data.data.id);
-        } catch (error) {
-          console.error("Error fetching current user:", error);
-        }
-      };
-
-      fetchCurrentUser();
-    }, []);
-
-    const handleSave = async (e) => {
-      e.preventDefault(); // Prevent page refresh
-    
-      // Prepare the data for submission
-      // const updatedFormData = {
-      //   userId: currentUser,
-      //   newPassword: formData.newPassword
-      // };
-    
+    const fetchCurrentUser = async () => {
       try {
-        // Call your API to save the data
-        const response = axios.post(`http://192.168.168.4:8759/user/change-password`,
-          new URLSearchParams({
-            userId: currentUser,
-            newPassword: formData.newPassword
+        const response = await GetUserLogin();
+        setCurrentUser(response.data.data.id); // Assuming the response contains a username field
+        console.log("Fetched user:", response.data.data.id);
+      } catch (error) {
+        console.error("Error fetching current user:", error);
+      }
+    };
+
+    fetchCurrentUser();
+  }, []);
+
+  const handleSave = async (e) => {
+    e.preventDefault(); // Prevent page refresh
+    
+    try {
+      // Call your API to save the data
+      const response = await axios.post(
+        `http://192.168.168.4:8759/user/change-password`,
+        new URLSearchParams({
+          userId: currentUser,
+          newPassword: formData.newPassword
         }),
-       {
-          // method: "POST",
+        {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
           },
-          // body: JSON.stringify(updatedFormData),
-        });
-    
-        // Show success alert
-        Swal.fire({
-          title: "Saved!",
-          text: "Password changed successfully.",
-          icon: "success",
-          confirmButtonText: "Okay",
-        });
-    
-        console.log("API Response:", await response.json());
-      } catch (error) {
-        console.error("Error saving data", error);
-    
-        // Show error alert if something goes wrong
-        Swal.fire({
-          title: "Error!",
-          text: "Failed to change password.",
-          icon: "error",
-          confirmButtonText: "Okay",
-        });
-      }
-    };
-    
+        }
+      );
 
-      const handleChange = (e) => {
-        const { id, value } = e.target;
-        setFormData((prev) => ({ ...prev, [id]: value }));
-      };
+      // Show success toast
+      toast.success("Change password successfully!", {
+        position: "top-left",
+        autoClose: 6000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "light"
+      });
+      
+      console.log("API Response:", await response.data);
+    } catch (error) {
+      console.error("Error saving data", error);
 
+      // Show error toast
+      toast.error("Change password fail!", {
+        position: "top-right",
+        autoClose: 4000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "light"
+      });
+      
+    }
+  };
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-8 ">
@@ -155,6 +154,9 @@ const Setting = () => {
           </button>
         </form>
       </div>
+
+      {/* ToastContainer for displaying the Toast notifications */}
+      <ToastContainer />
     </div>
   );
 };

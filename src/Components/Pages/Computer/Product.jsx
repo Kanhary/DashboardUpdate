@@ -205,7 +205,7 @@ const Product = () => {
   const recordsPerPage = 10;
   const filteredComputer = Computers.filter(
     (computer) =>
-      computer.engName?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
+      computer.deviceName?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
       computer.productCode.includes(searchTerm)
   );
 
@@ -734,7 +734,7 @@ const Product = () => {
                     "Product Code",
                     "Device Name",
                     "Staff Code",
-                    "Department",
+                    "Office",
                     "Category",
                     "Model",
                     "Brand",
@@ -791,7 +791,7 @@ const Product = () => {
                       "productCode",
                       "deviceName",
                       "staffCode",
-                      "departCode",
+                      "officeCode",
                       "categoryCode",
                       "modelName",
                       "brand",

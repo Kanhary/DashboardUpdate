@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { GetAllUser, GetDep, HelpRequest } from '../../api/user';
 import Select from "react-select";
 import {  PaperclipIcon } from "lucide-react"
+import Swal from 'sweetalert2';
 const Help = () => {
 
 
@@ -16,6 +17,7 @@ const Help = () => {
   const [userId, setUserId] = useState([]);
   const [error, setError] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null)
+  const [isSuccess, setIsSuccess] = useState(false)
 
     useEffect(() => {
       const fetchAllDep = async () => {
@@ -177,6 +179,8 @@ const Help = () => {
 //     // Clear the form inputs
 //     e.target.reset();
 // };
+
+
 
   return (
     <div className=" mt-10 font-khmer" data-aos='fade-right'>
