@@ -59,14 +59,15 @@ const GroupMaster = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 8;
   const filterGroupMaster = groupMaster.filter(groupmaster =>
-    groupmaster.roleName.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()) ||
-    groupmaster.roleId.includes(searchTerm)
+    groupmaster.roleName?.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()) ||
+    groupmaster.roleLabel?.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase())
+   
   );
   const totalPages = Math.ceil(filterGroupMaster.length / recordsPerPage);
   const handlePageChange = (pageNumber) => {
     if (pageNumber > 0 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber);
-    }
+    } 
   };
 
   const indexOfLastRecord = currentPage * recordsPerPage;

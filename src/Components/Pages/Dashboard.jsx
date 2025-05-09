@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Pie, Line } from 'react-chartjs-2';
+import { BsFillSendFill } from "react-icons/bs";
+import { useNavigate } from "react-router-dom";
+import Report from './Report';
 import {
   Chart as ChartJS,
   BarElement,
@@ -33,6 +36,9 @@ const Dashboard = () => {
   const [allComputer, setAllComputer] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+
 
   useEffect(() => {
     const fetchTotalComputers = async () => {
@@ -48,6 +54,7 @@ const Dashboard = () => {
     };
 
 
+  
     const fetchAllComputer = async () => {
       try{
         const response = await GetProduct();
@@ -85,7 +92,17 @@ const Dashboard = () => {
     { "MA-C": 0, "FA-C": 0 }
   );
   
+  const departmentCounts = allComputer.reduce((acc, device) => {
+    const department = device.officeCode || 'Unknown';
+    acc[department] = (acc[department] || 0) + 1;
+    return acc;
+  }, {});
   
+  const total = Object.values(departmentCounts).reduce((sum, count) => sum + count, 0);
+  
+  const handleSendClick = () => {
+    navigate("report"); // Make sure the route "/report" exists in your router
+  };
 
   const computerStatusData = {
     labels: ["Active", "In Maintenance", "Broken"],
@@ -140,32 +157,23 @@ const Dashboard = () => {
     ],
   };
 
-  // const computerStatusData = {
-  //   labels: ['Active', 'Inactive', 'Broken'],
-  //   datasets: [
-  //     {
-  //       label: 'Computer Status',
-  //       data: [100, 10, 5], 
-  //       backgroundColor: [
-  //         'rgba(99, 102, 241, 0.7)', // Active
-  //         'rgba(239, 68, 68, 0.7)', // Inactive
-  //         'rgba(234, 179, 8, 0.7)',  // Broken
-  //       ],
-  //       borderColor: [
-  //         'rgba(99, 102, 241, 1)',
-  //         'rgba(239, 68, 68, 1)',
-  //         'rgba(234, 179, 8, 1)',
-  //       ],
-  //       borderWidth: 2,
-  //       borderRadius: 12,
-  //       hoverBackgroundColor: [
-  //         'rgba(99, 102, 241, 0.9)',
-  //         'rgba(239, 68, 68, 0.9)',
-  //         'rgba(234, 179, 8, 0.9)',
-  //       ],
-  //     },
-  //   ],
-  // };
+  const departmentLabels = Object.keys(departmentCounts);
+  const departmentData = Object.values(departmentCounts);
+
+  const departmentDistributionData = {
+    labels: departmentLabels,
+    datasets: [
+      {
+        label: 'Computers per Department',
+        data: departmentData,
+        fill: false,
+        backgroundColor: 'rgba(34, 197, 94, 0.7)', // green
+        borderColor: 'rgba(34, 197, 94, 1)',
+        tension: 0.4,
+      },
+    ],
+  };
+
 
   const computerTrendData = {
     labels: ['January', 'February', 'March', 'April', 'May', 'June'],
@@ -274,7 +282,15 @@ const Dashboard = () => {
 
   return (
     <div className="flex flex-col min-h-screen mt-10">
-      <h1 className="text-md font-medium text-blue-800 font-khmer">Dashboard</h1>
+    <div className="flex items-center justify-between ">
+      <h1 className="text-lg font-semibold text-blue-800 font-khmer">
+        Dashboard
+      </h1>
+      <button onClick={handleSendClick} className="flex items-center gap-2 px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition duration-200">
+        <BsFillSendFill className="text-xl" />
+        <span className="text-sm" >Send</span>
+      </button>
+    </div>
       <div className="mt-3 mb-3 border"></div>
 
       <div className="grid grid-cols-1 gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
@@ -356,45 +372,35 @@ const Dashboard = () => {
         </div>
 
         <div className="p-6 bg-white rounded-lg shadow-lg">
-        <h2 className="mb-4 text-lg font-semibold text-gray-800">Recent Activities</h2>
-        <ul className="space-y-4">
-          {recentActivities.map((activity) => (
-            <li key={activity.id} className="flex items-center">
-              <div className="mr-3">{activity.icon}</div>
-              <div>
-                <p className="text-gray-700">{activity.activity}</p>
-                <p className="text-sm text-gray-500">{activity.time}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="p-6 bg-white rounded-lg shadow-lg">
           <h2 className="mb-4 text-lg font-semibold text-gray-800">Computer Status Overview</h2>
           <Pie data={assetStatusData} options={chartOptions} />
         </div>
 
-        {/* <div className="p-6 bg-white rounded-lg shadow-lg">
-          <h2 className="mb-4 text-lg font-semibold text-gray-800">Computer Trend Over Time</h2>
-          <Line data={computerTrendData} options={chartOptions} />
-        </div> */}
+        
       </div>
-
-      {/* Recent Activities Section */}
-      {/* <div className="p-6 bg-white rounded-lg shadow-lg">
-        <h2 className="mb-4 text-lg font-semibold text-gray-800">Recent Activities</h2>
-        <ul className="space-y-4">
-          {recentActivities.map((activity) => (
-            <li key={activity.id} className="flex items-center">
-              <div className="mr-3">{activity.icon}</div>
-              <div>
-                <p className="text-gray-700">{activity.activity}</p>
-                <p className="text-sm text-gray-500">{activity.time}</p>
+      {/* <div className="bg-white p-4 rounded-lg shadow-md">
+        <h2 className="text-base font-semibold text-gray-800 mb-3">
+          Department Distribution of Computers
+        </h2>
+        <div className="space-y-3">
+          {Object.entries(departmentCounts).map(([department, count]) => {
+            const percent = ((count / total) * 100).toFixed(1);
+            return (
+              <div key={department}>
+                <div className="flex justify-between text-xs text-gray-700 mb-1">
+                  <span>{department}</span>
+                  <span>{count} ({percent}%)</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className="h-2 rounded-full bg-blue-600"
+                    style={{ width: `${percent}%` }}
+                  ></div>
+                </div>
               </div>
-            </li>
-          ))}
-        </ul>
+            );
+          })}
+        </div>
       </div> */}
     </div>
   );

@@ -464,10 +464,10 @@ export function UpdateBranch(id,userId , data) {
   });
 }
 
-export function DeleteBranch(id, userId,deleteby) {
+export function DeleteBranch(id, deleteby) {
   return request({
     method: "DELETE",
-    url: `/Branch/DeleteBranchById/${id}/${userId}`,
+    url: `/Branch/DeleteBranchById/${id}`,
     data: {deleteby}
   });
 }

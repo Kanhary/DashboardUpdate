@@ -82,6 +82,9 @@ const OfficeList = () => {
       officeList.officeEngName
         ?.toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
+        officeList.officeKhName
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
       officeList.officeCode.includes(searchTerm)
   );
   const totalPages = Math.ceil(filteredOffices.length / recordsPerPage);

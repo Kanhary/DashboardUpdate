@@ -303,7 +303,7 @@ const Branch = () => {
       });
 
       if (result.isConfirmed) {
-        const response = await DeleteBranch(id, userId, currentUser);
+        const response = await DeleteBranch(id, currentUser);
         console.log("Response:", response);
 
         if (response.status === 200) {

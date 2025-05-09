@@ -68,6 +68,7 @@ const Department = () => {
   const filteredDepartment = DepList.filter(
     (dep) =>
       dep.departEngName?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
+      dep.departKhName?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
       dep.departCode.includes(searchTerm)
   );
 

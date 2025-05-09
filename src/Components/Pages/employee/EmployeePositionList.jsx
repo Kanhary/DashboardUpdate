@@ -77,7 +77,7 @@ const EmployeePositionList = () => {
   const filteredPosition = positions.filter(
     (position) =>
       position.positionName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      position.positionCode.includes(searchTerm)
+      position.positionCode.toLowerCase().includes(searchTerm)
   );
   const totalPages = Math.ceil(filteredPosition.length / recordsPerPage);
 
