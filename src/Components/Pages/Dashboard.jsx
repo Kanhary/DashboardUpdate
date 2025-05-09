@@ -101,7 +101,7 @@ const Dashboard = () => {
   const total = Object.values(departmentCounts).reduce((sum, count) => sum + count, 0);
   
   const handleSendClick = () => {
-    navigate("report"); // Make sure the route "/report" exists in your router
+    navigate("/main-dashboard/help"); // Make sure the route "/report" exists in your router
   };
 
   const computerStatusData = {
