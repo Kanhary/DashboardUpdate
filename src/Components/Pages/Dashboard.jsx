@@ -93,7 +93,7 @@ const Dashboard = () => {
   );
   
   const departmentCounts = allComputer.reduce((acc, device) => {
-    const department = device.officeCode || 'Unknown';
+    const department = device.departmentName || 'Unknown';
     acc[department] = (acc[department] || 0) + 1;
     return acc;
   }, {});
@@ -286,9 +286,9 @@ const Dashboard = () => {
       <h1 className="text-lg font-semibold text-blue-800 font-khmer">
         Dashboard
       </h1>
-      <button onClick={handleSendClick} className="flex items-center gap-2 px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition duration-200">
+      <button aria-label="Send Request" onClick={handleSendClick} className="flex items-center gap-2 px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition duration-200">
         <BsFillSendFill className="text-xl" />
-        <span className="text-sm" >Send</span>
+        <span className="text-sm" >Send Request</span>
       </button>
     </div>
       <div className="mt-3 mb-3 border"></div>
@@ -378,7 +378,7 @@ const Dashboard = () => {
 
         
       </div>
-      {/* <div className="bg-white p-4 rounded-lg shadow-md">
+      <div className="bg-white p-4 rounded-lg shadow-md">
         <h2 className="text-base font-semibold text-gray-800 mb-3">
           Department Distribution of Computers
         </h2>
@@ -401,7 +401,7 @@ const Dashboard = () => {
             );
           })}
         </div>
-      </div> */}
+      </div>
     </div>
   );
 };

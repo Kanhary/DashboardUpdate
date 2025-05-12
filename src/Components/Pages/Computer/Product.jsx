@@ -43,7 +43,8 @@ const Product = () => {
     ipaddress: "",
     macAddress: "",
     note: "",
-    supply: ""
+    supply: "",
+    departmentName: ""
   };
   const [searchTerm, setSearchTerm] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -567,18 +568,40 @@ const Product = () => {
     });
   };
 
-  const handleDepartmentChange = (selectedOption) => {
-    console.log("Selected department option:", selectedOption);
+  // const handleDepartmentChange = (selectedOption) => {
+  //   console.log("Selected department option:", selectedOption);
 
-    setFormData((prevData) => {
-      const updatedData = {
-        ...prevData,
-        departCode: selectedOption ? selectedOption.value : "",
-      };
-      console.log("Updated formData:", updatedData); // Check if the updated data is correct
-      return updatedData;
-    });
-  };
+  //   setFormData((prevData) => {
+  //     const updatedData = {
+  //       ...prevData,
+  //       departCode: selectedOption ? selectedOption.value : "",
+  //       departEngName: selectedOption ? selectedOption.value : "",
+  //     };
+  //     console.log("Updated formData:", updatedData); // Check if the updated data is correct
+  //     return updatedData;
+  //   });
+  // };
+
+
+  const handleDepartmentChange = (selectedOption) => {
+  if (selectedOption) {
+    const selectedDep = department.find(
+      (dep) => dep.departCode === selectedOption.value
+    );
+
+    setFormData((prevData) => ({
+      ...prevData,
+      departCode: selectedDep.departCode,
+      departmentName: selectedDep.departEngName, // This will post the readable name
+    }));
+  } else {
+    setFormData((prevData) => ({
+      ...prevData,
+      departCode: '',
+      departmentName: '',
+    }));
+  }
+};
 
 
 
