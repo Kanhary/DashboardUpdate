@@ -110,6 +110,7 @@ const MenuTab = ({
         const departmentOptions = response.data.data.map((dept) => ({
           value: dept.departCode,  // Assuming "departCode" is the unique ID
           label: dept.departEngName,  // Assuming "departName" is the display name
+          departName : dept.departEngName,
         }));
     
         setDepartment(departmentOptions);
@@ -124,7 +125,14 @@ const MenuTab = ({
       try {
         const response = await GetPosition();
         console.log(response.data.data);
-        setPosition(response.data.data);
+
+        const optionsPosiotn = response.data.data.map((pos) => ({
+          value: pos.positionCode,
+          label: `${pos.positionCode} - ${pos.positionName}`,
+          positionName: pos.positionName
+        }));
+
+        setPosition(optionsPosiotn);
       } catch (err) {
         setErrors({ message: err.message || "An error occurred" });
       }
@@ -194,6 +202,7 @@ const MenuTab = ({
     setFormData((prevData) => ({
       ...prevData,
       departCode: selectedOption ? selectedOption.value : "",
+      departName: selectedOption.departName,
       officeCode: "", // Reset office selection
     }));
 
@@ -209,6 +218,7 @@ const MenuTab = ({
       const officeOptions = response.data.data.map((office) => ({
         value: office.officeCode,
         label: office.officeEngName,
+        officeName: office.officeEngName,
       }));
       setOptionsOffice(officeOptions);
       console.log("Office : " ,optionsOffice)
@@ -226,6 +236,7 @@ const MenuTab = ({
       const updatedData = {
         ...prevData,
         positionCode: selectedOption ? selectedOption.value : "",
+        positionName: selectedOption ? selectedOption.positionName : "",
       };
       console.log("Updated formData:", updatedData); // Check if the updated data is correct
       return updatedData;
@@ -235,6 +246,7 @@ const MenuTab = ({
     setFormData((prevData) => ({
       ...prevData,
       officeCode: selectedOption ? selectedOption.value : "",
+      officeName: selectedOption ? selectedOption.officeName : "",
     }));
   };
 
@@ -265,14 +277,14 @@ const MenuTab = ({
   //   label: `${dep.departCode} - ${dep.departEngName}`,
   // }));
 
-  const optionsPosiotn = position.map((pos) => ({
-    value: pos.positionCode,
-    label: `${pos.positionCode} - ${pos.positionName}`,
-  }));
+  // const optionsPosiotn = position.map((pos) => ({
+  //   value: pos.positionCode,
+  //   label: `${pos.positionCode} - ${pos.positionName}`,
+  // }));
 
-  console.log("Matching option:", optionsPosiotn.find(
-    (option) => option.value === formData.positionCode
-  ));
+  // console.log("Matching option:", optionsPosiotn.find(
+  //   (option) => option.value === formData.positionCode
+  // ));
 
 
   const optionCourse = ComputerCourse.map((course) => ({
@@ -642,9 +654,9 @@ const MenuTab = ({
                     {/* Conditionally rendering select or input based on type */}
                     {type === "select" ? (
                       <Select
-                        options={optionsPosiotn}
+                        options={position}
                         onChange={handlePositionChange} // Ensure handleStaffCode is passed correctly here
-                        value={optionsPosiotn.find(
+                        value={position.find(
                           (option) => option.value === formData.positionCode
                         )}
                         placeholder="Select or type to search"

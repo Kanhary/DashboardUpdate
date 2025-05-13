@@ -18,6 +18,7 @@ const OfficeList = () => {
     officeEngName: "",
     officeKhName: "",
     departCode: "", // Initial value for department code
+    departName: "",
   });
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -331,6 +332,7 @@ const OfficeList = () => {
       const updatedData = {
         ...prevData,
         departCode: selectedOption ? selectedOption.value : "",
+        departName: selectedOption ? selectedOption.departName : "",
       };
       console.log("Updated formData:", updatedData); // Check if the updated data is correct
       return updatedData;
@@ -397,6 +399,7 @@ const OfficeList = () => {
   const optionsDepartment = department.map((dep) => ({
     value: dep.departCode,
     label: `${dep.departCode} - ${dep.departEngName}`,
+    departName: dep.departEngName,
   }));
 
   const handleRefresh = () => {

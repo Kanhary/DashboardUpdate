@@ -79,7 +79,7 @@ const StaffInfo = () => {
   };
 
   const [formData, setFormData] = useState({
-    id: "",
+    // id: "",
     staffCode: "",
     engName: "",
     khName: "",
@@ -92,6 +92,7 @@ const StaffInfo = () => {
     officeCode: "",
     branchCode: "",
     positionCode: "",
+    positionName: "",
     fileUpload: null,
   });
 
@@ -444,13 +445,13 @@ const StaffInfo = () => {
     e.preventDefault(); // Fix: Prevent form submission
   
     const updatedFormData = {
-      // ...formData, 
+      ...formData, 
       // formData,
-      staffCode: formData.staffCode,
-      engName: formData.engName,
-      khName: formData.khName,
-      branchCode: formData.branchCode,
-      departCode: formData.departCode,
+      // staffCode: formData.staffCode,
+      // engName: formData.engName,
+      // khName: formData.khName,
+      // branchCode: formData.branchCode,
+      // departCode: formData.departCode,
       createdBy: currentUser,
       lastBy: currentUser,
       lastDate: new Date().toISOString(),
@@ -469,7 +470,7 @@ const StaffInfo = () => {
         icon: "success",
       });
   
-      isAddModalOpen(false); // Fix: should be `setIsAddModalOpen(false)`
+     
       fetchAllStaff();
     } catch (error) {
       console.error("Error during user creation:", error);
@@ -519,7 +520,7 @@ const StaffInfo = () => {
         lastDate: new Date().toISOString(),
       };
   
-      const response = await UpdateStaff(updatedFormData);
+      const response = await UpdateStaff(updatedFormData, id);
   
       if (response.status === 200) {
         console.log("Employee updated successfully:", response.data);
@@ -722,8 +723,11 @@ const StaffInfo = () => {
     currentAddress,
     branchCode,
     departCode,
+    departName,
     officeCode,
+    officeName,
     positionCode,
+    positionName,
     coursename,
     courseCode,
     fromdate,
@@ -744,8 +748,11 @@ const StaffInfo = () => {
       currentAddress,
       branchCode,
       departCode,
+      departName,
       officeCode,
+      officeName,
       positionCode,
+      positionName,
       coursename,
       courseCode,
       fromdate,
@@ -767,8 +774,11 @@ const StaffInfo = () => {
       currentAddress,
       branchCode,
       departCode,
+      departName,
       officeCode,
+      officeName,
       positionCode,
+      positionName
     });
 
     setFormData({
@@ -783,8 +793,11 @@ const StaffInfo = () => {
       currentAddress,
       branchCode,
       departCode,
+      departName,
       officeCode,
+      officeName,
       positionCode,
+      positionName,
       fileUpload: null, // Retaining fileUpload initialization
     });
 
@@ -805,17 +818,28 @@ const StaffInfo = () => {
 
   const openViewModal = (
     id,
-    staffCode,
-    engName,
-    khName,
-    genderCode,
-    height,
-    weight,
-    bod,
-    currentAddress,
-    branchCode,
-    departCode,
-    positionCode
+      staffCode,
+      engName,
+      khName,
+      genderCode,
+      height,
+      weight,
+      bod,
+      currentAddress,
+      branchCode,
+      departCode,
+      departName,
+      officeCode,
+      officeName,
+      positionCode,
+      positionName,
+      coursename,
+      courseCode,
+      fromdate,
+      todate,
+      organize,
+      incountry,
+      outcountry,
   ) => {
     console.log({
       id,
@@ -829,7 +853,18 @@ const StaffInfo = () => {
       currentAddress,
       branchCode,
       departCode,
+      departName,
+      officeCode,
+      officeName,
       positionCode,
+      positionName,
+      coursename,
+      courseCode,
+      fromdate,
+      todate,
+      organize,
+      incountry,
+      outcountry,
     });
 
     setEditingEmployees({
@@ -844,11 +879,15 @@ const StaffInfo = () => {
       currentAddress,
       branchCode,
       departCode,
+      departName,
+      officeCode,
+      officeName,
       positionCode,
+      positionName
     });
 
     setFormData({
-      id,
+     id,
       staffCode,
       engName,
       khName,
@@ -859,7 +898,11 @@ const StaffInfo = () => {
       currentAddress,
       branchCode,
       departCode,
+      departName,
+      officeCode,
+      officeName,
       positionCode,
+      positionName
     });
     setIsViewModalOpen(true);
   };
@@ -873,7 +916,7 @@ const StaffInfo = () => {
     setEditingEmployees(null);
     setFormData({
       id: "",
-      staffCodeode: "",
+      staffCode: "",
       engName: "",
       khName: "",
       genderCode: "",
@@ -892,7 +935,7 @@ const StaffInfo = () => {
     setEditingEmployees(null);
     setFormData({
       id: "",
-      staffCodeode: "",
+      staffCode: "",
       engName: "",
       khName: "",
       genderCode: "",
@@ -1258,7 +1301,11 @@ const StaffInfo = () => {
                             employee.currentAddress,
                             employee.branchCode,
                             employee.departCode,
+                            employee.departName,
+                            employee.officeCode,
+                            employee.officeName,
                             employee.positionCode,
+                            employee.positionName,
                             employee.lastBy,
                             employee.lastDate,
                             employee.photo
@@ -1307,7 +1354,7 @@ const StaffInfo = () => {
                       {formatDateTime(employee.bod)}
                     </td>
                     <td className="px-4 py-1 border-r">
-                      {employee.courseCode}
+                      {`${employee.courseCode} - ${employee.courseName}`}
                     </td>
                     {/* <td className='px-4 py-1 border-r'>{employee.nationality}</td>
                       <td className='px-4 py-1 border-r'>{employee.region}</td> */}
@@ -1326,14 +1373,14 @@ const StaffInfo = () => {
                       {employee.branchCode}
                     </td>
                     <td className="px-4 py-1 border-r">
-                      {employee.departCode}
+                      {`${employee.departCode} - ${employee.departName}`}
                     </td>
                     <td className="px-4 py-1 border-r">
-                      {employee.officeCode}
+                      {`${employee.officeCode} - ${employee.officeName}`}
                     </td>
                     {/* <td className='px-4 py-1 border-r'>{employee.officeCode}</td> */}
                     <td className="px-4 py-1 border-r">
-                      {employee.positionCode}
+                      {`${employee.positionCode} -${employee.positionName}`}
                     </td>
                     <td className="px-4 py-1 border-r">{employee.lastBy}</td>
                     <td className="px-4 py-1 border-r">
