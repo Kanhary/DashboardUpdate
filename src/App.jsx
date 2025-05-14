@@ -16,7 +16,6 @@ function App() {
         
         <Route path="/main-dashboard/*" element={<MainDashboard />} />
         
-        
       </Routes>
     </Router>
   );

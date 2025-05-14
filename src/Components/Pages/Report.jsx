@@ -176,7 +176,7 @@ const Report = () => {
               <td className="px-6 py-4 text-sm font-medium text-gray-700 border border-gray-300">Computer</td>
               <td className="px-6 py-4 text-sm border border-gray-300">
                 <button
-                  onClick={() => downloadExcel("http://192.168.168.4:8759/product/exportProduct", "Computer.xlsx", "staff")}
+                  onClick={() => downloadExcel("http:192.168.168.4:8759/product/exportProduct", "Computer.xlsx", "staff")}
                   disabled={loading.computer}
                   className={`flex items-center px-4 py-2 text-white text-sm font-medium rounded-lg shadow-md ${loading.computer ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"}`}
                 >

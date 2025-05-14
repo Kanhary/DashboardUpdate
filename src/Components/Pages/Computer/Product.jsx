@@ -119,7 +119,10 @@ const Product = () => {
 
     const fetchAllStaff = async () => {
       try {
-        const response = await GetAllStaff();
+        const response = await Get
+        
+        
+        AllStaff();
         console.log("Get Staff code :", response.data.data);
         setStaff(response.data.data);
       } catch (err) {
@@ -2012,7 +2015,7 @@ const Product = () => {
 //     formDataToSend.append("description", formData.description);
 
 //     try {
-//       const response = await axios.post("http://192.168.100.55:8759/Docs/uploadFilePdf", formDataToSend, {
+//       const response = await axios.post("http://192.168.168.4:8759/Docs/uploadFilePdf", formDataToSend, {
 //         headers: { "Content-Type": "multipart/form-data" },
 //       });
 
