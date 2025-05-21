@@ -316,7 +316,11 @@ const Dashboard = () => {
         </motion.div>
 
         {/* Active Computers */}
-        <div className="flex items-center justify-between p-6 bg-white rounded-lg shadow-lg">
+                <motion.div
+          className="flex items-center justify-between p-6 transition-all transition-transform duration-300 transform bg-white rounded-lg shadow-xl hover:shadow-2xl"
+          whileHover={{ scale: 1.02 }}
+        >
+    
           <div>
             <p className="text-sm text-gray-500">In Active Computers </p>
             {loading ? (
@@ -328,11 +332,14 @@ const Dashboard = () => {
           <div className='flex items-center justify-center w-14 h-14 transition-transform transform bg-green-100 rounded-full hover:scale-105'>
             <FiMonitor className="text-green-500" size={20} />
           </div>
-          
-        </div>
+        
+        </motion.div>
 
         {/* In Maintenance */}
-        <div className="flex items-center justify-between p-6 bg-white rounded-lg shadow-lg">
+                <motion.div
+          className="flex items-center justify-between p-6 transition-all transition-transform duration-300 transform bg-white rounded-lg shadow-xl hover:shadow-2xl"
+          whileHover={{ scale: 1.02 }}
+        >
           <div>
             <p className="text-sm text-gray-500">In Maintenance</p>
             {loading ? (
@@ -345,10 +352,13 @@ const Dashboard = () => {
             <FiMonitor className="text-yellow-500" size={20} />
           </div>
           
-        </div>
+        </motion.div>
 
         {/* Broken Computers */}
-        <div className="flex items-center justify-between p-6 bg-white rounded-lg shadow-lg">
+                <motion.div
+          className="flex items-center justify-between p-6 transition-all transition-transform duration-300 transform bg-white rounded-lg shadow-xl hover:shadow-2xl"
+          whileHover={{ scale: 1.02 }}
+        >
           <div>
             <p className="text-sm text-gray-500">Broken Computers</p>
             {loading ? (
@@ -361,7 +371,7 @@ const Dashboard = () => {
             <FiMonitor className="text-red-500" size={20} />
           </div>
           
-        </div>
+        </motion.div>
       </div>
 
       {/* Charts Section */}
@@ -371,14 +381,12 @@ const Dashboard = () => {
           <Pie data={computerStatusData} options={chartOptions} />
         </div>
 
-        <div className="p-6 bg-white rounded-lg shadow-lg">
+        {/* <div className="p-6 bg-white rounded-lg shadow-lg">
           <h2 className="mb-4 text-lg font-semibold text-gray-800">Computer Status Overview</h2>
           <Pie data={assetStatusData} options={chartOptions} />
-        </div>
+        </div> */}
 
-        
-      </div>
-      <div className="bg-white p-4 rounded-lg shadow-md">
+              <div className="bg-white p-4 rounded-lg shadow-md">
         <h2 className="text-base font-semibold text-gray-800 mb-3">
           Department Distribution of Computers
         </h2>
@@ -402,6 +410,8 @@ const Dashboard = () => {
           })}
         </div>
       </div>
+      </div>
+
     </div>
   );
 };

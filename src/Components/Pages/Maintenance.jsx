@@ -379,7 +379,7 @@ const MaintenancePage = () => {
               // Check for a successful response
               Swal.fire({
                 title: "Deleted!",
-                text: "User has been deleted.",
+                text: "Maintenance has been deleted.",
                 icon: "success",
                 confirmButtonText: "Okay",
               });
@@ -390,7 +390,7 @@ const MaintenancePage = () => {
             } else {
               Swal.fire({
                 title: "Error!",
-                text: "Failed to delete user.",
+                text: "Failed to delete maintenance.",
                 icon: "error",
                 confirmButtonText: "Okay",
               });

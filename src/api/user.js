@@ -671,6 +671,21 @@ export function HelpRequest(data) {
   });
 }
 
+export function AddMenu(data) {
+  return request({
+    method: "POST",
+    url: "/menu/addNewMenuList",
+    data: data,
+  });
+}
+
+export function GetAllMenuRole(menuid) {
+  return request({
+    method: "GET",
+    url: `/RoleMenu/${menuid}/permissions`,
+  });
+}
+
 
 // export function GetOfficeByDep() {
 //   return request({

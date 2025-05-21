@@ -104,7 +104,11 @@ const Sidebar = ({ isSidebarOpen }) => {
   };
 
   // Function to translate menu name
-  const translateText = (text) => translations[text.toLowerCase()] || text;
+ const translateText = (text) => {
+  console.log('Translating:', text);
+  return typeof text === 'string' ? translations[text.toLowerCase()] || text : text;
+};
+
 
   const getIconComponent = (iconName) => {
     const iconMap = {
@@ -136,6 +140,7 @@ const Sidebar = ({ isSidebarOpen }) => {
               <NavItem
                 icon={getIconComponent(item.icon)}
                 text={translateText(item.menuName)}
+                // text={item.menuName}
                 onClick={() => toggleSubmenu(item.id)}
                 isActive={activeItem === item.menuName}
                 dropdownIcon={

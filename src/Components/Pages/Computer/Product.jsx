@@ -210,16 +210,12 @@ const Product = () => {
   const recordsPerPage = 10;
   const filteredComputer = Computers.filter(
     (computer) =>
-      computer.location.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (selectedTerminal === '' || computer.location === selectedTerminal) ||
+      // computer.location.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      // (selectedTerminal === '' || computer.location === selectedTerminal) ||
       computer.deviceName?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
       computer.productCode.includes(searchTerm)
   );
 
-  const filteredData = Computers.filter((item) =>
-  item.location.toLowerCase().includes(searchTerm.toLowerCase()) &&
-  (selectedTerminal === '' || item.terminal === selectedTerminal)
-);
 
   const totalPages = Math.ceil(filteredComputer.length / recordsPerPage);
 

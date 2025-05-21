@@ -22,6 +22,7 @@ import Department from "../Pages/Company/Department";
 import Office from "../Pages/Company/Office";
 import Branch from "../Pages/Company/Branch";
 import Company from "../Pages/Company/Company";
+import RequestHistory from "../Pages/RequestHistory";
 
 function MainDashboard() {
   const [isSidebarOpen, setSidebarOpen] = useState(true); // Start with sidebar open for better UX
@@ -90,6 +91,7 @@ function MainDashboard() {
           <Route path="setting" element={<Setting />} />
           <Route path="report" element={<Report />} />
           <Route path="help" element={<Help />} />
+          <Route path="request_history" element={<RequestHistory/>} />
           <Route path="*" element={<NotFound />} />{" "}
           {/* Handle unmatched routes */}
         </Routes>

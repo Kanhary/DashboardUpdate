@@ -3,10 +3,11 @@ import { FaPen, FaTrashAlt } from "react-icons/fa";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { IoMdRefresh } from "react-icons/io";
-import { GetMenu } from "../../api/user";
+import { AddMenu, GetMenu } from "../../api/user";
+import Swal from 'sweetalert2'; 
 
 const ItemPermission = () => {
-  const INITAIL_FORM_DATA = { code: "", functionCode: "", function: "" };
+  const INITAIL_FORM_DATA = { perms: '',};
   const [searchTerm, setSearchTerm] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -14,6 +15,8 @@ const ItemPermission = () => {
   const [editingItemPermission, setEditingItemPermission] = useState(null);
   const [flattenedMenus, setFlattenedMenus] = useState([]);
   const [items, setItems] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [activeTab, setActiveTab] = useState("Create Main Menu");
 
   // const items = [
   //   {code: '001', functionCode: 'តារាងបង្ហាញទិន្នន័យ', functionName: 'Dashboard'},
@@ -43,11 +46,7 @@ const ItemPermission = () => {
     });
     return flattened;
   };
-
-  useEffect(() => {
-    AOS.init({ duration: 1000 });
-
-    const fetchMenuItems = async () => {
+  const fetchMenuItems = async () => {
       try {
         const response = await GetMenu();
         if (response.data.code === 200) {
@@ -65,6 +64,22 @@ const ItemPermission = () => {
       }
     };
 
+
+  useEffect(() => {
+    AOS.init({ duration: 1000 });
+
+    const fetchCurrentUser = async () => {
+          try {
+            const response = await GetUserLogin(); // Call the API to get the current user
+            setCurrentUser(response.data.data.username); // Assuming the response contains a username field
+            console.log('Fetched user:', response.data.data.username);
+          } catch (error) {
+            console.error('Error fetching current user:', error);
+          }
+        };
+        
+    fetchCurrentUser();
+    
     fetchMenuItems();
   }, []);
 
@@ -141,20 +156,64 @@ const ItemPermission = () => {
     setIsEditModalOpen(false);
   };
 
-  const handleChange = (e) => {
-    const { id, value } = e.target;
-    setFormData((prev) => ({ ...prev, [id]: value }));
-  };
+const handleChange = (e) => {
+  const { id, value } = e.target;
+  setFormData((prevData) => ({
+    ...prevData,
+    [id]: value,
+  }));
+};
+
 
   const handleSaveNew = () => {
     console.log("Save & New clicked", formData);
     setFormData(INITAIL_FORM_DATA);
   };
 
-  const handleSave = () => {
-    console.log("Save clicked", formData);
-    closeAddModal();
-    closeEditModal();
+  const handleSave = async () => {
+       
+        const updatedFormData = {
+          ...formData,
+          parentId : 0,
+          menuName : formData.perms,
+          path : formData.perms,
+          // children : [],
+          // path: formData.path,
+          // componentPath: formData.path,
+          // perms: formData.path,
+          // icon: formData.path,
+          creator: currentUser,
+          // updater: currentUser,
+          createTime: new Date().toISOString(),
+          // updateTime: new Date().toISOString(),
+        };
+      
+        try {
+          // Call your API to save the data
+          const response = await AddMenu(updatedFormData);
+      
+          // Show success alert
+          Swal.fire({
+            title: "Saved!",
+            text: "Role has been saved successfully.",
+            icon: "success",
+            confirmButtonText: "Okay",
+          });
+      
+          console.log('API Response:', response);
+          closeAddModal(); // Close the modal on successful save
+          fetchMenuItems();
+        } catch (error) {
+          console.error('Error saving data', error);
+      
+          // Show error alert if something goes wrong
+          Swal.fire({
+            title: "Error!",
+            text: "Failed to save role.",
+            icon: "error",
+            confirmButtonText: "Okay",
+          });
+        }
   };
 
   const handleUpdate = () => {
@@ -218,7 +277,7 @@ const ItemPermission = () => {
   return (
     <section className="mt-14 font-khmer">
       <h1 className="text-md font-medium text-blue-800">
-        ការអនុញ្ញាតអ្នកប្រើប្រាស់
+        Menu
       </h1>
       <div className="mt-3 border"></div>
       <div className="w-full mt-4" data-aos="fade-up">
@@ -545,40 +604,68 @@ const ItemPermission = () => {
                 &times;
               </button>
             </header>
-            <div className="px-6 py-6 space-y-6">
-              {/* <div className="flex flex-col space-y-6 md:flex-row md:space-x-6 md:space-y-0">
-               
-                <div className="w-full">
-                  <label
-                    htmlFor="functionCode"
-                    className="block mb-2 text-sm font-semibold text-gray-700"
-                  >
-                    Function Code
-                  </label>
-                  <input
-                    type="text"
-                    id="functionCode"
-                    value={formData.functionCode}
-                    onChange={handleChange}
-                    className="block w-full px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                  />
-                </div>
-              </div> */}
+
+            <div className="w-full px-4 text-[13px] font-medium">
+              <div className="flex space-x-4 border-b">
+                <button
+                  className={`p-2 ${
+                    activeTab === "Create Main Menu"
+                      ? "border-b-2 border-blue-500"
+                      : ""
+                  }`}
+                  onClick={() => setActiveTab("Create Main Menu")}
+                >
+                  Create Main Menu
+                </button>
+                <button
+                  className={`p-2 ${
+                    activeTab === "assignRole"
+                      ? "border-b-2 border-blue-500"
+                      : ""
+                  }`}
+                  onClick={() => setActiveTab("assignRole")}
+                >
+                  Create Sub-Menu
+                </button>
+              </div>
+            </div>
+
+            <div className="text-[13px]">
+              {activeTab === "Create Main Menu" && (
+              <div className="px-6 py-6 space-y-6">
               <div>
                 <label
-                  htmlFor="functionName"
+                  htmlFor="menuName"
                   className="block mb-2 text-sm font-semibold text-gray-700"
                 >
                   Menu Name
                 </label>
-                <textarea
-                  id="functionName"
-                  value={formData.functionName}
+                <input
+                  id="perms"
+                  value={formData.perms}
                   onChange={handleChange}
                   className="block w-full h-10 px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm resize-none bg-gray-50 focus:outline-none focus:ring-4 focus:ring-blue-200 focus:border-blue-500"
                 />
               </div>
+              {/* <div>
+                <label
+                  htmlFor="path"
+                  className="block mb-2 text-sm font-semibold text-gray-700"
+                >
+                  Path
+                </label>
+                <textarea
+                  id="path"
+                  value={formData.path}
+                  onChange={handleChange}
+                  className="block w-full h-10 px-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg shadow-sm resize-none bg-gray-50 focus:outline-none focus:ring-4 focus:ring-blue-200 focus:border-blue-500"
+                />
+              </div> */}
             </div>
+              )}
+            </div>
+
+
             <footer className="flex flex-col-reverse items-center justify-end px-6 py-4 space-y-3 space-y-reverse bg-gray-100 rounded-b-xl md:flex-row md:space-x-3 md:space-y-0">
               <button
                 onClick={handleSave}
@@ -658,7 +745,7 @@ const ItemPermission = () => {
                   htmlFor="functionName"
                   className="block mb-2 text-sm font-semibold text-gray-700 "
                 >
-                  Function Name
+                  Menu Name
                 </label>
                 <textarea
                   id="functionName"
